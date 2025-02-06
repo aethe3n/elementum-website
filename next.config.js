@@ -23,6 +23,8 @@ const nextConfig = {
   swcMinify: true,
   reactStrictMode: true,
   output: 'standalone',
+  distDir: '.next',
+  generateEtags: true,
   experimental: {
     optimizeCss: true
   },
@@ -34,6 +36,14 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'browsing-topics=(), private-state-token-redemption=(), private-state-token-issuance=()'
+          },
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains'
           }
         ]
       }
@@ -50,6 +60,18 @@ const nextConfig = {
   // Add strict mode for better error catching
   typescript: {
     ignoreBuildErrors: false
+  },
+  // Handle static files
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Handle favicon.ico at the root
+        {
+          source: '/favicon.ico',
+          destination: '/public/favicon.ico'
+        }
+      ]
+    }
   }
 }
 
