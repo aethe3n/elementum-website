@@ -2,10 +2,54 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
+import { NewsArticle, getLatestNews } from "@/lib/news-service"
+
+const cities = [
+  // Americas
+  { name: "New York", x: 285, y: 280, size: 6, importance: "major" },
+  { name: "Los Angeles", x: 200, y: 320, size: 5, importance: "major" },
+  { name: "Vancouver", x: 180, y: 250, size: 4, importance: "minor" },
+  { name: "São Paulo", x: 350, y: 500, size: 5, importance: "major" },
+  
+  // Europe
+  { name: "London", x: 520, y: 250, size: 6, importance: "major" },
+  { name: "Rotterdam", x: 540, y: 260, size: 5, importance: "major" },
+  { name: "Hamburg", x: 550, y: 240, size: 4, importance: "minor" },
+  
+  // Asia
+  { name: "Singapore", x: 820, y: 450, size: 6, importance: "major" },
+  { name: "Hong Kong", x: 880, y: 350, size: 6, importance: "major" },
+  { name: "Shanghai", x: 900, y: 320, size: 5, importance: "major" },
+  { name: "Tokyo", x: 950, y: 300, size: 6, importance: "major" },
+  { name: "Dubai", x: 700, y: 380, size: 5, importance: "major" },
+  
+  // Oceania
+  { name: "Sydney", x: 950, y: 550, size: 5, importance: "major" },
+  
+  // Africa
+  { name: "Cape Town", x: 580, y: 550, size: 4, importance: "minor" },
+  { name: "Lagos", x: 520, y: 420, size: 4, importance: "minor" }
+];
 
 export default function Page() {
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{type: 'user' | 'ai' | 'market', content: string}>>([]);
+
+  // Example questions array
+  const exampleQuestions = [
+    "What's driving the current gold price movements?",
+    "How are forex markets responding to recent economic data?",
+    "What's the outlook for commodity prices this quarter?"
+  ];
+
+  const submitQuestion = async (question: string) => {
+    setChatMessages(prev => [...prev, { type: 'user', content: question }]);
+    // Add actual API call implementation here
+  };
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver((entries) => {
@@ -26,33 +70,107 @@ export default function Page() {
     return () => observerRef.current?.disconnect();
   }, []);
 
+  useEffect(() => {
+    getLatestNews().then(setArticles);
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen bg-black text-foreground">
+    <div className="min-h-screen bg-[#1A1A1A] text-foreground">
       <style jsx global>{`
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { 
+            opacity: 0; 
+            transform: translateY(30px); 
+            filter: blur(10px);
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0);
+            filter: blur(0);
+          }
+        }
+
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .animate-gradient {
+          animation: gradient 8s ease infinite;
+          background-size: 200% auto;
         }
 
         @keyframes shimmer {
-          0% { background-position: 0% 0; }
+          0% { background-position: -200% 0; }
           100% { background-position: 200% 0; }
         }
 
-        .fade-in {
-          animation: fadeIn 0.8s ease-out forwards;
-          opacity: 0;
+        @keyframes float {
+          0% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(10px, -10px) rotate(1deg); }
+          50% { transform: translate(0, -20px) rotate(0deg); }
+          75% { transform: translate(-10px, -10px) rotate(-1deg); }
+          100% { transform: translate(0, 0) rotate(0deg); }
         }
 
-        .delay-1 { animation-delay: 0.2s; }
-        .delay-2 { animation-delay: 0.4s; }
-        .delay-3 { animation-delay: 0.6s; }
+        @keyframes rotate {
+          from { transform: rotate(0deg) scale(0.95); }
+          to { transform: rotate(360deg) scale(1.05); }
+        }
+
+        .spiral-bg {
+          position: absolute;
+          width: 120%;
+          height: 120%;
+          left: -10%;
+          top: -10%;
+          background: radial-gradient(circle at center, rgba(184, 125, 59, 0.15) 0%, transparent 70%);
+          animation: rotate 60s linear infinite;
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dynamic-bg {
+          position: absolute;
+          inset: -20px;
+          background: 
+            radial-gradient(circle at 20% 20%, rgba(184, 125, 59, 0.08) 0%, transparent 70%),
+            radial-gradient(circle at 80% 80%, rgba(184, 125, 59, 0.08) 0%, transparent 70%);
+          filter: blur(80px);
+          opacity: 0.7;
+          z-index: 0;
+          animation: float 30s ease-in-out infinite;
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in {
+          animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          opacity: 0;
+          transform: translateY(30px);
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .delay-1 { animation-delay: 0.3s; }
+        .delay-2 { animation-delay: 0.6s; }
+        .delay-3 { animation-delay: 0.9s; }
         
         .glimmer-card {
           position: relative;
-          background: rgb(23, 23, 23);
-          border-radius: 12px;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 16px;
           overflow: hidden;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(184, 125, 59, 0.1);
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glimmer-card:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 
+            0 20px 40px -20px rgba(184, 125, 59, 0.3),
+            0 0 20px rgba(184, 125, 59, 0.1);
+          border-color: rgba(184, 125, 59, 0.3);
+          background: rgba(0, 0, 0, 0.4);
         }
         
         .glimmer-card::before {
@@ -62,424 +180,629 @@ export default function Page() {
           background: linear-gradient(
             90deg,
             transparent,
-            rgba(236, 72, 153, 0.03),
-            rgba(236, 72, 153, 0.06),
-            rgba(236, 72, 153, 0.03),
+            rgba(184, 125, 59, 0.15),
+            rgba(184, 125, 59, 0.25),
+            rgba(184, 125, 59, 0.15),
             transparent
           );
           background-size: 200% 100%;
-          animation: shimmer 8s ease-in-out infinite;
+          animation: shimmer 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
           pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .glimmer-pill {
-          position: relative;
-          background: rgb(23, 23, 23);
-          border-radius: 9999px;
-          overflow: hidden;
-        }
-        
-        .glimmer-pill::before {
-          content: '';
-          position: absolute;
-          inset: -1px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(236, 72, 153, 0.03),
-            rgba(236, 72, 153, 0.06),
-            rgba(236, 72, 153, 0.03),
-            transparent
-          );
-          background-size: 200% 100%;
-          animation: shimmer 8s ease-in-out infinite;
-          pointer-events: none;
+        .glimmer-card:hover::before {
+          opacity: 1;
         }
 
-        .hero-glow {
-          position: absolute;
-          top: 85%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 140%;
-          height: 600px;
-          background: radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.08) 0%,
-            rgba(255, 255, 255, 0.03) 35%,
-            transparent 70%
-          );
-          pointer-events: none;
-          z-index: 0;
-          filter: blur(50px);
+        .service-icon-container {
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glimmer-card:hover .service-icon-container {
+          transform: scale(1.1) rotate(5deg);
+          box-shadow: 
+            0 0 30px -5px rgba(184, 125, 59, 0.3),
+            inset 0 0 20px rgba(184, 125, 59, 0.2);
+        }
+
+        @keyframes nodeGlow {
+          0%, 100% { 
+            opacity: 0.4; 
+            r: var(--base-size);
+            filter: drop-shadow(0 0 8px rgba(184, 125, 59, 0.4));
+          }
+          50% { 
+            opacity: 0.9; 
+            r: calc(var(--base-size) * 1.5);
+            filter: drop-shadow(0 0 16px rgba(184, 125, 59, 0.6));
+          }
+        }
+
+        @keyframes pathFlow {
+          0% { 
+            stroke-dashoffset: 1000; 
+            opacity: 0.1;
+            filter: drop-shadow(0 0 4px rgba(184, 125, 59, 0.2));
+          }
+          50% {
+            opacity: 0.5;
+            filter: drop-shadow(0 0 8px rgba(184, 125, 59, 0.4));
+          }
+          100% { 
+            stroke-dashoffset: 0; 
+            opacity: 0.1;
+            filter: drop-shadow(0 0 4px rgba(184, 125, 59, 0.2));
+          }
+        }
+
+        .trade-route {
+          stroke-dasharray: 1000;
+          stroke-dashoffset: 1000;
+          animation: pathFlow 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .trade-route:hover {
+          opacity: 0.8;
+          filter: drop-shadow(0 0 12px rgba(184, 125, 59, 0.6));
+          stroke-width: 2;
+        }
+
+        .trade-node {
+          --base-size: 3px;
+          animation: nodeGlow 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .trade-node.major {
+          --base-size: 4px;
+        }
+
+        .trade-node:hover {
+          --base-size: 8px;
+          opacity: 1;
+          filter: drop-shadow(0 0 16px rgba(184, 125, 59, 0.8));
+        }
+
+        .node-label {
+          opacity: 0;
+          transform: translateY(10px);
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.8));
+        }
+
+        .trade-node:hover + .node-label {
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .scroll-animation {
           opacity: 0;
-          transform: translateY(20px);
-          transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+          transform: translateY(30px);
+          transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: blur(10px);
         }
 
         .scroll-animation.animate-in {
           opacity: 1;
           transform: translateY(0);
+          filter: blur(0);
         }
 
-        .scroll-delay-1 { transition-delay: 0.1s; }
-        .scroll-delay-2 { transition-delay: 0.2s; }
-        .scroll-delay-3 { transition-delay: 0.3s; }
+        .scroll-delay-1 { transition-delay: 0.3s; }
+        .scroll-delay-2 { transition-delay: 0.6s; }
+        .scroll-delay-3 { transition-delay: 0.9s; }
       `}</style>
 
-      {/* Navigation */}
-      <header className="flex items-center justify-between py-4 px-6 border-b border-neutral-800/50">
-        <Link href="/" className="text-lg font-semibold">
-          Software Composer LP
-        </Link>
-        <nav className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/login">Log in</Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link href="/signup">Sign up</Link>
-          </Button>
-        </nav>
-      </header>
+      <div className="spiral-bg" />
+      <div className="dynamic-bg" />
 
-      <main className="flex-grow">
+      <main className="flex-grow relative z-10">
         {/* Hero Section */}
-        <section className="py-20 px-6 relative">
-          <div className="hero-glow" />
+        <section className="min-h-screen relative px-6 pt-20 pb-20 overflow-hidden">
+          {/* Background Network Visualization */}
+          <div className="absolute inset-0 z-0">
+            <svg width="100%" height="100%" viewBox="0 0 1000 800" className="opacity-40">
+              <defs>
+                <radialGradient id="nodeGradient" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#B87D3B" stopOpacity="0.8"/>
+                  <stop offset="100%" stopColor="#B87D3B" stopOpacity="0"/>
+                </radialGradient>
+              </defs>
+
+              {/* Major Trading Ports and Cities */}
+              {cities.map((city, i) => (
+                <g key={city.name}>
+                  <circle
+                    className="trade-node"
+                    cx={city.x}
+                    cy={city.y}
+                    r="4"
+                    fill="#B87D3B"
+                    style={{ animationDelay: `${i * 0.5}s` }}
+                  />
+                  <circle
+                    className="trade-node"
+                    cx={city.x}
+                    cy={city.y}
+                    r="8"
+                    fill="url(#nodeGradient)"
+                    style={{ animationDelay: `${i * 0.5}s` }}
+                  />
+                  <text
+                    x={city.x + 10}
+                    y={city.y - 10}
+                    fill="#B87D3B"
+                    fontSize="10"
+                    opacity="0.6"
+                  >
+                    {city.name}
+                  </text>
+                </g>
+              ))}
+
+              {/* Trade Routes */}
+              {[
+                ["Los Angeles", "Shanghai"],
+                ["Los Angeles", "Tokyo"],
+                ["Vancouver", "Hong Kong"],
+                ["New York", "London"],
+                ["New York", "Rotterdam"],
+                ["Rotterdam", "Singapore"],
+                ["Hamburg", "Dubai"],
+                ["London", "Hong Kong"],
+                ["São Paulo", "Cape Town"],
+                ["São Paulo", "Rotterdam"],
+                ["Singapore", "Shanghai"],
+                ["Hong Kong", "Tokyo"],
+                ["Dubai", "Singapore"],
+                ["Lagos", "Rotterdam"],
+                ["Cape Town", "Dubai"],
+                ["Sydney", "Singapore"],
+                ["Sydney", "Hong Kong"]
+              ].map((route, i) => {
+                const start = cities.find(c => c.name === route[0]);
+                const end = cities.find(c => c.name === route[1]);
+                if (!start || !end) return null;
+
+                const midX = (start.x + end.x) / 2;
+                const midY = (start.y + end.y) / 2 - 20;
+
+                return (
+                  <path
+                    key={`route-${i}`}
+                    className="trade-route"
+                    d={`M${start.x},${start.y} Q${midX},${midY} ${end.x},${end.y}`}
+                    stroke="#B87D3B"
+                    strokeWidth="1"
+                    fill="none"
+                    style={{ animationDelay: `${i * 1}s` }}
+                  />
+                );
+              })}
+            </svg>
+          </div>
+
           <div className="max-w-[1200px] mx-auto text-center relative z-10">
-            <div className="inline-flex items-center px-3 py-1 text-sm text-neutral-400 mb-8 glimmer-pill fade-in">
-              <span>3 Prompts to a Perfect Landing Page</span>
+            <div className="mb-16 fade-in">
+              <h1 className="text-6xl md:text-7xl tracking-tight font-light bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent" style={{ letterSpacing: '-0.02em', fontFeatureSettings: "'ss02' on, 'ss01' on" }}>
+                ELEMENTUM<br/>
+                <span className="font-extralight tracking-widest" style={{ letterSpacing: '0.05em' }}>GLOBAL</span>
+              </h1>
             </div>
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight fade-in delay-1">
-              The Cursor Template<br />For Landing Pages
+            <div className="inline-flex items-center px-3 py-1 text-sm text-[#B87D3B] mb-8 glimmer-pill fade-in">
+              <span>Global Trading & Financial Services</span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight fade-in delay-1 animate-gradient bg-gradient-to-r from-[#C89D6D] via-[#B87D3B] to-[#96652F] bg-[length:200%_auto] bg-clip-text text-transparent transition-all duration-300 hover:scale-[1.02]" style={{ textShadow: '0 0 30px rgba(184,125,59,0.2)', letterSpacing: '-0.02em' }}>
+              Transform Your Business<br />
+              With Global Solutions
             </h1>
             <p className="text-xl text-neutral-400 mb-8 max-w-2xl mx-auto fade-in delay-2">
-              Create stunning landing pages in minutes, not months. Save $10,000+ on design and development
-              with our Cursor-powered template.
+              Empowering businesses with secure and efficient global trading capabilities.
             </p>
-            <div className="fade-in delay-3">
-              <Button size="lg" className="rounded-full">
-                Download Template
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto rounded-full bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] hover:from-[#96652F] hover:via-[#B87D3B] hover:to-[#96652F] text-white px-8 py-6 text-lg font-medium relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_20px_rgba(184,125,59,0.3)]"
+                asChild
+              >
+                <Link 
+                  href="/get-started"
+                  className="flex items-center justify-center gap-2"
+                >
+                  <span>Schedule Consultation</span>
+                  <svg 
+                    className="w-5 h-5 transform transition-transform group-hover:translate-x-1" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M17 8l4 4m0 0l-4 4m4-4H3" 
+                    />
+                  </svg>
+                </Link>
+              </Button>
+
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto rounded-full border-2 border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B] hover:text-white px-8 py-6 text-lg font-medium relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_20px_rgba(184,125,59,0.2)]"
+                asChild
+              >
+                <Link 
+                  href="/services"
+                  className="flex items-center justify-center gap-2"
+                >
+                  <span>View Services</span>
+                  <svg 
+                    className="w-5 h-5 transform transition-transform group-hover:translate-x-1" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                    />
+                  </svg>
+                </Link>
+              </Button>
+            </div>
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto rounded-full bg-black/30 border border-[#B87D3B]/50 hover:border-[#B87D3B] text-[#B87D3B] hover:text-white hover:bg-[#B87D3B]/10 px-8 py-6 text-lg font-medium backdrop-blur-sm relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_20px_rgba(184,125,59,0.15)]"
+              asChild
+            >
+              <Link 
+                href="/market-ai"
+                className="flex items-center justify-center gap-2"
+              >
+                <span>Market AI</span>
+                <svg 
+                  className="w-5 h-5 transform transition-transform group-hover:translate-x-1" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" 
+                  />
+                </svg>
+              </Link>
+            </Button>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
+          <div className="max-w-[1200px] mx-auto scroll-animation">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Our Services</h2>
+              <p className="text-neutral-400 max-w-2xl mx-auto">Comprehensive trading and financial solutions tailored to your business needs</p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-12">
+              {/* Precious Metals */}
+              <div className="space-y-8">
+                <div className="glimmer-card p-8 hover-float">
+                  <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
+                    <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">Precious Metals</h3>
+                  <p className="text-neutral-400 mb-6">
+                    Global trading solutions for gold, silver, and other precious metals. We facilitate secure and efficient transactions worldwide.
+                  </p>
+                  <ul className="space-y-3 text-neutral-300">
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Secure Storage Solutions
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Global Market Access
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Competitive Pricing
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Food Products */}
+                <div className="glimmer-card p-8 hover-float">
+                  <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
+                    <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h18v18H3z M12 8v8 M8 12h8" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">Food Products</h3>
+                  <p className="text-neutral-400 mb-6">
+                    International trade and distribution of agricultural and food commodities, ensuring quality and reliability.
+                  </p>
+                  <ul className="space-y-3 text-neutral-300">
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Quality Assurance
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Global Distribution Network
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Supply Chain Management
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                {/* OTC Trading */}
+                <div className="glimmer-card p-8 hover-float">
+                  <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
+                    <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">OTC Trading</h3>
+                  <p className="text-neutral-400 mb-6">
+                    Secure and efficient cryptocurrency exchange services with competitive rates and personalized support.
+                  </p>
+                  <ul className="space-y-3 text-neutral-300">
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Competitive Rates
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Secure Transactions
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Expert Guidance
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Escrow Services */}
+                <div className="glimmer-card p-8 hover-float">
+                  <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
+                    <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">Escrow Services</h3>
+                  <p className="text-neutral-400 mb-6">
+                    Secure transaction management and risk mitigation services for international trade operations.
+                  </p>
+                  <ul className="space-y-3 text-neutral-300">
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Risk Management
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Secure Payments
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Transaction Monitoring
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* About Us Summary Section */}
+        <section className="py-20 px-6 relative">
+          <div className="max-w-[1200px] mx-auto scroll-animation">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Who We Are</h2>
+              <p className="text-neutral-400 max-w-2xl mx-auto">Your trusted partner in global trade and financial solutions</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="glimmer-card p-8 hover-float">
+                <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
+                  <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-4 text-white">Our Story</h3>
+                <p className="text-neutral-400">
+                  Founded on principles of integrity and excellence, bridging markets and creating opportunities worldwide.
+                </p>
+              </div>
+
+              <div className="glimmer-card p-8 hover-float">
+                <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
+                  <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-4 text-white">Our Mission</h3>
+                <p className="text-neutral-400">
+                  Empowering businesses through secure, efficient, and innovative trading solutions.
+                </p>
+              </div>
+
+              <div className="glimmer-card p-8 hover-float">
+                <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
+                  <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-4 text-white">Global Vision</h3>
+                <p className="text-neutral-400">
+                  Connecting markets across borders with integrity and excellence.
+                </p>
+              </div>
+            </div>
+            <div className="text-center mt-8">
+              <Button 
+                variant="outline" 
+                className="rounded-full border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10"
+                asChild
+              >
+                <Link href="/about-us">Learn More About Us</Link>
               </Button>
             </div>
           </div>
         </section>
 
-        {/* Demo Section */}
-        <section className="py-20 px-6">
+        {/* Blog/News Section */}
+        <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
           <div className="max-w-[1200px] mx-auto scroll-animation">
-            <div className="glimmer-card">
-              <div className="bg-neutral-900">
-                <div className="flex items-center gap-2 p-2 md:p-3 border-b border-neutral-800">
-                  <div className="flex gap-1.5 md:gap-2">
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500" />
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-500" />
-                    <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500" />
-                  </div>
-                </div>
-                <div className="flex flex-col md:flex-row h-[500px] md:h-[700px]">
-                  {/* Sidebar */}
-                  <div className="hidden md:block md:w-64 border-r border-neutral-800 p-4 flex-shrink-0">
-                    <div className="flex items-center gap-2 p-2 bg-neutral-800 rounded-lg mb-4">
-                      <div className="w-8 h-8 rounded-full bg-neutral-700" />
-                      <span>Cursor AI</span>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Prompts</span>
-                        <span className="text-sm text-neutral-500">3</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Components</span>
-                        <span className="text-sm text-neutral-500">25+</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Time Saved</span>
-                        <span className="text-sm text-neutral-500">100h+</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded hover:bg-neutral-800 transition-colors">
-                        <span>Money Saved</span>
-                        <span className="text-sm text-green-500">$10k+</span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Mobile Stats Bar */}
-                  <div className="md:hidden w-full border-b border-neutral-800 p-3 bg-neutral-800/50">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-neutral-700" />
-                        <span className="text-sm font-medium">Cursor AI</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs">
-                        <span className="text-neutral-400">3 Prompts</span>
-                        <span className="text-green-500 font-medium">$10k+ Saved</span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Main Content */}
-                  <div className="flex-1 flex flex-col p-3 md:p-4 overflow-hidden">
-                    <div className="flex items-center justify-between mb-4 sticky top-0">
-                      <input
-                        type="text"
-                        placeholder="Enter your prompt here..."
-                        className="w-full max-w-2xl px-3 md:px-4 py-2 bg-neutral-800 rounded-lg border border-neutral-700 text-sm md:text-base placeholder:text-neutral-500"
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Latest Insights</h2>
+              <p className="text-neutral-400 max-w-2xl mx-auto">Stay informed with the latest updates in global trade and finance</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {articles.map((article, index) => (
+                <div key={index} className="glimmer-card p-6 hover-float">
+                  <div className="aspect-video mb-4 bg-[#B87D3B]/10 rounded-lg overflow-hidden">
+                    {article.urlToImage ? (
+                      <Image
+                        src={article.urlToImage}
+                        alt={article.title}
+                        width={400}
+                        height={225}
+                        className="w-full h-full object-cover"
                       />
-                      <div className="flex items-center gap-1 md:gap-2 ml-2">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
-                          <span className="sr-only">Generate</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v19"/><path d="M5 12h14"/></svg>
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
-                          <span className="sr-only">Save</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="space-y-4 overflow-y-auto flex-1 pr-1">
-                      <div className="p-4 rounded-lg bg-neutral-800">
-                        <div className="flex items-center gap-3 md:gap-4 mb-2">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-neutral-700 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-medium text-sm md:text-base">Cursor AI</h3>
-                            <p className="text-xs md:text-sm text-neutral-400">Prompt #1: Hero Section</p>
-                          </div>
-                          <div className="text-xs md:text-sm text-green-400 flex-shrink-0">
-                            Generated in 2s
-                          </div>
-                        </div>
-                        <p className="text-sm md:text-base text-neutral-300">
-                          I&apos;ll create a modern, attention-grabbing hero section for your landing page. 
-                          Just describe your product&apos;s main value proposition, and I&apos;ll generate the perfect
-                          layout with compelling copy and visuals.
-                        </p>
-                      </div>
-
-                      <div className="p-6 md:p-8 rounded-lg bg-neutral-800/50 border border-neutral-700 border-dashed text-center">
-                        <div className="mb-4">
-                          <svg className="mx-auto w-10 h-10 md:w-12 md:h-12 text-neutral-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                        <h3 className="text-lg md:text-xl font-semibold mb-2">Upload any image and get any fucking landing page you want</h3>
-                        <p className="text-sm md:text-base text-neutral-400 mb-4">Drag and drop an image, or click to browse</p>
-                        <Button variant="outline" size="lg" className="h-9 md:h-10 text-sm md:text-base">
-                          Choose Image
-                        </Button>
-                      </div>
-
-                      <div className="p-4 rounded-lg bg-neutral-800">
-                        <div className="flex items-center gap-3 md:gap-4 mb-2">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-neutral-700 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-medium text-sm md:text-base">Cursor AI</h3>
-                            <p className="text-xs md:text-sm text-neutral-400">Image Analysis</p>
-                          </div>
-                          <div className="text-xs md:text-sm text-neutral-400 flex-shrink-0">
-                            Waiting for image...
-                          </div>
-                        </div>
-                        <p className="text-sm md:text-base text-neutral-300">
-                          yup its really that easy, download the template, open it in cursor, upload an image, and i will create that website... like legit
-                        </p>
-                      </div>
-                    </div>
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#B87D3B]/20 to-transparent" />
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-[#B87D3B] px-3 py-1 rounded-full bg-[#B87D3B]/10 inline-block">
+                      {article.category}
+                    </p>
+                    <h3 className="text-lg font-semibold text-white line-clamp-2">{article.title}</h3>
+                    <p className="text-neutral-400 text-sm line-clamp-2">
+                      {article.description}
+                    </p>
+                    <Link 
+                      href="/latest-insights"
+                      className="text-sm text-[#B87D3B] hover:text-[#96652F] transition-colors inline-flex items-center gap-1"
+                    >
+                      Read More
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </Link>
                   </div>
                 </div>
-              </div>
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Button 
+                variant="outline" 
+                className="rounded-full border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10"
+                asChild
+              >
+                <Link href="/latest-insights">View All Articles</Link>
+              </Button>
             </div>
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-32 px-6 border-t border-neutral-800">
-          <div className="max-w-[1200px] mx-auto">
-            <div className="text-center mb-24 scroll-animation">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Create in Minutes, Not Months</h2>
-              <p className="text-neutral-400">Transform your ideas into reality with three simple prompts.</p>
-            </div>
-
-            <div className="relative">
-              {/* Decorative line connecting the steps */}
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-neutral-800 via-pink-500/20 to-neutral-800 hidden md:block" />
-              
-              <div className="grid md:grid-cols-3 gap-24 relative">
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800 scroll-animation scroll-delay-1">
-                  <div className="text-2xl mb-6">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                      <polyline points="7 10 12 15 17 10"/>
-                      <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">Download Template</h3>
-                  <p className="text-neutral-400">
-                    Get started with our production-ready template. It&apos;s packed with everything you need to build a stunning landing page.
-                  </p>
-                </div>
-
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800 scroll-animation scroll-delay-2">
-                  <div className="text-2xl mb-6">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">Tell Cursor What You Want</h3>
-                  <p className="text-neutral-400">
-                    Describe your vision in plain English. Cursor will transform your words into a beautiful, functional design.
-                  </p>
-                </div>
-
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800 scroll-animation scroll-delay-3">
-                  <div className="text-2xl mb-6">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"/>
-                      <line x1="2" y1="12" x2="22" y2="12"/>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">Deploy to the Internet</h3>
-                  <p className="text-neutral-400">
-                    Push your new landing page live with one click. Share your creation with the world in seconds.
-                  </p>
-                </div>
-              </div>
-            </div>
+        {/* CTA Section */}
+        <section className="py-20 px-6 relative">
+          <div className="max-w-[800px] mx-auto text-center scroll-animation">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">
+              Ready to Get Started?
+            </h2>
+            <p className="text-neutral-400 mb-8">
+              Let's discuss how we can help achieve your trading and financial goals
+            </p>
+            <Button 
+              size="lg" 
+              className="rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-8 py-6 text-lg"
+              asChild
+            >
+              <Link href="/get-started">Schedule a Consultation</Link>
+            </Button>
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <section className="py-20 px-6 border-t border-neutral-800">
-          <div className="max-w-[1200px] mx-auto text-center">
-            <div className="scroll-animation">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Pricing (Plot Twist: It&apos;s All Free)</h2>
-              <p className="text-neutral-400 mb-12">Because great tools shouldn&apos;t cost a fortune. Or anything.</p>
-            </div>
-            <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="col-span-1">
-                {/* Starter Plan */}
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800">
-                  <h3 className="text-xl font-semibold mb-2">Starter</h3>
-                  <div className="text-3xl font-bold mb-4">$0</div>
-                  <p className="text-neutral-400 mb-6">Perfect for getting started</p>
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Basic features
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Community support
-                    </li>
-                  </ul>
-                  <Button className="w-full" variant="outline">Get Started</Button>
-                </div>
-              </div>
-              <div className="col-span-1">
-                {/* Pro Plan */}
-                <div className="bg-neutral-900 p-8 rounded-xl border-2 border-pink-500/20 relative">
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-pink-500/10 text-pink-500 px-3 py-1 rounded-full text-xs font-medium">
-                    Most Popular
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">Pro</h3>
-                  <div className="text-2xl font-bold mb-1">$0</div>
-                  <div className="text-xs text-neutral-400 mb-4">Save $0 when you pay yearly!</div>
-                  <p className="text-sm text-neutral-400 mb-6">Everything you need</p>
-                  <ul className="space-y-4 mb-8 text-sm">
-                    <li className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Everything in Starter
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Advanced features (free)
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Priority support (also free)
-                    </li>
-                  </ul>
-                  <Button className="w-full text-sm">Upgrade for $0</Button>
-                </div>
-              </div>
-              <div className="col-span-1">
-                {/* Enterprise Plan */}
-                <div className="bg-neutral-900 p-8 rounded-xl border border-neutral-800">
-                  <h3 className="text-xl font-semibold mb-2">Enterprise</h3>
-                  <div className="text-3xl font-bold mb-4">$0</div>
-                  <p className="text-neutral-400 mb-6">For larger teams</p>
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Everything in Pro
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                      Custom features (free)
-                    </li>
-                  </ul>
-                  <Button className="w-full" variant="outline">Contact Sales</Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer className="py-8 px-6 border-t border-neutral-800/50 scroll-animation">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between">
-          <div className="text-sm text-neutral-400">
-            © 2024 Software Composer LP. All rights reserved.
-          </div>
-          <div className="flex items-center gap-6">
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">Twitter</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
-              </svg>
-            </a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">GitHub</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-              </svg>
-            </a>
-            <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">Discord</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 6h0a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-7a3 3 0 0 1-3-3v0"/>
-                <path d="M6 18v-7a3 3 0 0 1 3-3h7"/>
-                <circle cx="8" cy="12" r="1"/>
-                <circle cx="16" cy="12" r="1"/>
-              </svg>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-              <span className="sr-only">LinkedIn</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-                <rect x="2" y="9" width="4" height="12"/>
-                <circle cx="4" cy="4" r="2"/>
-              </svg>
-            </a>
+        {/* Example Questions */}
+        <div className="max-w-2xl mx-auto mb-16">
+          <h2 className="text-2xl font-semibold mb-6">Example Questions You Can Ask</h2>
+          <div className="grid gap-4 text-left">
+            {exampleQuestions.map((question, index) => (
+              <button
+                key={index}
+                onClick={() => submitQuestion(question)}
+                className="glimmer-card p-4 text-left w-full hover:bg-[#B87D3B]/10 transition-colors duration-200 cursor-pointer"
+              >
+                "{question}"
+              </button>
+            ))}
           </div>
         </div>
-      </footer>
+        
+        {/* Open Market Assistant Button */}
+        <div className="max-w-4xl mx-auto">
+          <Button 
+            onClick={() => setShowChat(prev => !prev)}
+            className="w-full bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] hover:from-[#96652F] hover:via-[#B87D3B] hover:to-[#96652F] text-white py-8 text-xl font-medium rounded-2xl shadow-lg transform transition-all duration-500 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.3)] relative overflow-hidden group backdrop-blur-sm border border-[#B87D3B]/20"
+          >
+            {showChat ? 'Close Market Assistant' : 'Open Market Assistant'}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+          </Button>
+          
+          {showChat && (
+            <div className="mt-8">
+              {/* Chat messages will go here */}
+              {chatMessages.map((msg, i) => (
+                <div key={i} className={`mb-4 ${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
+                  <div className={`inline-block p-4 rounded-lg ${
+                    msg.type === 'user' ? 'bg-[#B87D3B]/20' : 'bg-[#1A1A1A]'
+                  }`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   )
 }
