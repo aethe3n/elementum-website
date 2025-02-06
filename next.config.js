@@ -49,9 +49,18 @@ const nextConfig = {
       }
     ]
   },
-  // Add better error handling and debugging
+  // Enhanced error handling
   onError(error) {
     console.error('Next.js build error:', error);
+    // Log to external service if needed
+  },
+  // Development error handling
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      // Improve error overlay
+      config.devtool = 'eval-source-map';
+    }
+    return config;
   },
   // Enable source maps for debugging
   productionBrowserSourceMaps: true,
