@@ -402,19 +402,19 @@ export default function Page() {
             <p className="text-xl text-neutral-400 mb-8 max-w-2xl mx-auto fade-in delay-2">
               Empowering businesses with secure and efficient global trading capabilities.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
               <Button 
                 size="lg" 
-                className="w-full sm:w-auto rounded-full bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] hover:from-[#96652F] hover:via-[#B87D3B] hover:to-[#96652F] text-white px-8 py-6 text-lg font-medium relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_20px_rgba(184,125,59,0.3)]"
+                className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-10 py-8 text-xl font-bold relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
                 asChild
               >
                 <Link 
                   href="/get-started"
-                  className="flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-3"
                 >
                   <span>Schedule Consultation</span>
                   <svg 
-                    className="w-5 h-5 transform transition-transform group-hover:translate-x-1" 
+                    className="w-6 h-6 transform transition-transform group-hover:translate-x-1" 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"
@@ -431,16 +431,16 @@ export default function Page() {
 
               <Button 
                 size="lg" 
-                className="w-full sm:w-auto rounded-full border-2 border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B] hover:text-white px-8 py-6 text-lg font-medium relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_20px_rgba(184,125,59,0.2)]"
+                className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-10 py-8 text-xl font-bold relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
                 asChild
               >
                 <Link 
                   href="/services"
-                  className="flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-3"
                 >
                   <span>View Services</span>
                   <svg 
-                    className="w-5 h-5 transform transition-transform group-hover:translate-x-1" 
+                    className="w-6 h-6 transform transition-transform group-hover:translate-x-1" 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"
@@ -457,16 +457,16 @@ export default function Page() {
             </div>
             <Button 
               size="lg" 
-              className="w-full sm:w-auto rounded-full bg-black/30 border border-[#B87D3B]/50 hover:border-[#B87D3B] text-[#B87D3B] hover:text-white hover:bg-[#B87D3B]/10 px-8 py-6 text-lg font-medium backdrop-blur-sm relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_20px_rgba(184,125,59,0.15)]"
+              className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-10 py-8 text-xl font-bold relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
               asChild
             >
               <Link 
                 href="/market-ai"
-                className="flex items-center justify-center gap-2"
+                className="flex items-center justify-center gap-3"
               >
                 <span>Market AI</span>
                 <svg 
-                  className="w-5 h-5 transform transition-transform group-hover:translate-x-1" 
+                  className="w-6 h-6 transform transition-transform group-hover:translate-x-1" 
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
@@ -540,7 +540,7 @@ export default function Page() {
                     <li className="flex items-center">
                       <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
+                    </svg>
                       Quality Assurance
                     </li>
                     <li className="flex items-center">
@@ -593,35 +593,35 @@ export default function Page() {
                   </ul>
                 </div>
 
-                {/* Escrow Services */}
+                {/* Petroleum Services */}
                 <div className="glimmer-card p-8 hover-float">
                   <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
                     <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  </svg>
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-white">Escrow Services</h3>
+                  <h2 className="text-2xl font-bold mb-4 text-white">Petroleum Services</h2>
                   <p className="text-neutral-400 mb-6">
-                    Secure transaction management and risk mitigation services for international trade operations.
+                    Comprehensive petroleum trading and distribution solutions, ensuring reliable supply chain and competitive pricing in global energy markets.
                   </p>
                   <ul className="space-y-3 text-neutral-300">
                     <li className="flex items-center">
                       <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Risk Management
+                      Global Distribution
                     </li>
                     <li className="flex items-center">
                       <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Secure Payments
+                      Market Analysis
                     </li>
                     <li className="flex items-center">
                       <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Transaction Monitoring
+                      Supply Chain Solutions
                     </li>
                   </ul>
                 </div>
@@ -636,13 +636,13 @@ export default function Page() {
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Who We Are</h2>
               <p className="text-neutral-400 max-w-2xl mx-auto">Your trusted partner in global trade and financial solutions</p>
-            </div>
+          </div>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="glimmer-card p-8 hover-float">
                 <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
                   <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
+              </svg>
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-white">Our Story</h3>
                 <p className="text-neutral-400">
@@ -654,7 +654,7 @@ export default function Page() {
                 <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
                   <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
-                  </svg>
+              </svg>
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-white">Our Mission</h3>
                 <p className="text-neutral-400">
@@ -666,7 +666,7 @@ export default function Page() {
                 <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
                   <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                  </svg>
+              </svg>
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-white">Global Vision</h3>
                 <p className="text-neutral-400">
@@ -724,7 +724,7 @@ export default function Page() {
                       Read More
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
+              </svg>
                     </Link>
                   </div>
                 </div>

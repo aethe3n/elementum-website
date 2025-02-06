@@ -141,28 +141,28 @@ export default function ServicesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold mb-4 text-white">Escrow Services</h2>
+              <h2 className="text-2xl font-bold mb-4 text-white">Petroleum Services</h2>
               <p className="text-neutral-400 mb-6">
-                Secure transaction management and risk mitigation services for international trade operations.
+                Comprehensive petroleum trading and distribution solutions, ensuring reliable supply chain and competitive pricing in global energy markets.
               </p>
               <ul className="space-y-3 text-neutral-300">
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Risk Management
+                  Global Distribution
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Secure Payments
+                  Market Analysis
                 </li>
                 <li className="flex items-center">
                   <svg className="w-5 h-5 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Transaction Monitoring
+                  Supply Chain Solutions
                 </li>
               </ul>
             </div>

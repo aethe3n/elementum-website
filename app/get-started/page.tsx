@@ -95,7 +95,7 @@ export default function GetStartedPage() {
                       placeholder="Tell us about your needs"
                     ></textarea>
                   </div>
-                  <Button className="w-full bg-[#B87D3B] hover:bg-[#96652F] text-white">
+                  <Button className="w-full bg-[#B87D3B] hover:bg-[#96652F] text-white rounded-full px-8 py-6 text-lg">
                     Submit Request
                   </Button>
                 </form>
@@ -112,7 +112,7 @@ export default function GetStartedPage() {
                     Prefer to discuss your needs directly? Schedule a consultation with our team at your convenience.
                   </p>
                   <Button 
-                    className="w-full bg-[#B87D3B] hover:bg-[#96652F] text-white transition-all duration-300 py-6 text-lg font-medium relative overflow-hidden group"
+                    className="w-full bg-[#B87D3B] hover:bg-[#96652F] text-white transition-all duration-300 py-6 text-lg font-medium relative overflow-hidden group rounded-full"
                     asChild
                   >
                     <Link 

@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get AI response
-    const response = await getChatResponse(body.message, jbContext);
+    const response = await getChatResponse(body.message);
     
     if (!response) {
       throw new Error('No response received from AI service');

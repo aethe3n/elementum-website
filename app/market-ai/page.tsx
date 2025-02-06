@@ -224,32 +224,14 @@ export default function MarketAIPage() {
               </div>
             </div>
             
-            {/* Quick Actions Grid */}
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              {[
-                ["What's the latest prediction for USD Interest Rate?", "USD Interest Rate"],
-                ["What's the CPI forecast?", "CPI Forecast"],
-                ["Tell me about EUR GDP predictions", "EUR GDP"],
-                ["What's the market sentiment analysis?", "Market Sentiment"]
-              ].map(([query, label]) => (
-                <Button
-                  key={label}
-                  variant="quick"
-                  className="p-3 text-sm bg-[#B87D3B]/10 border border-[#B87D3B]/20 hover:bg-[#B87D3B]/20 hover:border-[#B87D3B]/30 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
-                  onClick={() => handleQuickAction(query)}
-                >
-                  {label}
-                </Button>
-              ))}
-            </div>
-            
             {/* Chat Interface */}
             <div className="max-w-4xl mx-auto">
               <Button 
                 onClick={() => setShowChat(prev => !prev)}
-                className="w-full bg-[#B87D3B] hover:bg-[#96652F] text-white mb-4"
+                className="w-full rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white py-10 text-2xl font-medium relative overflow-hidden group transform transition-all duration-500 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
               >
                 {showChat ? 'Close Market Assistant' : 'Open Market Assistant'}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
               </Button>
               
               {showChat && (

@@ -42,7 +42,7 @@ export default function RootLayout({
               <Link href="/services" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">Services</Link>
               <Link href="/latest-insights" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">Latest Insights</Link>
               <Link href="/market-ai" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">Market AI</Link>
-              <Button size="sm" className="bg-[#B87D3B] hover:bg-[#96652F] text-white font-light tracking-wide">
+              <Button size="sm" className="rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white font-light tracking-wide px-6">
                 <Link href="/get-started">Get Started</Link>
               </Button>
             </nav>
@@ -68,7 +68,6 @@ export default function RootLayout({
                 <li className="hover:text-[#B87D3B] transition-colors cursor-pointer font-light tracking-wide">Food Products</li>
                 <li className="hover:text-[#B87D3B] transition-colors cursor-pointer font-light tracking-wide">Petroleum Services</li>
                 <li className="hover:text-[#B87D3B] transition-colors cursor-pointer font-light tracking-wide">OTC Trading</li>
-                <li className="hover:text-[#B87D3B] transition-colors cursor-pointer font-light tracking-wide">Escrow Services</li>
               </ul>
             </div>
             <div>

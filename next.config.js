@@ -16,6 +16,14 @@ const nextConfig = {
     POLYGON_API_KEY: process.env.POLYGON_API_KEY,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
     JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY
+  },
+  poweredByHeader: false,
+  compress: true,
+  swcMinify: true,
+  reactStrictMode: true,
+  output: 'standalone',
+  experimental: {
+    optimizeCss: true
   }
 }
 

@@ -414,16 +414,6 @@ export default function LatestInsightsPage() {
         </div>
       </div>
 
-      {/* Header Section */}
-      <section className="relative z-10 py-20 px-6 branded-section">
-        <div className="max-w-[1200px] mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Latest Market Insights</h1>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
-            Stay informed with real-time market analysis and expert insights
-          </p>
-        </div>
-      </section>
-
       <main className="relative z-10 py-20 px-6">
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-16">
@@ -433,9 +423,10 @@ export default function LatestInsightsPage() {
             </p>
             <Button 
               onClick={() => setShowChat(prev => !prev)}
-              className="w-full max-w-xl mx-auto bg-[#B87D3B] hover:bg-[#96652F] text-white transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white py-6 text-xl font-medium relative overflow-hidden group transform transition-all duration-500 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
             >
               {showChat ? 'Close Market Assistant' : 'Open Market Assistant'}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
             </Button>
           </div>
 
@@ -459,30 +450,6 @@ export default function LatestInsightsPage() {
                       'Get Global Market Overview'
                     )}
                   </Button>
-
-                  {/* Quick Actions */}
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    {[
-                      ["What's the latest prediction for USD Interest Rate?", "USD Interest Rate"],
-                      ["What's the CPI forecast?", "CPI Forecast"],
-                      ["Tell me about EUR GDP predictions", "EUR GDP"],
-                      ["What's the market sentiment analysis?", "Market Sentiment"]
-                    ].map(([query, label]) => (
-                      <Button
-                        key={label}
-                        variant="quick"
-                        className="p-3 text-sm bg-[#B87D3B]/10 border border-[#B87D3B]/20 hover:bg-[#B87D3B]/20 hover:border-[#B87D3B]/30 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
-                        onClick={() => {
-                          setUserInput(query);
-                          if (inputRef.current) {
-                            inputRef.current.focus();
-                          }
-                        }}
-                      >
-                        {label}
-                      </Button>
-                    ))}
-                  </div>
                 </div>
                 
                 <div 
