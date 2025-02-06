@@ -9,6 +9,7 @@ const nextConfig = {
       'finnhub.io',
       'api.polygon.io'
     ],
+    unoptimized: true
   },
   env: {
     ALPHA_VANTAGE_API_KEY: process.env.ALPHA_VANTAGE_API_KEY,
@@ -37,6 +38,18 @@ const nextConfig = {
         ]
       }
     ]
+  },
+  // Add better error handling and debugging
+  onError(error) {
+    console.error('Next.js build error:', error);
+  },
+  // Enable source maps for debugging
+  productionBrowserSourceMaps: true,
+  // Ensure trailing slashes are handled consistently
+  trailingSlash: false,
+  // Add strict mode for better error catching
+  typescript: {
+    ignoreBuildErrors: false
   }
 }
 
