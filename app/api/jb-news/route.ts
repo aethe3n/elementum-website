@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { CJBNews } from '@/lib/jb-news';
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Fallback data structure
 const FALLBACK_DATA = {
   predictions: [
