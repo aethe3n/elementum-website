@@ -21,7 +21,7 @@ export async function getChatResponse(message: string): Promise<string> {
         'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
       },
       body: JSON.stringify({
-        model: 'deepseek-coder-33b-instruct',
+        model: 'deepseek-chat',
         messages: [
           {
             role: 'system',
@@ -33,7 +33,8 @@ export async function getChatResponse(message: string): Promise<string> {
           }
         ],
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 2000,
+        stream: false
       })
     });
 
@@ -44,6 +45,7 @@ export async function getChatResponse(message: string): Promise<string> {
     }
 
     const data = await response.json();
+    console.log('DeepSeek API Response:', data);
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
       throw new Error('Invalid response format from AI service');
@@ -82,7 +84,7 @@ export async function getMarketAnalysis(): Promise<string> {
         'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
       },
       body: JSON.stringify({
-        model: 'deepseek-coder-33b-instruct',
+        model: 'deepseek-chat',
         messages: [
           {
             role: 'system',
@@ -94,7 +96,8 @@ export async function getMarketAnalysis(): Promise<string> {
           }
         ],
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 2000,
+        stream: false
       })
     });
 
@@ -105,6 +108,7 @@ export async function getMarketAnalysis(): Promise<string> {
     }
 
     const data = await response.json();
+    console.log('DeepSeek API Response:', data);
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
       throw new Error('Invalid response format from AI service');
