@@ -1,15 +1,8 @@
 import { getMarketOverview } from './market-service';
 
-// Add types at the top of the file
-interface AnthropicContent {
-  type: string;
-  text: string;
-}
-
-interface AnthropicResponse {
-  content: AnthropicContent[];
-  model: string;
-  role: string;
+interface DeepSeekMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 const SYSTEM_PROMPT = `You are a knowledgeable market analysis AI assistant. Your role is to:
@@ -21,47 +14,42 @@ const SYSTEM_PROMPT = `You are a knowledgeable market analysis AI assistant. You
 
 export async function getChatResponse(message: string): Promise<string> {
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'anthropic-version': '2024-01-01',
-        'anthropic-beta': 'messages-2024-01-01',
-        'x-api-key': process.env.ANTHROPIC_API_KEY || ''
+        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
+        model: 'deepseek-chat',
         messages: [
+          {
+            role: 'system',
+            content: SYSTEM_PROMPT
+          },
           {
             role: 'user',
             content: message
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Anthropic API Error:', errorData);
+      console.error('DeepSeek API Error:', errorData);
       throw new Error(`Failed to get AI response: ${response.status}`);
     }
 
     const data = await response.json();
     
-    // The response format for Claude 3 is different
-    if (!data.content || !Array.isArray(data.content) || data.content.length === 0) {
+    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
       throw new Error('Invalid response format from AI service');
     }
     
-    // Get the first text content
-    const textContent = data.content.find((c: AnthropicContent) => c.type === 'text');
-    if (!textContent || !textContent.text) {
-      throw new Error('No text content in AI response');
-    }
-    
-    return textContent.text;
+    return data.choices[0].message.content;
   } catch (error) {
     console.error('AI Service Error:', error);
     throw error;
@@ -87,47 +75,42 @@ export async function getMarketAnalysis(): Promise<string> {
       If some market data is unavailable, focus on the available data and provide general market insights.
     `;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'anthropic-version': '2024-01-01',
-        'anthropic-beta': 'messages-2024-01-01',
-        'x-api-key': process.env.ANTHROPIC_API_KEY || ''
+        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
+        model: 'deepseek-chat',
         messages: [
+          {
+            role: 'system',
+            content: SYSTEM_PROMPT
+          },
           {
             role: 'user',
             content: prompt
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Anthropic API Error:', errorData);
+      console.error('DeepSeek API Error:', errorData);
       throw new Error(`Failed to get AI response: ${response.status}`);
     }
 
     const data = await response.json();
     
-    // The response format for Claude 3 is different
-    if (!data.content || !Array.isArray(data.content) || data.content.length === 0) {
+    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
       throw new Error('Invalid response format from AI service');
     }
     
-    // Get the first text content
-    const textContent = data.content.find((c: AnthropicContent) => c.type === 'text');
-    if (!textContent || !textContent.text) {
-      throw new Error('No text content in AI response');
-    }
-    
-    return textContent.text;
+    return data.choices[0].message.content;
   } catch (error) {
     console.error('Error in getMarketAnalysis:', error);
     return 'I apologize, but I encountered an error generating the market analysis. Please try again later.';
