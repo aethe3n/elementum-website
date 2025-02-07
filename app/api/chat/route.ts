@@ -6,8 +6,8 @@ export async function POST(req: NextRequest) {
   try {
     console.log('Chat API: Starting request');
     
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error('Chat API: Missing ANTHROPIC_API_KEY');
+    if (!process.env.DEEPSEEK_API_KEY) {
+      console.error('Chat API: Missing DEEPSEEK_API_KEY');
       return NextResponse.json(
         { response: "I apologize, but I'm temporarily unable to process your request due to missing API configuration. Please try again later." },
         { status: 200 }

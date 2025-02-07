@@ -22,40 +22,51 @@ export async function getChatResponse(message: string): Promise<string> {
       throw new Error('API key configuration is missing');
     }
 
+    console.log('Sending request to DeepSeek API with message length:', message.length);
+    
+    const requestBody = {
+      model: 'deepseek-coder-33b-instruct',
+      messages: [
+        {
+          role: 'system',
+          content: SYSTEM_PROMPT
+        },
+        {
+          role: 'user',
+          content: message
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000,
+      stream: false
+    };
+
+    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          {
-            role: 'system',
-            content: SYSTEM_PROMPT
-          },
-          {
-            role: 'user',
-            content: message
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-        stream: false
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('DeepSeek API Error:', errorData);
-      throw new Error(`Failed to get AI response: ${response.status}`);
+      console.error('DeepSeek API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorData
+      });
+      throw new Error(`Failed to get AI response: ${response.status} - ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('DeepSeek API Response:', data);
+    console.log('DeepSeek API Response:', JSON.stringify(data, null, 2));
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+      console.error('Invalid response format:', data);
       throw new Error('Invalid response format from AI service');
     }
     
@@ -92,7 +103,7 @@ export async function getMarketAnalysis(): Promise<string> {
         'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'deepseek-coder-33b-instruct',
         messages: [
           {
             role: 'system',
