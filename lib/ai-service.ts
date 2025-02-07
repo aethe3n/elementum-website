@@ -14,14 +14,14 @@ const SYSTEM_PROMPT = `You are a knowledgeable market analysis AI assistant. You
 
 export async function getChatResponse(message: string): Promise<string> {
   try {
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const response = await fetch('https://api.deepseek.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'deepseek-coder-33b-instruct',
         messages: [
           {
             role: 'system',
@@ -75,14 +75,14 @@ export async function getMarketAnalysis(): Promise<string> {
       If some market data is unavailable, focus on the available data and provide general market insights.
     `;
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const response = await fetch('https://api.deepseek.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'deepseek-coder-33b-instruct',
         messages: [
           {
             role: 'system',

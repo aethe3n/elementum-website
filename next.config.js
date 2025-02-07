@@ -15,7 +15,7 @@ const nextConfig = {
     ALPHA_VANTAGE_API_KEY: process.env.ALPHA_VANTAGE_API_KEY,
     FINNHUB_API_KEY: process.env.FINNHUB_API_KEY,
     POLYGON_API_KEY: process.env.POLYGON_API_KEY,
-    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
     JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY
   },
   poweredByHeader: false,
@@ -52,7 +52,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io; connect-src 'self' *.vercel.app api.anthropic.com api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com;"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io; connect-src 'self' *.vercel.app api.deepseek.com api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com;"
           },
           {
             key: 'X-DNS-Prefetch-Control',
