@@ -52,22 +52,33 @@ const FALLBACK_DATA = {
 export async function GET() {
   try {
     const API_KEY = process.env.JB_NEWS_API_KEY;
+    
+    // If no API key, return fallback data immediately
     if (!API_KEY) {
       console.log('JB News API: No API key found, using fallback data');
-      return NextResponse.json(FALLBACK_DATA);
+      return NextResponse.json({
+        ...FALLBACK_DATA,
+        source: 'fallback',
+        message: 'Using fallback data (no API key)',
+        timestamp: new Date().toISOString()
+      });
     }
 
     const eventIds = [756020001, 840010002, 978030001];
     const jb = new CJBNews();
-    jb.offset = 0;
-
     const predictions = [];
-    let hasError = false;
 
     try {
       const connected = await jb.get(API_KEY);
+      
       if (!connected) {
-        throw new Error('Failed to connect to JB News API');
+        console.log('JB News API: Connection failed, using fallback data');
+        return NextResponse.json({
+          ...FALLBACK_DATA,
+          source: 'fallback',
+          message: 'Using fallback data (connection failed)',
+          timestamp: new Date().toISOString()
+        });
       }
 
       for (const eventId of eventIds) {
@@ -87,42 +98,45 @@ export async function GET() {
             });
           }
         } catch (eventError) {
-          console.error(`Error loading event ${eventId}:`, eventError);
-          hasError = true;
+          console.log(`Non-critical: Failed to load event ${eventId}`);
           continue;
         }
       }
     } catch (connectionError) {
-      console.error('Error connecting to JB News:', connectionError);
-      hasError = true;
+      console.log('Non-critical: JB News connection error, using fallback');
+      return NextResponse.json({
+        ...FALLBACK_DATA,
+        source: 'fallback',
+        message: 'Using fallback data (connection error)',
+        timestamp: new Date().toISOString()
+      });
     }
 
-    // If we have some predictions but not all, merge with fallback data
-    if (predictions.length > 0 && predictions.length < eventIds.length) {
-      const existingEventIds = predictions.map(p => p.eventId);
-      const missingPredictions = FALLBACK_DATA.predictions.filter(
-        p => !existingEventIds.includes(p.eventId)
-      );
-      predictions.push(...missingPredictions);
-    }
-
-    // If we have no predictions at all, use fallback data
+    // If we got no predictions, use fallback
     if (predictions.length === 0) {
       console.log('JB News API: No predictions available, using fallback data');
-      return NextResponse.json(FALLBACK_DATA);
+      return NextResponse.json({
+        ...FALLBACK_DATA,
+        source: 'fallback',
+        message: 'Using fallback data (no predictions)',
+        timestamp: new Date().toISOString()
+      });
     }
 
+    // Return whatever predictions we got
     return NextResponse.json({ 
       predictions,
-      source: hasError ? 'partial_live_with_fallback' : 'live',
+      source: 'live',
+      message: 'Using live data',
       timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error('JB News API Error:', error);
+    console.log('JB News API: Unexpected error, using fallback data');
     return NextResponse.json({
       ...FALLBACK_DATA,
       source: 'fallback',
+      message: 'Using fallback data (unexpected error)',
       error: error instanceof Error ? error.message : 'Unknown error',
       timestamp: new Date().toISOString()
     });

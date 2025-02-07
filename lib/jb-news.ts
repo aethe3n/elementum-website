@@ -16,21 +16,28 @@ export class CJBNews {
 
   async get(apiKey: string): Promise<boolean> {
     try {
+      if (!apiKey) {
+        console.log('No JB News API key provided');
+        return false;
+      }
+
       const response = await fetch('https://www.jblanked.com/news/api/v1/connect', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
-        }
+        },
+        signal: AbortSignal.timeout(5000)
       });
 
       if (!response.ok) {
-        throw new Error('Failed to connect to JB News API');
+        console.log(`JB News API responded with status: ${response.status}`);
+        return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error connecting to JB News:', error);
+      console.log('Error connecting to JB News (non-critical):', error);
       return false;
     }
   }
@@ -40,17 +47,19 @@ export class CJBNews {
       const response = await fetch(`https://www.jblanked.com/news/api/v1/event/${eventId}`, {
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        signal: AbortSignal.timeout(5000)
       });
 
       if (!response.ok) {
-        throw new Error('Failed to load event data');
+        console.log(`Failed to load event ${eventId} with status: ${response.status}`);
+        return false;
       }
 
       this.info = await response.json();
       return true;
     } catch (error) {
-      console.error('Error loading event:', error);
+      console.log(`Error loading event ${eventId} (non-critical):`, error);
       return false;
     }
   }
