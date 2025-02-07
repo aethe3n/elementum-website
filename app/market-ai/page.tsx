@@ -82,54 +82,80 @@ export default function MarketAIPage() {
     fetchData();
   }, []);
 
-  const handleGetMarketOverview = () => {
-    if (marketData) {
-      setChatMessages(prev => [
-        ...prev,
-        { type: 'market', content: marketData.summary + '\n\n' + marketAnalysis }
-      ]);
-    }
-  };
-
-  const submitQuestion = async (question: string) => {
-    if (!showChat) {
-      setShowChat(true);
-    }
-
-    setChatMessages(prev => [...prev, { type: 'user', content: question }]);
-    setIsLoading(true);
-    
+  const handleGetMarketOverview = async () => {
+    setIsOverviewLoading(true);
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: question })
-      });
-      
+      const response = await fetch('/api/market');
       if (!response.ok) {
-        throw new Error('Failed to get AI response');
+        throw new Error('Failed to fetch market data');
       }
       
       const data = await response.json();
-      setChatMessages(prev => [...prev, { type: 'ai', content: data.response }]);
+      
+      if (data.data && data.analysis) {
+        const overviewMessage = `${data.data.summary}\n\n${data.analysis}`;
+        setChatMessages(prev => [...prev, { type: 'market', content: overviewMessage }]);
+      } else {
+        throw new Error('Invalid market data format');
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Market overview error:', error);
       setChatMessages(prev => [...prev, { 
-        type: 'ai', 
-        content: 'I apologize, but I encountered an error processing your request.' 
+        type: 'market', 
+        content: 'I apologize, but I was unable to fetch the current market overview. Please try again later.' 
       }]);
     } finally {
-      setIsLoading(false);
+      setIsOverviewLoading(false);
     }
   };
 
   const handleAskQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userInput.trim()) return;
-    await submitQuestion(userInput);
-    setUserInput('');
+    
+    setIsLoading(true);
+    try {
+      // Add the user's message to the chat
+      setChatMessages(prev => [...prev, { type: 'user', content: userInput }]);
+
+      // Make API call to chat endpoint
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userInput }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const data = await response.json();
+      
+      // Add AI response to chat
+      setChatMessages(prev => [...prev, { 
+        type: 'ai', 
+        content: data.response || 'I apologize, but I was unable to process your request.'
+      }]);
+
+      // Clear input after successful response
+      setUserInput('');
+      
+      // Scroll to bottom of chat
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      }
+
+    } catch (error) {
+      console.error('Chat error:', error);
+      setChatMessages(prev => [...prev, { 
+        type: 'ai', 
+        content: 'I apologize, but I encountered an error processing your request. Please try again.' 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Add quick action handler
@@ -141,7 +167,50 @@ export default function MarketAIPage() {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-    await submitQuestion(query);
+    
+    setIsLoading(true);
+    try {
+      // Add the user's message to the chat
+      setChatMessages(prev => [...prev, { type: 'user', content: query }]);
+
+      // Make API call to chat endpoint
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: query }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const data = await response.json();
+      
+      // Add AI response to chat
+      setChatMessages(prev => [...prev, { 
+        type: 'ai', 
+        content: data.response || 'I apologize, but I was unable to process your request.'
+      }]);
+
+      // Clear input after successful response
+      setUserInput('');
+      
+      // Scroll to bottom of chat
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      }
+
+    } catch (error) {
+      console.error('Chat error:', error);
+      setChatMessages(prev => [...prev, { 
+        type: 'ai', 
+        content: 'I apologize, but I encountered an error processing your request. Please try again.' 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -215,7 +284,7 @@ export default function MarketAIPage() {
                 {exampleQuestions.map((question, index) => (
                   <button
                     key={index}
-                    onClick={() => submitQuestion(question)}
+                    onClick={() => handleQuickAction(question)}
                     className="glimmer-card p-4 text-left w-full hover:bg-[#B87D3B]/10 transition-colors duration-200 cursor-pointer"
                   >
                     "{question}"

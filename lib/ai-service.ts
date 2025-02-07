@@ -34,7 +34,19 @@ export async function getChatResponse(message: string): Promise<string> {
     }
 
     const data = await response.json();
-    return data.content[0].text || 'I apologize, but I was unable to process your request.';
+    
+    // Check for the correct response format
+    if (!data.messages || !data.messages[0] || !data.messages[0].content) {
+      throw new Error('Invalid response format from AI service');
+    }
+    
+    // Extract the response text from the first content block
+    const content = data.messages[0].content[0];
+    if (!content || content.type !== 'text' || !content.text) {
+      throw new Error('Invalid content format in AI response');
+    }
+    
+    return content.text;
   } catch (error) {
     console.error('AI Service Error:', error);
     throw error;
@@ -85,7 +97,19 @@ export async function getMarketAnalysis(): Promise<string> {
     }
 
     const data = await response.json();
-    return data.content[0].text || 'I apologize, but I was unable to generate the market analysis.';
+    
+    // Check for the correct response format
+    if (!data.messages || !data.messages[0] || !data.messages[0].content) {
+      throw new Error('Invalid response format from AI service');
+    }
+    
+    // Extract the response text from the first content block
+    const content = data.messages[0].content[0];
+    if (!content || content.type !== 'text' || !content.text) {
+      throw new Error('Invalid content format in AI response');
+    }
+    
+    return content.text;
   } catch (error) {
     console.error('Error in getMarketAnalysis:', error);
     return 'I apologize, but I encountered an error generating the market analysis. Please try again later.';
