@@ -34,8 +34,8 @@ const nextConfig = {
         source: '/:path*',
         headers: [
           {
-            key: 'Permissions-Policy',
-            value: 'browsing-topics=(), private-state-token-redemption=(), private-state-token-issuance=()'
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io; connect-src 'self' *.vercel.app api.anthropic.com api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com;"
           },
           {
             key: 'X-DNS-Prefetch-Control',
@@ -44,23 +44,26 @@ const nextConfig = {
           {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'browsing-topics=(), private-state-token-redemption=(), private-state-token-issuance=()'
           }
         ]
       }
     ]
-  },
-  // Enhanced error handling
-  onError(error) {
-    console.error('Next.js build error:', error);
-    // Log to external service if needed
-  },
-  // Development error handling
-  webpack: (config, { dev, isServer }) => {
-    if (dev && !isServer) {
-      // Improve error overlay
-      config.devtool = 'eval-source-map';
-    }
-    return config;
   },
   // Enable source maps for debugging
   productionBrowserSourceMaps: true,
