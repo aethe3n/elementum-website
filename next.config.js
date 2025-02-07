@@ -72,6 +72,16 @@ const nextConfig = {
   // Add strict mode for better error catching
   typescript: {
     ignoreBuildErrors: false
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/api/:path*',
+          destination: '/api/:path*'
+        }
+      ]
+    }
   }
 }
 
