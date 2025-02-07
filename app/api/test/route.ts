@@ -1,36 +1,12 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
+// Remove edge runtime configuration
 export async function GET(request: NextRequest) {
-  try {
-    const response = {
-      status: 'ok',
-      message: 'API is working',
-      path: request.nextUrl.pathname,
-      timestamp: new Date().toISOString()
-    };
-
-    return new Response(JSON.stringify(response), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'no-store, must-revalidate'
-      }
-    });
-  } catch (error) {
-    console.error('API Test Error:', error);
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-  }
+  return NextResponse.json({
+    message: 'API is working',
+    path: request.nextUrl.pathname,
+    timestamp: new Date().toISOString()
+  });
 }
 
 // Handle OPTIONS for CORS
