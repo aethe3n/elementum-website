@@ -25,7 +25,7 @@ export async function getChatResponse(message: string): Promise<string> {
     console.log('Sending request to DeepSeek API with message length:', message.length);
     
     const requestBody = {
-      model: 'deepseek-coder-33b-instruct',
+      model: 'deepseek-chat',
       messages: [
         {
           role: 'system',
@@ -38,7 +38,8 @@ export async function getChatResponse(message: string): Promise<string> {
       ],
       temperature: 0.7,
       max_tokens: 2000,
-      stream: false
+      stream: false,
+      stop: null
     };
 
     console.log('Request body:', JSON.stringify(requestBody, null, 2));
@@ -47,17 +48,18 @@ export async function getChatResponse(message: string): Promise<string> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/json'
       },
       body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorText = await response.text();
       console.error('DeepSeek API Error:', {
         status: response.status,
         statusText: response.statusText,
-        error: errorData
+        error: errorText
       });
       throw new Error(`Failed to get AI response: ${response.status} - ${response.statusText}`);
     }
@@ -96,40 +98,49 @@ export async function getMarketAnalysis(): Promise<string> {
       If some market data is unavailable, focus on the available data and provide general market insights.
     `;
 
+    const requestBody = {
+      model: 'deepseek-chat',
+      messages: [
+        {
+          role: 'system',
+          content: SYSTEM_PROMPT
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000,
+      stream: false,
+      stop: null
+    };
+
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`
+        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`,
+        'Accept': 'application/json'
       },
-      body: JSON.stringify({
-        model: 'deepseek-coder-33b-instruct',
-        messages: [
-          {
-            role: 'system',
-            content: SYSTEM_PROMPT
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-        stream: false
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('DeepSeek API Error:', errorData);
+      const errorText = await response.text();
+      console.error('DeepSeek API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
       throw new Error(`Failed to get AI response: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('DeepSeek API Response:', data);
+    console.log('DeepSeek API Response:', JSON.stringify(data, null, 2));
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+      console.error('Invalid response format:', data);
       throw new Error('Invalid response format from AI service');
     }
     
