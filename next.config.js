@@ -72,18 +72,6 @@ const nextConfig = {
   // Add strict mode for better error catching
   typescript: {
     ignoreBuildErrors: false
-  },
-  // Handle static files
-  async rewrites() {
-    return {
-      beforeFiles: [
-        // Handle favicon.ico at the root
-        {
-          source: '/favicon.ico',
-          destination: '/public/favicon.ico'
-        }
-      ]
-    }
   }
 }
 

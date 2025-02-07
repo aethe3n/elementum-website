@@ -20,6 +20,19 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Elementum Global - Global Trading & Financial Services",
   description: "Empowering businesses with secure and efficient global trading capabilities.",
+  icons: {
+    icon: [
+      {
+        url: '/logo.png',
+        href: '/logo.png',
+      }
+    ],
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
+  manifest: '/manifest.json',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+  themeColor: '#1A1A1A',
 };
 
 export default function RootLayout({
@@ -29,6 +42,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${montserrat.variable} ${inter.variable} font-sans antialiased`}>
+      <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
+      </head>
       <body className="flex flex-col min-h-screen bg-[#1A1A1A] text-white">
         {/* Navigation */}
         <header className="sticky top-0 z-50 backdrop-blur-lg bg-black/50 border-b border-neutral-800">
