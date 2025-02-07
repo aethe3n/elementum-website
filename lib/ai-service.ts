@@ -1,5 +1,17 @@
 import { getMarketOverview } from './market-service';
 
+// Add types at the top of the file
+interface AnthropicContent {
+  type: string;
+  text: string;
+}
+
+interface AnthropicResponse {
+  content: AnthropicContent[];
+  model: string;
+  role: string;
+}
+
 const SYSTEM_PROMPT = `You are a knowledgeable market analysis AI assistant. Your role is to:
 1. Provide clear, concise answers about market conditions, trends, and predictions
 2. Explain complex financial concepts in an accessible way
@@ -13,7 +25,8 @@ export async function getChatResponse(message: string): Promise<string> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
+        'anthropic-version': '2024-01-01',
+        'anthropic-beta': 'messages-2024-01-01',
         'x-api-key': process.env.ANTHROPIC_API_KEY || ''
       },
       body: JSON.stringify({
@@ -30,23 +43,25 @@ export async function getChatResponse(message: string): Promise<string> {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to get AI response');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Anthropic API Error:', errorData);
+      throw new Error(`Failed to get AI response: ${response.status}`);
     }
 
     const data = await response.json();
     
-    // Check for the correct response format
-    if (!data.messages || !data.messages[0] || !data.messages[0].content) {
+    // The response format for Claude 3 is different
+    if (!data.content || !Array.isArray(data.content) || data.content.length === 0) {
       throw new Error('Invalid response format from AI service');
     }
     
-    // Extract the response text from the first content block
-    const content = data.messages[0].content[0];
-    if (!content || content.type !== 'text' || !content.text) {
-      throw new Error('Invalid content format in AI response');
+    // Get the first text content
+    const textContent = data.content.find((c: AnthropicContent) => c.type === 'text');
+    if (!textContent || !textContent.text) {
+      throw new Error('No text content in AI response');
     }
     
-    return content.text;
+    return textContent.text;
   } catch (error) {
     console.error('AI Service Error:', error);
     throw error;
@@ -76,7 +91,8 @@ export async function getMarketAnalysis(): Promise<string> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
+        'anthropic-version': '2024-01-01',
+        'anthropic-beta': 'messages-2024-01-01',
         'x-api-key': process.env.ANTHROPIC_API_KEY || ''
       },
       body: JSON.stringify({
@@ -93,23 +109,25 @@ export async function getMarketAnalysis(): Promise<string> {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to get AI analysis');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Anthropic API Error:', errorData);
+      throw new Error(`Failed to get AI response: ${response.status}`);
     }
 
     const data = await response.json();
     
-    // Check for the correct response format
-    if (!data.messages || !data.messages[0] || !data.messages[0].content) {
+    // The response format for Claude 3 is different
+    if (!data.content || !Array.isArray(data.content) || data.content.length === 0) {
       throw new Error('Invalid response format from AI service');
     }
     
-    // Extract the response text from the first content block
-    const content = data.messages[0].content[0];
-    if (!content || content.type !== 'text' || !content.text) {
-      throw new Error('Invalid content format in AI response');
+    // Get the first text content
+    const textContent = data.content.find((c: AnthropicContent) => c.type === 'text');
+    if (!textContent || !textContent.text) {
+      throw new Error('No text content in AI response');
     }
     
-    return content.text;
+    return textContent.text;
   } catch (error) {
     console.error('Error in getMarketAnalysis:', error);
     return 'I apologize, but I encountered an error generating the market analysis. Please try again later.';
