@@ -2,14 +2,39 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
-  return NextResponse.json({
-    status: 'ok',
-    message: 'API is working',
-    path: request.nextUrl.pathname,
-    timestamp: new Date().toISOString()
-  });
+  try {
+    return new NextResponse(
+      JSON.stringify({
+        status: 'ok',
+        message: 'API is working',
+        path: request.nextUrl.pathname,
+        timestamp: new Date().toISOString()
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'no-store, must-revalidate'
+        }
+      }
+    );
+  } catch (error) {
+    console.error('API Test Error:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'Internal Server Error' }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      }
+    );
+  }
 }
 
 // Handle OPTIONS for CORS
