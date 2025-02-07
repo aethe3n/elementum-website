@@ -52,7 +52,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io; connect-src 'self' *.vercel.app api.deepseek.com api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com;"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io; connect-src 'self' *.vercel.app api.deepseek.com api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com; frame-ancestors 'none'; form-action 'self';"
           },
           {
             key: 'X-DNS-Prefetch-Control',
@@ -76,7 +76,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'browsing-topics=(), private-state-token-redemption=(), private-state-token-issuance=()'
+            value: 'browsing-topics=(), private-state-token-redemption=(), private-state-token-issuance=(), camera=(), microphone=(), geolocation=()'
           }
         ]
       }
