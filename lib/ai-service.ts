@@ -1,7 +1,12 @@
 import { getMarketOverview } from './market-service';
 
 interface DeepSeekMessage {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+interface OpenAIMessage {
+  role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
@@ -12,14 +17,59 @@ const SYSTEM_PROMPT = `You are a knowledgeable market analysis AI assistant. You
 4. When specific data is unavailable, provide educational content and general insights
 5. Always maintain a professional, confident tone`;
 
+async function getOpenAIResponse(messages: OpenAIMessage[]): Promise<string> {
+  try {
+    console.log('Falling back to OpenAI API...');
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'OpenAI-Organization': 'org-jb8JEG0Iy8VcVxvvJgwVKBXD'
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages,
+        temperature: 0.7,
+        max_tokens: 2000
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      throw new Error(`Failed to get OpenAI response: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('OpenAI API Response:', JSON.stringify(data, null, 2));
+
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response format from OpenAI');
+    }
+
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI Service Error:', error);
+    throw error;
+  }
+}
+
 export async function getChatResponse(message: string): Promise<string> {
   try {
     const apiKey = process.env.DEEPSEEK_API_KEY || '';
     console.log('Making request to DeepSeek API...');
     
     if (!apiKey) {
-      console.error('DeepSeek API key is missing');
-      throw new Error('API key configuration is missing');
+      console.error('DeepSeek API key is missing, falling back to OpenAI');
+      return getOpenAIResponse([
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: message }
+      ]);
     }
 
     console.log('Sending request to DeepSeek API with message length:', message.length);
@@ -44,35 +94,52 @@ export async function getChatResponse(message: string): Promise<string> {
 
     console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('DeepSeek API Error:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText
+    try {
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
       });
-      throw new Error(`Failed to get AI response: ${response.status} - ${response.statusText}`);
-    }
 
-    const data = await response.json();
-    console.log('DeepSeek API Response:', JSON.stringify(data, null, 2));
-    
-    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
-      console.error('Invalid response format:', data);
-      throw new Error('Invalid response format from AI service');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('DeepSeek API Error:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorText
+        });
+        console.log('Falling back to OpenAI due to DeepSeek error');
+        return getOpenAIResponse([
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: message }
+        ]);
+      }
+
+      const data = await response.json();
+      console.log('DeepSeek API Response:', JSON.stringify(data, null, 2));
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+        console.error('Invalid response format:', data);
+        console.log('Falling back to OpenAI due to invalid DeepSeek response format');
+        return getOpenAIResponse([
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: message }
+        ]);
+      }
+      
+      return data.choices[0].message.content;
+    } catch (deepseekError) {
+      console.error('DeepSeek Service Error:', deepseekError);
+      console.log('Falling back to OpenAI due to DeepSeek service error');
+      return getOpenAIResponse([
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: message }
+      ]);
     }
-    
-    return data.choices[0].message.content;
   } catch (error) {
     console.error('AI Service Error:', error);
     throw error;
@@ -98,53 +165,53 @@ export async function getMarketAnalysis(): Promise<string> {
       If some market data is unavailable, focus on the available data and provide general market insights.
     `;
 
-    const requestBody = {
-      model: 'deepseek-chat',
-      messages: [
-        {
-          role: 'system',
-          content: SYSTEM_PROMPT
+    // Try DeepSeek first, then fall back to OpenAI if needed
+    try {
+      const requestBody = {
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: SYSTEM_PROMPT
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000,
+        stream: false,
+        stop: null
+      };
+
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`,
+          'Accept': 'application/json'
         },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 2000,
-      stream: false,
-      stop: null
-    };
-
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY || ''}`,
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('DeepSeek API Error:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText
+        body: JSON.stringify(requestBody)
       });
-      throw new Error(`Failed to get AI response: ${response.status}`);
-    }
 
-    const data = await response.json();
-    console.log('DeepSeek API Response:', JSON.stringify(data, null, 2));
-    
-    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
-      console.error('Invalid response format:', data);
-      throw new Error('Invalid response format from AI service');
+      if (!response.ok) {
+        throw new Error(`DeepSeek API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data.choices?.[0]?.message?.content) {
+        throw new Error('Invalid DeepSeek response format');
+      }
+
+      return data.choices[0].message.content;
+    } catch (deepseekError) {
+      console.log('Falling back to OpenAI for market analysis');
+      return getOpenAIResponse([
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: prompt }
+      ]);
     }
-    
-    return data.choices[0].message.content;
   } catch (error) {
     console.error('Error in getMarketAnalysis:', error);
     return 'I apologize, but I encountered an error generating the market analysis. Please try again later.';

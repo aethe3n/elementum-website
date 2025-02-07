@@ -16,6 +16,7 @@ const nextConfig = {
     FINNHUB_API_KEY: process.env.FINNHUB_API_KEY,
     POLYGON_API_KEY: process.env.POLYGON_API_KEY,
     DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY
   },
   poweredByHeader: false,
