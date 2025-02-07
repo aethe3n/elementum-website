@@ -6,8 +6,8 @@ export async function POST(req: NextRequest) {
   try {
     console.log('Chat API: Starting request');
     
-    if (!process.env.DEEPSEEK_API_KEY) {
-      console.error('Chat API: Missing DEEPSEEK_API_KEY');
+    if (!process.env.DEEPSEEK_API_KEY && !process.env.OPENAI_API_KEY) {
+      console.error('Chat API: Missing both DEEPSEEK_API_KEY and OPENAI_API_KEY');
       return NextResponse.json(
         { response: "I apologize, but I'm temporarily unable to process your request due to missing API configuration. Please try again later." },
         { status: 200 }
@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    console.log('Chat API: Processing message:', body.message);
 
     let jbContext = '';
     
@@ -66,8 +68,11 @@ export async function POST(req: NextRequest) {
     const response = await getChatResponse(body.message);
     
     if (!response) {
+      console.error('Chat API: No response received from AI service');
       throw new Error('No response received from AI service');
     }
+
+    console.log('Chat API: Successfully got response');
 
     return NextResponse.json({ 
       response,
@@ -76,7 +81,12 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Chat API Error:', error);
+    console.error('Chat API Error:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+    
     return NextResponse.json(
       { 
         response: "I apologize, but I encountered an error processing your request. Please try again.",
