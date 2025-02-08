@@ -10,6 +10,51 @@ interface OpenAIMessage {
   content: string;
 }
 
+// Add Tavily API interface
+interface TavilySearchResult {
+  title: string;
+  url: string;
+  content: string;
+  published_date?: string;
+}
+
+// Add Tavily search function
+async function getTavilySearchResults(query: string): Promise<TavilySearchResult[]> {
+  try {
+    const response = await fetch('https://api.tavily.com/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.TAVILY_API_KEY}`
+      },
+      body: JSON.stringify({
+        query,
+        search_depth: "advanced",
+        include_domains: [
+          "reuters.com",
+          "bloomberg.com",
+          "ft.com",
+          "wsj.com",
+          "cnbc.com",
+          "marketwatch.com",
+          "investing.com"
+        ],
+        max_results: 5
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Tavily API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.warn('Failed to get Tavily search results:', error);
+    return [];
+  }
+}
+
 const SYSTEM_PROMPT = `You are a knowledgeable market analysis AI assistant for Elementum Global. Your role is to:
 1. Provide clear, concise answers about market conditions, trends, and predictions
 2. Explain complex financial concepts in an accessible way
@@ -146,7 +191,20 @@ export async function getChatResponse(message: string, conversationHistory: Arra
       console.warn('Failed to get market context:', error);
     }
 
-    const fullPrompt = `${message}\n${marketContext}`;
+    // Get relevant news and analysis from Tavily
+    let newsContext = '';
+    try {
+      const searchResults = await getTavilySearchResults(message);
+      if (searchResults.length > 0) {
+        newsContext = '\nRecent Market News & Analysis:\n' + searchResults
+          .map(result => `- ${result.title} (${result.published_date || 'Recent'})\n  ${result.content.substring(0, 200)}...`)
+          .join('\n\n');
+      }
+    } catch (error) {
+      console.warn('Failed to get news context:', error);
+    }
+
+    const fullPrompt = `${message}\n${marketContext}\n${newsContext}`;
     
     // Combine conversation history with current message
     const messages = [
