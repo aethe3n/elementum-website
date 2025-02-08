@@ -391,30 +391,11 @@ export default function Page() {
               Empowering businesses with secure and efficient global trading capabilities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-10 py-8 text-xl font-bold relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
-                asChild
-              >
-                <Link 
-                  href="/market-ai"
-                  className="flex items-center justify-center gap-3"
-                >
-                  <span>Market AI</span>
-                  <svg 
-                    className="w-6 h-6 transform transition-transform group-hover:translate-x-1" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" 
-                    />
-                  </svg>
-                </Link>
+              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-12 py-8 text-xl font-bold" asChild>
+                <Link href="/get-started">Schedule Consultation</Link>
+              </Button>
+              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-8 py-6 text-lg font-bold" asChild>
+                <Link href="/market-ai">Market Assistant</Link>
               </Button>
             </div>
           </div>
