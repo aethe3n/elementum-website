@@ -390,17 +390,17 @@ export default function Page() {
             <p className="text-xl text-neutral-400 mb-8 max-w-2xl mx-auto fade-in delay-2">
               Empowering businesses with secure and efficient global trading capabilities.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
                 className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-10 py-8 text-xl font-bold relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
                 asChild
               >
                 <Link 
-                  href="/get-started"
+                  href="/market-ai"
                   className="flex items-center justify-center gap-3"
                 >
-                  <span>Schedule Consultation</span>
+                  <span>Market AI</span>
                   <svg 
                     className="w-6 h-6 transform transition-transform group-hover:translate-x-1" 
                     fill="none" 
@@ -411,63 +411,12 @@ export default function Page() {
                       strokeLinecap="round" 
                       strokeLinejoin="round" 
                       strokeWidth={2} 
-                      d="M17 8l4 4m0 0l-4 4m4-4H3" 
-                    />
-                  </svg>
-                </Link>
-              </Button>
-
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-10 py-8 text-xl font-bold relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
-                asChild
-              >
-                <Link 
-                  href="/services"
-                  className="flex items-center justify-center gap-3"
-                >
-                  <span>View Services</span>
-                  <svg 
-                    className="w-6 h-6 transform transition-transform group-hover:translate-x-1" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" 
                     />
                   </svg>
                 </Link>
               </Button>
             </div>
-            <Button 
-              size="lg" 
-              className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-10 py-8 text-xl font-bold relative overflow-hidden group transform transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
-              asChild
-            >
-              <Link 
-                href="/market-ai"
-                className="flex items-center justify-center gap-3"
-              >
-                <span>Market AI</span>
-                <svg 
-                  className="w-6 h-6 transform transition-transform group-hover:translate-x-1" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" 
-                  />
-                </svg>
-              </Link>
-            </Button>
           </div>
         </div>
       </div>
