@@ -4,7 +4,6 @@ import "./globals.css";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const montserrat = Montserrat({ 
   subsets: ["latin"],
@@ -67,7 +66,6 @@ export default function RootLayout({
         </header>
 
         {children}
-        <SpeedInsights />
 
         <footer className="border-t border-neutral-800 py-12 px-6 relative z-10 bg-black/50 backdrop-blur-lg">
           <div className="max-w-[1200px] mx-auto grid md:grid-cols-4 gap-8">

@@ -8,12 +8,15 @@ export async function POST(req: NextRequest) {
     // Check for OpenAI API key
     if (!process.env.OPENAI_API_KEY) {
       console.error('Chat API: Missing OPENAI_API_KEY');
-      return NextResponse.json(
-        { 
+      return new NextResponse(
+        JSON.stringify({
           error: 'Configuration error',
           message: "I apologize, but I'm temporarily unable to process your request due to missing API configuration. Please try again later."
-        },
-        { status: 500 }
+        }),
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
@@ -23,17 +26,23 @@ export async function POST(req: NextRequest) {
       body = await req.json();
     } catch (parseError) {
       console.error('Chat API: Failed to parse request body:', parseError);
-      return NextResponse.json(
-        { error: 'Invalid request body' },
-        { status: 400 }
+      return new NextResponse(
+        JSON.stringify({ error: 'Invalid request body' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
     
     if (!body.message) {
       console.error('Chat API: Missing message in request body');
-      return NextResponse.json(
-        { error: 'Message is required' },
-        { status: 400 }
+      return new NextResponse(
+        JSON.stringify({ error: 'Message is required' }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
@@ -52,11 +61,17 @@ export async function POST(req: NextRequest) {
 
     console.log('Chat API: Successfully got response');
 
-    return NextResponse.json({ 
-      response,
-      timestamp: new Date().toISOString(),
-      status: 'success'
-    });
+    return new NextResponse(
+      JSON.stringify({ 
+        response,
+        timestamp: new Date().toISOString(),
+        status: 'success'
+      }),
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
 
   } catch (error) {
     console.error('Chat API Error:', {
@@ -65,14 +80,17 @@ export async function POST(req: NextRequest) {
       timestamp: new Date().toISOString()
     });
     
-    return NextResponse.json(
-      { 
+    return new NextResponse(
+      JSON.stringify({ 
         error: 'Internal server error',
         message: "I apologize, but I encountered an error processing your request. Please try again.",
         details: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString()
-      },
-      { status: 500 }
+      }),
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 } 
