@@ -135,6 +135,14 @@ const initialMarketInsights: MarketInsight[] = [
   }
 ];
 
+function formatMarkdown(text: string): string {
+  // Replace markdown header syntax with HTML h3 tags
+  text = text.replace(/###\s*(.*?)(?:\n|$)/g, '<h3 class="text-xl font-semibold text-[#B87D3B] mt-4 mb-2">$1</h3>');
+  // Replace markdown bold syntax with HTML bold tags
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  return text;
+}
+
 export default function LatestInsightsPage() {
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState(true)
@@ -479,7 +487,7 @@ export default function LatestInsightsPage() {
                             Global Market Overview
                           </div>
                         )}
-                        <div className="whitespace-pre-line">{msg.content}</div>
+                        <div className="whitespace-pre-line" dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}></div>
                       </div>
                     </div>
                   ))}

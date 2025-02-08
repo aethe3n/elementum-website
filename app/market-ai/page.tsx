@@ -118,13 +118,24 @@ export default function MarketAIPage() {
       // Add the user's message to the chat
       setChatMessages(prev => [...prev, { type: 'user', content: userInput }]);
 
+      // Prepare conversation history
+      const history = chatMessages
+        .map(msg => ({
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        }))
+        .filter(msg => msg.role === 'user' || msg.role === 'assistant');
+
       // Make API call to chat endpoint
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: userInput }),
+        body: JSON.stringify({ 
+          message: userInput,
+          history: history
+        }),
       });
 
       if (!response.ok) {
@@ -212,6 +223,14 @@ export default function MarketAIPage() {
       setIsLoading(false);
     }
   };
+
+  function formatMarkdown(text: string): string {
+    // Replace markdown header syntax with HTML h3 tags
+    text = text.replace(/###\s*(.*?)(?:\n|$)/g, '<h3 class="text-xl font-semibold text-[#B87D3B] mt-4 mb-2">$1</h3>');
+    // Replace markdown bold syntax with HTML bold tags
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    return text;
+  }
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] text-white">
@@ -354,10 +373,10 @@ export default function MarketAIPage() {
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                               </svg>
-                              AI Assistant
+                              Market AI Assistant
                             </div>
                           )}
-                          <div className="whitespace-pre-line">{msg.content}</div>
+                          <div className="whitespace-pre-line" dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}></div>
                         </div>
                       </div>
                     ))}

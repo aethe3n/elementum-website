@@ -1,22 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getChatResponse } from '@/lib/ai-service';
-import { CJBNews } from '@/lib/jb-news';
 
 export async function POST(req: NextRequest) {
   try {
     console.log('Chat API: Starting request');
     
-    if (!process.env.DEEPSEEK_API_KEY && !process.env.OPENAI_API_KEY) {
-      console.error('Chat API: Missing both DEEPSEEK_API_KEY and OPENAI_API_KEY');
+    // Check for OpenAI API key
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('Chat API: Missing OPENAI_API_KEY');
       return NextResponse.json(
-        { response: "I apologize, but I'm temporarily unable to process your request due to missing API configuration. Please try again later." },
-        { status: 200 }
+        { 
+          error: 'Configuration error',
+          message: "I apologize, but I'm temporarily unable to process your request due to missing API configuration. Please try again later."
+        },
+        { status: 500 }
       );
     }
 
-    const body = await req.json();
+    // Parse request body
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error('Chat API: Failed to parse request body:', parseError);
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 }
+      );
+    }
     
     if (!body.message) {
+      console.error('Chat API: Missing message in request body');
       return NextResponse.json(
         { error: 'Message is required' },
         { status: 400 }
@@ -25,47 +39,11 @@ export async function POST(req: NextRequest) {
 
     console.log('Chat API: Processing message:', body.message);
 
-    let jbContext = '';
+    // Get conversation history from request
+    const conversationHistory = body.history || [];
     
-    // Try to get JB-News data, but don't fail if unavailable
-    try {
-      if (process.env.JB_NEWS_API_KEY) {
-        const jb = new CJBNews();
-        if (await jb.get(process.env.JB_NEWS_API_KEY)) {
-          const eventIds = [756020001, 840010002, 978030001]; // Key market events
-          const predictions = [];
-          
-          for (const eventId of eventIds) {
-            try {
-              if (await jb.load(eventId)) {
-                predictions.push({
-                  event: jb.info.name,
-                  prediction: jb.info.machine_learning.prediction,
-                  analysis: jb.info.smart_analysis,
-                  confidence: jb.info.machine_learning.confidence
-                });
-              }
-            } catch (error) {
-              console.error(`Failed to load event ${eventId}:`, error);
-              continue;
-            }
-          }
-          
-          if (predictions.length > 0) {
-            jbContext = '\nLatest Market Event Predictions:\n' + 
-              predictions.map(p => 
-                `${p.event}: ${p.prediction} (${Math.round(p.confidence * 100)}% confidence)`
-              ).join('\n');
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch JB-News data:', error);
-      // Continue without JB-News context
-    }
-
-    // Get AI response
-    const response = await getChatResponse(body.message);
+    // Get AI response with market context and conversation history
+    const response = await getChatResponse(body.message, conversationHistory);
     
     if (!response) {
       console.error('Chat API: No response received from AI service');
@@ -89,12 +67,12 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json(
       { 
-        response: "I apologize, but I encountered an error processing your request. Please try again.",
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-        status: 'error'
+        error: 'Internal server error',
+        message: "I apologize, but I encountered an error processing your request. Please try again.",
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
       },
-      { status: 200 }
+      { status: 500 }
     );
   }
 } 
