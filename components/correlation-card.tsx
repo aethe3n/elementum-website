@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
+import { trackEngagement } from '@/lib/utils'
 
 interface CorrelationCardProps {
   title: string
@@ -20,6 +21,15 @@ export function CorrelationCard({
   id 
 }: CorrelationCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  const handleViewDetails = () => {
+    trackEngagement('correlation_view', {
+      correlation_id: id,
+      title,
+      impact,
+      correlation
+    });
+  };
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -138,6 +148,7 @@ export function CorrelationCard({
         <Button
           variant="outline"
           className="rounded-full border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10"
+          onClick={handleViewDetails}
           asChild
         >
           <Link href={`/correlations/${id}`}>View Details</Link>

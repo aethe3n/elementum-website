@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 import { CorrelationCard } from '@/components/correlation-card'
+import { trackEvent, trackEngagement } from '@/lib/utils'
 
 interface MarketData {
   symbol: string;
@@ -293,6 +294,27 @@ export default function LatestInsightsPage() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    // Track page view
+    trackEvent('page_view', { page: 'latest_insights' });
+  }, []);
+
+  const handleNewsClick = (article: NewsArticle) => {
+    trackEngagement('news_click', {
+      title: article.title,
+      source: article.source.name,
+      category: article.category
+    });
+  };
+
+  const handleInsightClick = (insight: MarketInsight) => {
+    trackEngagement('insight_click', {
+      title: insight.title,
+      impact: insight.impact,
+      correlation: insight.correlation
+    });
+  };
 
   // Modify handleAskQuestion to include scroll behavior
   const handleAskQuestion = async (e: React.FormEvent) => {
@@ -629,8 +651,9 @@ export default function LatestInsightsPage() {
                     <p className="text-neutral-400">{article.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-neutral-400">Source: {article.source.name}</span>
-                      <a
+                      <Link 
                         href={article.url}
+                        onClick={() => handleNewsClick(article)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[#B87D3B] hover:text-[#96652F] transition-colors inline-flex items-center gap-1"
@@ -639,7 +662,7 @@ export default function LatestInsightsPage() {
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
