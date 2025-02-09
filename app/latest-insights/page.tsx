@@ -5,6 +5,7 @@ import { NewsArticle } from '@/lib/news-service'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
+import { CorrelationCard } from '@/components/correlation-card'
 
 interface MarketData {
   symbol: string;
@@ -551,177 +552,15 @@ export default function LatestInsightsPage() {
             <h2 className="text-2xl font-semibold mb-6 text-center">Market News Correlations</h2>
             <div className="grid md:grid-cols-3 gap-4">
               {marketInsights.map((insight, index) => (
-                <div key={index} className="glimmer-card p-4 aspect-square flex flex-col">
-                  {/* Header with Title and Impact */}
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-base font-semibold flex-1 mr-2">{insight.title}</h3>
-                    <div className={`px-2 py-0.5 rounded-full text-xs whitespace-nowrap ${
-                      insight.impact === 'positive' 
-                        ? 'bg-green-500/20 text-green-400'
-                        : insight.impact === 'negative'
-                        ? 'bg-red-500/20 text-red-400'
-                        : 'bg-yellow-500/20 text-yellow-400'
-                    }`}>
-                      {insight.impact.charAt(0).toUpperCase() + insight.impact.slice(1)}
-                    </div>
-                  </div>
-
-                  {/* Details */}
-                  <p className="text-xs text-neutral-400 mb-4 flex-1">{insight.details}</p>
-
-                  {/* ML Prediction Section */}
-                  {insight.mlPrediction && (
-                    <div className="mb-4 p-2 rounded bg-black/20">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium">AI Forecast</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full animate-pulse"
-                            style={{
-                              backgroundColor: insight.mlPrediction.probability > 0.8 
-                                ? '#10B981' 
-                                : insight.mlPrediction.probability > 0.6 
-                                ? '#F59E0B' 
-                                : '#EF4444'
-                            }}
-                          />
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-[#B87D3B]/20 text-[#B87D3B]">
-                            {Math.round(insight.mlPrediction.probability * 100)}% confidence
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Prediction Details */}
-                      <div className="space-y-2">
-                        <p className="text-xs text-neutral-300">{insight.mlPrediction.forecast}</p>
-                        
-                        {/* Historical Data Chart */}
-                        {insight.mlPrediction.historical_data && (
-                          <div className="mt-2 pt-2 border-t border-neutral-800">
-                            <div className="flex items-center justify-between text-[10px] text-neutral-500 mb-1">
-                              <span>Historical Trend</span>
-                              <div className="flex gap-2">
-                                <span className="flex items-center">
-                                  <div className="w-2 h-2 bg-green-500 rounded-full mr-1" />
-                                  Actual
-                                </span>
-                                <span className="flex items-center">
-                                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-1" />
-                                  Forecast
-                                </span>
-                              </div>
-                            </div>
-                            <div className="h-12 relative">
-                              {insight.mlPrediction.historical_data?.map((point: HistoricalDataPoint, idx: number, arr: HistoricalDataPoint[]) => {
-                                const x = (idx / (arr.length - 1)) * 100;
-                                const yActual = ((point.actual - Math.min(...arr.map((p: HistoricalDataPoint) => p.actual))) / 
-                                  (Math.max(...arr.map((p: HistoricalDataPoint) => p.actual)) - Math.min(...arr.map((p: HistoricalDataPoint) => p.actual)))) * 100;
-                                const yForecast = ((point.forecast - Math.min(...arr.map((p: HistoricalDataPoint) => p.forecast))) /
-                                  (Math.max(...arr.map((p: HistoricalDataPoint) => p.forecast)) - Math.min(...arr.map((p: HistoricalDataPoint) => p.forecast)))) * 100;
-                                
-                                return (
-                                  <div key={point.date}>
-                                    {/* Actual Value Point */}
-                                    <div 
-                                      className="absolute w-1 h-1 bg-green-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"
-                                      style={{ left: `${x}%`, bottom: `${yActual}%` }}
-                                    />
-                                    {/* Forecast Value Point */}
-                                    <div 
-                                      className="absolute w-1 h-1 bg-blue-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"
-                                      style={{ left: `${x}%`, bottom: `${yForecast}%` }}
-                                    />
-                                    {idx < arr.length - 1 && (
-                                      <>
-                                        {/* Lines connecting points */}
-                                        <div 
-                                          className="absolute h-px bg-green-500/30"
-                                          style={{
-                                            left: `${x}%`,
-                                            width: `${100 / (arr.length - 1)}%`,
-                                            bottom: `${yActual}%`,
-                                            transform: `rotate(${Math.atan2(
-                                              arr[idx + 1].actual - point.actual,
-                                              1
-                                            )}rad)`
-                                          }}
-                                        />
-                                        <div 
-                                          className="absolute h-px bg-blue-500/30"
-                                          style={{
-                                            left: `${x}%`,
-                                            width: `${100 / (arr.length - 1)}%`,
-                                            bottom: `${yForecast}%`,
-                                            transform: `rotate(${Math.atan2(
-                                              arr[idx + 1].forecast - point.forecast,
-                                              1
-                                            )}rad)`
-                                          }}
-                                        />
-                                      </>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Smart Analysis */}
-                        <div className="mt-2 pt-2 border-t border-neutral-800">
-                          <p className="text-[10px] text-neutral-500">{insight.mlPrediction.smartAnalysis}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Correlation Section */}
-                  <div className="mt-auto">
-                    {/* Correlation Bar */}
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="text-neutral-400">Correlation</span>
-                        <span className="font-medium">
-                          {Math.abs(insight.correlation * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                      <div className="h-1.5 bg-black/30 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full ${
-                            insight.impact === 'positive'
-                              ? 'bg-green-500'
-                              : insight.impact === 'negative'
-                              ? 'bg-red-500'
-                              : 'bg-yellow-500'
-                          }`}
-                          style={{ width: `${Math.abs(insight.correlation * 100)}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Footer with Sources and Date */}
-                    <div className="flex flex-col gap-2 text-[10px]">
-                      <div className="flex gap-2">
-                        {insight.sources.map((source, idx) => (
-                          <a
-                            key={idx}
-                            href={source.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#B87D3B] hover:text-[#96652F] transition-colors inline-flex items-center gap-1"
-                          >
-                            Source {idx + 1}
-                            <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                          </a>
-                        ))}
-                      </div>
-                      <span className="text-neutral-500">
-                        Updated: {getRelativeTime(insight.lastUpdated)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                <CorrelationCard
+                  key={index}
+                  title={insight.title}
+                  impact={insight.impact}
+                  correlation={insight.correlation}
+                  description={insight.description}
+                  details={insight.details}
+                  id={insight.title.toLowerCase().replace(/\s+/g, '-')}
+                />
               ))}
             </div>
           </div>

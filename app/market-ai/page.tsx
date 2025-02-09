@@ -26,6 +26,20 @@ interface MarketInsight {
   description: string;
 }
 
+interface Citation {
+  title: string;
+  url: string;
+  content: string;
+  source: string;
+  date?: string;
+}
+
+interface ChatMessage {
+  type: 'user' | 'ai' | 'market';
+  content: string;
+  citations?: Citation[];
+}
+
 export default function MarketAIPage() {
   const [showChat, setShowChat] = useState(false)
   const [chatMessages, setChatMessages] = useState<Array<{type: 'user' | 'ai' | 'market', content: string}>>([])
@@ -147,7 +161,8 @@ export default function MarketAIPage() {
       // Add AI response to chat
       setChatMessages(prev => [...prev, { 
         type: 'ai', 
-        content: data.response || 'I apologize, but I was unable to process your request.'
+        content: data.response || 'I apologize, but I was unable to process your request.',
+        citations: data.citations
       }]);
 
       // Clear input after successful response
@@ -202,7 +217,8 @@ export default function MarketAIPage() {
       // Add AI response to chat
       setChatMessages(prev => [...prev, { 
         type: 'ai', 
-        content: data.response || 'I apologize, but I was unable to process your request.'
+        content: data.response || 'I apologize, but I was unable to process your request.',
+        citations: data.citations
       }]);
 
       // Clear input after successful response
@@ -377,6 +393,28 @@ export default function MarketAIPage() {
                             </div>
                           )}
                           <div className="whitespace-pre-line" dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}></div>
+                          
+                          {/* Citations Section */}
+                          {msg.citations && msg.citations.length > 0 && (
+                            <div className="mt-4 pt-4 border-t border-[#B87D3B]/20">
+                              <div className="text-sm font-medium text-[#B87D3B] mb-2">Sources:</div>
+                              <div className="space-y-2">
+                                {msg.citations.map((citation: Citation, index: number) => (
+                                  <a
+                                    key={index}
+                                    href={citation.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block p-2 rounded bg-[#B87D3B]/5 hover:bg-[#B87D3B]/10 transition-colors text-sm"
+                                  >
+                                    <div className="font-medium text-[#B87D3B]">{citation.title}</div>
+                                    <div className="text-neutral-400 text-xs mt-1">{citation.source} • {citation.date || 'Recent'}</div>
+                                    <div className="text-neutral-300 text-xs mt-1 line-clamp-2">{citation.content}</div>
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}

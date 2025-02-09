@@ -61,17 +61,11 @@ export async function POST(req: NextRequest) {
 
     console.log('Chat API: Successfully got response');
 
-    return new NextResponse(
-      JSON.stringify({ 
-        response,
-        timestamp: new Date().toISOString(),
-        status: 'success'
-      }),
-      { 
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    return NextResponse.json({ 
+      response: response.content,
+      citations: response.citations,
+      timestamp: new Date().toISOString()
+    });
 
   } catch (error) {
     console.error('Chat API Error:', {

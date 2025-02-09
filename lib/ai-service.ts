@@ -180,7 +180,23 @@ async function makeOpenAIRequest(messages: Array<{ role: string; content: string
   throw lastError || new Error('Failed to get response from OpenAI API');
 }
 
-export async function getChatResponse(message: string, conversationHistory: Array<{ role: string; content: string }> = []): Promise<string> {
+interface Citation {
+  title: string;
+  url: string;
+  content: string;
+  source: string;
+  date?: string;
+}
+
+interface ChatResponse {
+  content: string;
+  citations: Citation[];
+}
+
+export async function getChatResponse(
+  message: string, 
+  conversationHistory: Array<{ role: string; content: string }> = []
+): Promise<ChatResponse> {
   try {
     // Get current market data for context
     let marketContext = '';
@@ -193,18 +209,27 @@ export async function getChatResponse(message: string, conversationHistory: Arra
 
     // Get relevant news and analysis from Tavily
     let newsContext = '';
+    let citations: Citation[] = [];
     try {
       const searchResults = await getTavilySearchResults(message);
       if (searchResults.length > 0) {
         newsContext = '\nRecent Market News & Analysis:\n' + searchResults
           .map(result => `- ${result.title} (${result.published_date || 'Recent'})\n  ${result.content.substring(0, 200)}...`)
           .join('\n\n');
+        
+        citations = searchResults.map(result => ({
+          title: result.title,
+          url: result.url,
+          content: result.content.substring(0, 200),
+          source: new URL(result.url).hostname,
+          date: result.published_date
+        }));
       }
     } catch (error) {
       console.warn('Failed to get news context:', error);
     }
 
-    const fullPrompt = `${message}\n${marketContext}\n${newsContext}`;
+    const fullPrompt = `${message}\n${marketContext}\n${newsContext}\n\nPlease provide a detailed response with citations to the sources provided above when relevant.`;
     
     // Combine conversation history with current message
     const messages = [
@@ -218,7 +243,12 @@ export async function getChatResponse(message: string, conversationHistory: Arra
       messages.splice(1, messages.length - 12);
     }
     
-    return await makeOpenAIRequest(messages);
+    const response = await makeOpenAIRequest(messages);
+    
+    return {
+      content: response,
+      citations
+    };
   } catch (error) {
     console.error('Chat Response Error:', error);
     throw error;
