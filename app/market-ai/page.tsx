@@ -42,7 +42,7 @@ interface ChatMessage {
 
 export default function MarketAIPage() {
   const [showChat, setShowChat] = useState(false)
-  const [chatMessages, setChatMessages] = useState<Array<{type: 'user' | 'ai' | 'market', content: string}>>([])
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [userInput, setUserInput] = useState('')
   const [marketData, setMarketData] = useState<MarketOverview | null>(null);
   const [marketAnalysis, setMarketAnalysis] = useState<string>('');
