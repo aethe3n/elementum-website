@@ -113,7 +113,11 @@ export default function MarketAIPage() {
       
       if (data.data && data.analysis) {
         const overviewMessage = `${data.data.summary}\n\n${data.analysis}`;
-        setChatMessages(prev => [...prev, { type: 'market', content: overviewMessage }]);
+        setChatMessages(prev => [...prev, { 
+          type: 'market', 
+          content: overviewMessage,
+          citations: data.sources || [] // Include sources if available
+        }]);
       } else {
         throw new Error('Invalid market data format');
       }
@@ -275,217 +279,201 @@ export default function MarketAIPage() {
 
       <main className="relative z-10 py-20 px-6">
         <div className="max-w-[1200px] mx-auto">
+          {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">
-              Market AI Assistant
-            </h1>
-            <p className="text-xl text-neutral-400 max-w-2xl mx-auto mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Market AI Assistant</h1>
+            <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
               Your intelligent companion for market analysis and insights
             </p>
+          </div>
 
-            {/* AI Capabilities Section */}
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16">
-              <div className="glimmer-card p-6 text-left">
-                <div className="mb-4 p-3 rounded-xl inline-block bg-[#B87D3B]/10">
-                  <svg className="w-8 h-8 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Real-Time Analysis</h3>
-                <p className="text-neutral-400">
-                  Get instant analysis of market conditions across precious metals, forex, and commodities
-                </p>
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="glimmer-card p-6">
+              <div className="mb-4 service-icon-container p-3 rounded-xl inline-block bg-[#B87D3B]/10">
+                <svg className="w-8 h-8 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
               </div>
+              <h3 className="text-lg font-semibold mb-2">Market Intelligence</h3>
+              <p className="text-neutral-400 text-sm">Advanced AI-powered analysis of real-time market data across precious metals, forex, and commodities with comprehensive market overviews</p>
+            </div>
 
-              <div className="glimmer-card p-6 text-left">
-                <div className="mb-4 p-3 rounded-xl inline-block bg-[#B87D3B]/10">
-                  <svg className="w-8 h-8 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Interactive Insights</h3>
-                <p className="text-neutral-400">
-                  Ask questions and receive detailed explanations about market trends and movements
-                </p>
+            <div className="glimmer-card p-6">
+              <div className="mb-4 service-icon-container p-3 rounded-xl inline-block bg-[#B87D3B]/10">
+                <svg className="w-8 h-8 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
               </div>
+              <h3 className="text-lg font-semibold mb-2">Smart Insights</h3>
+              <p className="text-neutral-400 text-sm">Natural language interaction with AI for detailed market analysis, backed by real-time data and expert sources with citation tracking</p>
+            </div>
 
-              <div className="glimmer-card p-6 text-left">
-                <div className="mb-4 p-3 rounded-xl inline-block bg-[#B87D3B]/10">
-                  <svg className="w-8 h-8 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Predictive Insights</h3>
-                <p className="text-neutral-400">
-                  Get forward-looking analysis based on current market conditions and historical trends
-                </p>
+            <div className="glimmer-card p-6">
+              <div className="mb-4 service-icon-container p-3 rounded-xl inline-block bg-[#B87D3B]/10">
+                <svg className="w-8 h-8 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
               </div>
+              <h3 className="text-lg font-semibold mb-2">Strategic Forecasting</h3>
+              <p className="text-neutral-400 text-sm">Machine learning-powered predictions and trend analysis using historical data patterns and current market indicators for informed decision-making</p>
+            </div>
+          </div>
+
+          {/* Main Chat Interface */}
+          <div className="glimmer-card p-8 max-w-6xl mx-auto">
+            <div className="mb-6">
+              <Button 
+                onClick={handleGetMarketOverview}
+                variant="outline" 
+                size="lg"
+                disabled={isOverviewLoading}
+                className="w-full transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10 px-8 py-3"
+              >
+                {isOverviewLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-[#B87D3B]/20 border-t-[#B87D3B] rounded-full animate-spin" />
+                    <span>Fetching Overview...</span>
+                  </div>
+                ) : (
+                  'Get Global Market Overview'
+                )}
+              </Button>
             </div>
 
             {/* Example Questions */}
-            <div className="max-w-2xl mx-auto mb-16">
-              <h2 className="text-2xl font-semibold mb-6">Example Questions You Can Ask</h2>
-              <div className="grid gap-4 text-left">
-                {exampleQuestions.map((question, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleQuickAction(question)}
-                    className="glimmer-card p-4 text-left w-full hover:bg-[#B87D3B]/10 transition-colors duration-200 cursor-pointer"
+            {chatMessages.length === 0 && (
+              <div className="mb-8 p-6 bg-[#1A1A1A] rounded-lg border border-neutral-800">
+                <h3 className="text-lg font-semibold mb-4 text-[#B87D3B]">Example Questions You Can Ask:</h3>
+                <div className="space-y-3">
+                  <button 
+                    onClick={() => handleQuickAction("What's driving the current gold price movements?")}
+                    className="w-full text-left p-3 rounded-lg bg-[#B87D3B]/10 hover:bg-[#B87D3B]/20 transition-colors"
                   >
-                    "{question}"
+                    "What's driving the current gold price movements?"
                   </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Chat Interface */}
-            <div className="max-w-4xl mx-auto">
-              <Button 
-                onClick={() => setShowChat(prev => !prev)}
-                className="w-full rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white py-10 text-2xl font-medium relative overflow-hidden group transform transition-all duration-500 ease-out hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_0_30px_rgba(184,125,59,0.4)] border-2 border-[#B87D3B]"
-              >
-                {showChat ? 'Close Market Assistant' : 'Open Market Assistant'}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-              </Button>
-              
-              {showChat && (
-                <div className="glimmer-card p-8">
-                  {chatMessages.length === 0 && (
-                    <div className="text-center mb-6">
-                      <Button 
-                        onClick={handleGetMarketOverview}
-                        variant="outline" 
-                        size="lg"
-                        className="border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10 px-8 py-3"
-                      >
-                        Get Global Market Overview
-                      </Button>
-                    </div>
-                  )}
-                  
-                  {/* Enhanced Chat Messages Container */}
-                  <div 
-                    ref={chatContainerRef}
-                    className="h-[600px] overflow-y-auto mb-6 space-y-4 pr-4 scrollbar-thin scrollbar-thumb-[#B87D3B] scrollbar-track-transparent scroll-smooth"
+                  <button 
+                    onClick={() => handleQuickAction("How are forex markets responding to recent economic data?")}
+                    className="w-full text-left p-3 rounded-lg bg-[#B87D3B]/10 hover:bg-[#B87D3B]/20 transition-colors"
                   >
-                    {chatMessages.map((msg, i) => (
-                      <div 
-                        key={i} 
-                        className={`${
-                          msg.type === 'user' ? 'text-right' : 'text-left'
-                        } animate-slideIn opacity-0`}
-                        style={{ 
-                          animation: 'slideIn 0.3s ease-out forwards',
-                          animationDelay: `${i * 100}ms` 
-                        }}
-                      >
-                        <div className={`inline-block p-4 rounded-lg max-w-[85%] transform transition-all duration-300 hover:scale-[1.01] ${
-                          msg.type === 'user' 
-                            ? 'bg-[#B87D3B]/20 ml-auto shadow-lg' 
-                            : msg.type === 'market'
-                            ? 'bg-[#1A1A1A] border border-[#B87D3B]/30 shadow-xl'
-                            : 'bg-[#1A1A1A] shadow-lg'
-                        }`}>
-                          {msg.type === 'market' && (
-                            <div className="font-semibold text-[#B87D3B] mb-2 flex items-center gap-2">
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                              </svg>
-                              Global Market Overview
-                            </div>
-                          )}
-                          {msg.type === 'ai' && (
-                            <div className="font-semibold text-[#B87D3B] mb-2 flex items-center gap-2">
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                              </svg>
-                              Market AI Assistant
-                            </div>
-                          )}
-                          <div className="whitespace-pre-line" dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}></div>
-                          
-                          {/* Citations Section */}
-                          {msg.citations && msg.citations.length > 0 && (
-                            <div className="mt-4 pt-4 border-t border-[#B87D3B]/20">
-                              <div className="text-sm font-medium text-[#B87D3B] mb-2">Sources:</div>
-                              <div className="space-y-2">
-                                {msg.citations.map((citation: Citation, index: number) => (
-                                  <a
-                                    key={index}
-                                    href={citation.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block p-2 rounded bg-[#B87D3B]/5 hover:bg-[#B87D3B]/10 transition-colors text-sm"
-                                  >
-                                    <div className="font-medium text-[#B87D3B]">{citation.title}</div>
-                                    <div className="text-neutral-400 text-xs mt-1">{citation.source} • {citation.date || 'Recent'}</div>
-                                    <div className="text-neutral-300 text-xs mt-1 line-clamp-2">{citation.content}</div>
-                                  </a>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                    "How are forex markets responding to recent economic data?"
+                  </button>
+                  <button 
+                    onClick={() => handleQuickAction("What's the outlook for commodity prices this quarter?")}
+                    className="w-full text-left p-3 rounded-lg bg-[#B87D3B]/10 hover:bg-[#B87D3B]/20 transition-colors"
+                  >
+                    "What's the outlook for commodity prices this quarter?"
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Chat Messages */}
+            <div 
+              ref={chatContainerRef}
+              className="h-[600px] overflow-y-auto mb-6 space-y-4 pr-4 scrollbar-thin scrollbar-thumb-[#B87D3B] scrollbar-track-transparent scroll-smooth"
+            >
+              {chatMessages.map((msg, i) => (
+                <div 
+                  key={i} 
+                  className={`${
+                    msg.type === 'user' ? 'text-right' : 'text-left'
+                  } animate-slideIn opacity-0`}
+                  style={{ 
+                    animation: 'slideIn 0.3s ease-out forwards',
+                    animationDelay: `${i * 100}ms` 
+                  }}
+                >
+                  <div className={`inline-block p-3 rounded-lg max-w-[80%] transform transition-all duration-300 hover:scale-[1.01] ${
+                    msg.type === 'user' 
+                      ? 'bg-[#B87D3B]/20 ml-auto' 
+                      : msg.type === 'market'
+                      ? 'bg-[#1A1A1A] border border-[#B87D3B]/30'
+                      : 'bg-[#1A1A1A]'
+                  }`}>
+                    {msg.type === 'market' && (
+                      <div className="font-semibold text-[#B87D3B] mb-2">
+                        Global Market Overview
                       </div>
-                    ))}
-                    {(isLoading || isOverviewLoading) && (
-                      <div className="text-left animate-fadeIn">
-                        <div className="inline-block p-4 rounded-lg bg-[#1A1A1A] border border-[#B87D3B]/30 shadow-lg">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center space-x-2">
-                              <div className="w-2 h-2 bg-[#B87D3B] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                              <div className="w-2 h-2 bg-[#B87D3B] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                              <div className="w-2 h-2 bg-[#B87D3B] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                            </div>
-                            <span className="text-sm text-neutral-400">Processing your request...</span>
-                          </div>
+                    )}
+                    <div className="whitespace-pre-line" dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}></div>
+                    
+                    {/* Citations Section */}
+                    {msg.citations && msg.citations.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-[#B87D3B]/20">
+                        <div className="text-sm font-medium text-[#B87D3B] mb-2">Sources:</div>
+                        <div className="space-y-2">
+                          {msg.citations.map((citation, index) => (
+                            <a
+                              key={index}
+                              href={citation.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block p-2 rounded bg-[#B87D3B]/5 hover:bg-[#B87D3B]/10 transition-colors text-sm"
+                            >
+                              <div className="font-medium text-[#B87D3B]">{citation.title}</div>
+                              <div className="text-neutral-400 text-xs mt-1">{citation.source} • {citation.date || 'Recent'}</div>
+                              <div className="text-neutral-300 text-xs mt-1 line-clamp-2">{citation.content}</div>
+                            </a>
+                          ))}
                         </div>
                       </div>
                     )}
                   </div>
-                  
-                  {/* Enhanced Input Form */}
-                  <form 
-                    onSubmit={handleAskQuestion} 
-                    className="flex gap-3 transform transition-all duration-300"
-                  >
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={userInput}
-                      onChange={(e) => setUserInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey && !isLoading && userInput.trim()) {
-                          e.preventDefault();
-                          handleAskQuestion(e as any);
-                        }
-                      }}
-                      placeholder="Ask about market conditions..."
-                      className="flex-1 px-6 py-4 text-lg rounded-lg bg-black/30 border border-neutral-800 focus:outline-none focus:border-[#B87D3B] transition-all duration-300 hover:bg-black/40 placeholder-neutral-500"
-                      disabled={isLoading}
-                    />
-                    <Button 
-                      type="submit" 
-                      variant="default"
-                      size="lg"
-                      disabled={isLoading || !userInput.trim()}
-                      className={`min-w-[120px] py-4 text-lg transform transition-all duration-300 ${
-                        isLoading ? 'opacity-50' : 'hover:scale-[1.02] active:scale-[0.98]'
-                      }`}
-                    >
-                      {isLoading ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                          <span>Sending...</span>
-                        </div>
-                      ) : (
-                        'Send'
-                      )}
-                    </Button>
-                  </form>
+                </div>
+              ))}
+              {(isLoading || isOverviewLoading) && (
+                <div className="text-left animate-fadeIn">
+                  <div className="inline-block p-4 rounded-lg bg-[#1A1A1A] border border-[#B87D3B]/30">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-[#B87D3B] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-[#B87D3B] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-[#B87D3B] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
+
+            {/* Input Form */}
+            <form 
+              onSubmit={handleAskQuestion} 
+              className="flex gap-2 transform transition-all duration-300"
+            >
+              <input
+                ref={inputRef}
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && !isLoading && userInput.trim()) {
+                    e.preventDefault();
+                    handleAskQuestion(e as any);
+                  }
+                }}
+                placeholder="Ask about market conditions..."
+                className="flex-1 px-4 py-2 rounded-lg bg-black/30 border border-neutral-800 focus:outline-none focus:border-[#B87D3B] transition-all duration-300 hover:bg-black/40"
+                disabled={isLoading}
+              />
+              <Button 
+                type="submit" 
+                variant="default"
+                size="sm"
+                disabled={isLoading || !userInput.trim()}
+                className={`transform transition-all duration-300 ${
+                  isLoading ? 'opacity-50' : 'hover:scale-[1.02] active:scale-[0.98]'
+                }`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <span>Sending...</span>
+                  </div>
+                ) : (
+                  'Send'
+                )}
+              </Button>
+            </form>
           </div>
         </div>
       </main>
