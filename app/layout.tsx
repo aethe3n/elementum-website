@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image"
+import { Analytics } from "@vercel/analytics/react";
 
 const montserrat = Montserrat({ 
   subsets: ["latin"],
@@ -105,6 +106,7 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );

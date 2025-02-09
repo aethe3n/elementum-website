@@ -4,11 +4,15 @@ import { Button } from "@/components/ui/button"
 import { ServiceCard } from "@/components/service-card"
 import Link from "next/link"
 import { useEffect, useRef } from "react"
+import { trackEvent, trackEngagement, trackConversion } from '@/lib/utils'
 
 export default function ServicesPage() {
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
+    // Track services page view
+    trackEvent('page_view', { page: 'services' });
+
     observerRef.current = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -26,6 +30,14 @@ export default function ServicesPage() {
 
     return () => observerRef.current?.disconnect();
   }, []);
+
+  const handleServiceClick = (serviceName: string) => {
+    trackEngagement('service_click', { service: serviceName });
+  };
+
+  const handleGetStartedClick = () => {
+    trackConversion('service_inquiry');
+  };
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] text-white">
@@ -71,6 +83,7 @@ export default function ServicesPage() {
                 "Competitive Pricing"
               ]}
               href="/services/precious-metals"
+              onClick={() => handleServiceClick('precious_metals')}
             />
 
             <ServiceCard
@@ -87,6 +100,7 @@ export default function ServicesPage() {
                 "Supply Chain Management"
               ]}
               href="/services/food-products"
+              onClick={() => handleServiceClick('food_products')}
             />
           </div>
 
@@ -105,6 +119,7 @@ export default function ServicesPage() {
                 "Expert Guidance"
               ]}
               href="/services/otc-trading"
+              onClick={() => handleServiceClick('otc_trading')}
             />
 
             <ServiceCard
@@ -121,6 +136,7 @@ export default function ServicesPage() {
                 "Supply Chain Solutions"
               ]}
               href="/services/petroleum-services"
+              onClick={() => handleServiceClick('petroleum_services')}
             />
           </div>
         </div>
@@ -136,11 +152,12 @@ export default function ServicesPage() {
             Contact us today to discuss how we can help transform your business with our global trading solutions.
           </p>
           <Button 
+            onClick={handleGetStartedClick}
             size="lg" 
             className="rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-8 py-6 text-lg"
             asChild
           >
-            <Link href="/get-started">Schedule a Consultation</Link>
+            <Link href="/get-started">Get Started Today</Link>
           </Button>
         </div>
       </section>

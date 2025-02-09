@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { trackEvent, trackEngagement } from '@/lib/utils'
 
 interface CorrelationData {
   date: string
@@ -83,6 +84,12 @@ export default function CorrelationPage({ params }: { params: { id: string } }) 
   const [correlation, setCorrelation] = useState<DetailedCorrelation | null>(null)
 
   useEffect(() => {
+    // Track correlation page view
+    trackEvent('page_view', {
+      page: 'correlation_detail',
+      correlation_id: params.id
+    });
+
     // In production, this would be an API call
     setCorrelation(MOCK_CORRELATIONS[params.id])
   }, [params.id])
@@ -169,6 +176,14 @@ export default function CorrelationPage({ params }: { params: { id: string } }) 
     ctx.stroke()
 
   }, [correlation])
+
+  const handleDataPointHover = (data: CorrelationData) => {
+    trackEngagement('correlation_data_hover', {
+      correlation_id: params.id,
+      date: data.date,
+      value: data.value
+    });
+  };
 
   if (!correlation) {
     return (

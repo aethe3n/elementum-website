@@ -7,11 +7,12 @@ interface ServiceCardProps {
   icon: ReactNode
   features: string[]
   href: string
+  onClick?: () => void
 }
 
-export function ServiceCard({ title, description, icon, features, href }: ServiceCardProps) {
+export function ServiceCard({ title, description, icon, features, href, onClick }: ServiceCardProps) {
   return (
-    <Link href={href} className="block">
+    <Link href={href} className="block" onClick={onClick}>
       <div className="glimmer-card p-8 hover-float">
         <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
           {icon}

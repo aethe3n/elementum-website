@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
+import { trackEvent, trackEngagement, trackError } from "@/lib/utils"
 
 interface MarketData {
   symbol: string;
@@ -94,11 +95,15 @@ export default function MarketAIPage() {
       }
     }
     fetchData();
+
+    // Track page view
+    trackEvent('page_view', { page: 'market_ai' });
   }, []);
 
   const handleGetMarketOverview = async () => {
     setIsOverviewLoading(true);
     try {
+      trackEngagement('get_market_overview');
       const response = await fetch('/api/market');
       if (!response.ok) {
         throw new Error('Failed to fetch market data');
@@ -113,6 +118,7 @@ export default function MarketAIPage() {
         throw new Error('Invalid market data format');
       }
     } catch (error) {
+      trackError(error as Error, 'market_overview');
       console.error('Market overview error:', error);
       setChatMessages(prev => [...prev, { 
         type: 'market', 
@@ -129,6 +135,7 @@ export default function MarketAIPage() {
     
     setIsLoading(true);
     try {
+      trackEngagement('ask_question', { question: userInput });
       // Add the user's message to the chat
       setChatMessages(prev => [...prev, { type: 'user', content: userInput }]);
 
@@ -174,6 +181,7 @@ export default function MarketAIPage() {
       }
 
     } catch (error) {
+      trackError(error as Error, 'market_ai_question');
       console.error('Chat error:', error);
       setChatMessages(prev => [...prev, { 
         type: 'ai', 
@@ -196,6 +204,7 @@ export default function MarketAIPage() {
     
     setIsLoading(true);
     try {
+      trackEngagement('quick_action', { query });
       // Add the user's message to the chat
       setChatMessages(prev => [...prev, { type: 'user', content: query }]);
 
@@ -230,6 +239,7 @@ export default function MarketAIPage() {
       }
 
     } catch (error) {
+      trackError(error as Error, 'quick_action');
       console.error('Chat error:', error);
       setChatMessages(prev => [...prev, { 
         type: 'ai', 
