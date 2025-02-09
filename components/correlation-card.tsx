@@ -30,38 +30,83 @@ export function CorrelationCard({
     // Clear canvas
     ctx.clearRect(0, 0, 200, 200)
 
-    // Draw correlation gauge
+    // Configuration
     const centerX = 100
     const centerY = 100
     const radius = 80
+    const startAngle = Math.PI
+    const endAngle = 2 * Math.PI
+    const lineWidth = 10
 
     // Draw background arc
     ctx.beginPath()
-    ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI)
-    ctx.lineWidth = 10
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle)
     ctx.strokeStyle = '#2A2A2A'
+    ctx.lineWidth = lineWidth
     ctx.stroke()
 
     // Draw correlation arc
-    const startAngle = Math.PI
-    const endAngle = Math.PI + (correlation * Math.PI)
-    
+    const correlationAngle = startAngle + (correlation + 1) * Math.PI / 2
+    const gradient = ctx.createLinearGradient(
+      centerX - radius, 
+      centerY, 
+      centerX + radius, 
+      centerY
+    )
+
+    if (impact === 'positive') {
+      gradient.addColorStop(0, '#22C55E88')
+      gradient.addColorStop(1, '#22C55EFF')
+    } else if (impact === 'negative') {
+      gradient.addColorStop(0, '#EF444488')
+      gradient.addColorStop(1, '#EF4444FF')
+    } else {
+      gradient.addColorStop(0, '#EAB30888')
+      gradient.addColorStop(1, '#EAB308FF')
+    }
+
     ctx.beginPath()
-    ctx.arc(centerX, centerY, radius, startAngle, endAngle)
-    ctx.lineWidth = 10
-    ctx.strokeStyle = impact === 'positive' 
-      ? '#22C55E' 
-      : impact === 'negative'
-      ? '#EF4444'
-      : '#EAB308'
+    ctx.arc(centerX, centerY, radius, startAngle, correlationAngle)
+    ctx.strokeStyle = gradient
+    ctx.lineWidth = lineWidth
     ctx.stroke()
 
-    // Draw correlation value
+    // Draw center circle
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, radius - lineWidth, startAngle, endAngle)
+    ctx.fillStyle = '#1A1A1A'
+    ctx.fill()
+
+    // Add correlation text
     ctx.font = 'bold 24px Inter'
     ctx.fillStyle = '#FFFFFF'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(`${Math.abs(correlation * 100)}%`, centerX, centerY)
+
+    // Add impact indicator
+    const indicatorY = centerY + 30
+    ctx.font = '14px Inter'
+    ctx.fillStyle = impact === 'positive' 
+      ? '#22C55E' 
+      : impact === 'negative'
+      ? '#EF4444'
+      : '#EAB308'
+    ctx.fillText(impact.toUpperCase(), centerX, indicatorY)
+
+    // Add decorative elements
+    const dotRadius = 2
+    const dotCount = 24
+    for (let i = 0; i < dotCount; i++) {
+      const angle = startAngle + (i * Math.PI) / (dotCount - 1)
+      const x = centerX + (radius + 15) * Math.cos(angle)
+      const y = centerY + (radius + 15) * Math.sin(angle)
+      
+      ctx.beginPath()
+      ctx.arc(x, y, dotRadius, 0, 2 * Math.PI)
+      ctx.fillStyle = '#2A2A2A'
+      ctx.fill()
+    }
 
   }, [correlation, impact])
 
