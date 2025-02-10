@@ -69,22 +69,24 @@ export default function BlogPostPage() {
         </Link>
 
         {post.coverImage && (
-          <div className="relative h-[400px] rounded-lg overflow-hidden mb-8">
+          <div className="relative h-[200px] w-[200px] mx-auto rounded-lg overflow-hidden mb-12">
             <Image
               src={post.coverImage}
               alt={post.title}
               fill
-              className="object-cover"
+              className="object-contain"
             />
           </div>
         )}
 
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4 mb-12">
           <Badge variant="outline" className="bg-[#B87D3B]/10 text-[#B87D3B] border-[#B87D3B]">
             {post.category}
           </Badge>
 
-          <h1 className="text-4xl font-bold">{post.title}</h1>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">
+            {post.title}
+          </h1>
 
           <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-400">
             <div className="flex items-center gap-2">
@@ -101,11 +103,14 @@ export default function BlogPostPage() {
           </div>
         </div>
 
-        <div className="prose prose-invert max-w-none prose-headings:text-[#B87D3B] prose-a:text-[#B87D3B] hover:prose-a:text-[#96652F]">
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        <div className="prose prose-invert max-w-none prose-headings:text-[#B87D3B] prose-a:text-[#B87D3B] hover:prose-a:text-[#96652F] prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-p:leading-relaxed prose-li:text-base">
+          <div 
+            dangerouslySetInnerHTML={{ __html: post.content }}
+            className="space-y-6"
+          />
         </div>
 
-        <div className="mt-8 pt-8 border-t border-neutral-800">
+        <div className="mt-12 pt-8 border-t border-neutral-800">
           <div className="flex flex-wrap gap-2">
             {post.tags.map((tag) => (
               <div

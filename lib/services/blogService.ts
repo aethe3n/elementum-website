@@ -9,38 +9,46 @@ const blogPosts: BlogPost[] = [
     slug: 'welcome-to-elementumglobal',
     excerpt: 'Introducing our groundbreaking Premium Market AI Agent for professional and institutional trading solutions.',
     content: `
+<div class="space-y-8">
+
 # Welcome to ElementumGlobal: Pioneering AI-Powered Commodities Intelligence
 
 At ElementumGlobal, we're thrilled to announce a groundbreaking addition to our suite of professional and institutional trading solutions - the launch of our Premium Market AI Agent. This innovative tool represents a significant leap forward in how professional and institutional investors and traders interact with commodities market intelligence.
 
-## Transforming Market Intelligence
+## **Transforming Market Intelligence**
+
 Our Premium Market AI Chat platform harnesses cutting-edge artificial intelligence to deliver real-time market insights, predictive analytics, and comprehensive trading intelligence. This sophisticated system has been meticulously designed to process vast amounts of market data, providing institutional clients with actionable insights at unprecedented speed.
 
-## Revolutionary Features
-**Advanced Market Analysis**
+## **Revolutionary Features**
+
+### **Advanced Market Analysis**
 The platform offers sophisticated pattern recognition capabilities, enabling traders to identify market trends and opportunities with greater precision. Our AI-powered system continuously analyzes market conditions, providing institutional-grade insights that drive informed decision-making.
 
-**Real-Time Intelligence**
+### **Real-Time Intelligence**
 - Dynamic market sentiment analysis
 - Instant access to global commodities data
 - Automated risk assessment protocols
 - Custom alert systems for market movements
 
-## Institutional Excellence
+## **Institutional Excellence**
+
 As a Delaware-based commodities trading company, ElementumGlobal remains committed to delivering exceptional value to our institutional clients. The Premium Market AI Agent represents our dedication to technological innovation while maintaining the highest standards of market intelligence and compliance.
 
-## Looking Forward
+## **Looking Forward**
+
 The launch of our Premium Market AI Agent platform marks just the beginning of our journey to revolutionize commodities trading. We invite you to join us in embracing the future of institutional trading, where artificial intelligence meets human expertise to create unprecedented market opportunities.
 
 Stay tuned for exclusive access to our Premium Market AI Agent platform, where the future of commodities trading becomes reality.
+
+</div>
     `,
-    coverImage: '/blog/market-ai-launch.jpg',
+    coverImage: '/elementum-banner.jpg',
     author: {
       name: 'Elementum Team',
-      avatar: '/team/avatar.jpg'
+      avatar: '/elementum-banner.jpg'
     },
     tags: ['AI', 'Trading', 'Market Intelligence', 'Innovation'],
-    publishedAt: '2024-02-15T10:00:00Z',
+    publishedAt: '2025-02-09T10:00:00Z',
     readingTime: '5 min',
     category: 'Update'
   }
@@ -59,10 +67,11 @@ export const fetchBlogPost = async (slug: string): Promise<BlogPost | null> => {
     return null;
   }
 
-  // Convert markdown content to HTML
-  post.content = marked(post.content);
+  // Convert markdown content to HTML using marked
+  const postCopy = { ...post };
+  postCopy.content = await marked(post.content);
   
-  return post;
+  return postCopy;
 };
 
 export const fetchLatestPosts = async (limit: number = 3): Promise<BlogPost[]> => {
