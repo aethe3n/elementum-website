@@ -7,9 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 
 // Analytics utility functions
 export function trackEvent(eventName: string, properties?: Record<string, any>) {
-  if (typeof window !== 'undefined' && (window as any).va) {
-    (window as any).va('event', eventName, properties);
-  }
+  // Implement your analytics tracking here
+  console.log('Track Event:', eventName, properties)
 }
 
 export function trackPageView(url: string) {
@@ -22,14 +21,12 @@ export function trackConversion(type: string, value?: number) {
   trackEvent('conversion', { type, value });
 }
 
-export function trackEngagement(action: string, details?: Record<string, any>) {
-  trackEvent('engagement', { action, ...details });
+export function trackEngagement(action: string, properties?: Record<string, any>) {
+  // Implement your engagement tracking here
+  console.log('Track Engagement:', action, properties)
 }
 
-export function trackError(error: Error, context?: string) {
-  trackEvent('error', {
-    message: error.message,
-    stack: error.stack,
-    context
-  });
+export function trackError(error: Error, context: string) {
+  // Implement your error tracking here
+  console.error('Track Error:', context, error)
 }

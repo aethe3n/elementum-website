@@ -1,8 +1,10 @@
-'use client'
+"use client"
 
 import { useEffect, useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { trackEvent, trackEngagement, trackError } from "@/lib/utils"
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/context/AuthContext'
 
 interface MarketData {
   symbol: string;
@@ -42,6 +44,8 @@ interface ChatMessage {
 }
 
 export default function MarketAIPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [showChat, setShowChat] = useState(false)
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [userInput, setUserInput] = useState('')
@@ -79,6 +83,12 @@ export default function MarketAIPage() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/login?from=/market-ai');
+    }
+  }, [user, loading, router]);
 
   useEffect(() => {
     async function fetchData() {
@@ -260,6 +270,21 @@ export default function MarketAIPage() {
     // Replace markdown bold syntax with HTML bold tags
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     return text;
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-[#B87D3B] border-r-2 mb-4"></div>
+          <p className="text-neutral-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect in useEffect
   }
 
   return (

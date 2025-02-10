@@ -10,7 +10,7 @@ import {
   setPersistence,
   browserLocalPersistence
 } from 'firebase/auth';
-import { auth } from '../firebase/config';
+import { auth } from '../firebase/init';
 
 export type AuthResponse = {
   user?: User;

@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -9,7 +11,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
+      "rounded-lg border border-neutral-800 bg-neutral-900 text-neutral-50 shadow-sm",
       className
     )}
     {...props}
@@ -35,7 +37,10 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("font-semibold leading-none tracking-tight", className)}
+    className={cn(
+      "text-lg font-semibold leading-none tracking-tight",
+      className
+    )}
     {...props}
   />
 ))
@@ -47,7 +52,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm text-neutral-400", className)}
     {...props}
   />
 ))

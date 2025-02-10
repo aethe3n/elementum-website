@@ -399,8 +399,8 @@ export default function Page() {
               </Button>
             </div>
           </div>
-        </div>
-      </div>
+                  </div>
+                </div>
 
       {/* Services Section */}
       <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
@@ -408,7 +408,7 @@ export default function Page() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Our Services</h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">Comprehensive trading and financial solutions tailored to your business needs</p>
-          </div>
+                    </div>
           <div className="grid md:grid-cols-2 gap-12">
             {/* Precious Metals */}
             <div className="space-y-8">
@@ -443,7 +443,7 @@ export default function Page() {
                 ]}
                 href="/services/food-products"
               />
-            </div>
+                      </div>
 
             <div className="space-y-8">
               <ServiceCard
@@ -452,7 +452,7 @@ export default function Page() {
                 icon={
                   <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+                          </svg>
                 }
                 features={[
                   "Competitive Rates",
@@ -478,9 +478,9 @@ export default function Page() {
                 href="/services/petroleum-services"
               />
             </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* About Us Summary Section */}
       <section className="py-20 px-6 relative">
