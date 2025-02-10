@@ -9,18 +9,29 @@ import SubscriptionManager from '@/components/profile/SubscriptionManager'
 import ProfileSettings from '@/components/profile/ProfileSettings'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { trackPageView } from '@/lib/utils'
+import { AppUser } from '@/lib/types'
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth()
+  const { user: firebaseUser, loading } = useAuth()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('profile')
 
+  // Transform Firebase user to our AppUser interface
+  const transformedUser: AppUser | null = firebaseUser ? {
+    id: firebaseUser.uid,
+    name: firebaseUser.displayName || undefined,
+    email: firebaseUser.email || '',
+    plan: 'basic' as const,
+    createdAt: firebaseUser.metadata.creationTime || new Date().toISOString(),
+    lastLogin: firebaseUser.metadata.lastSignInTime || new Date().toISOString()
+  } : null
+
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !transformedUser) {
       router.push('/auth/login?from=/profile')
     }
     trackPageView('/profile')
-  }, [user, loading, router])
+  }, [transformedUser, loading, router])
 
   if (loading) {
     return (
@@ -33,14 +44,14 @@ export default function ProfilePage() {
     )
   }
 
-  if (!user) {
+  if (!transformedUser) {
     return null
   }
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] text-white py-20 px-6">
       <div className="max-w-[1200px] mx-auto space-y-8">
-        <ProfileHeader user={user} />
+        <ProfileHeader user={transformedUser} />
         
         <Tabs defaultValue="profile" className="mt-12">
           <TabsList className="grid w-full grid-cols-3 bg-black/50 backdrop-blur-lg rounded-xl p-1 border border-neutral-800">
@@ -65,15 +76,15 @@ export default function ProfilePage() {
           </TabsList>
 
           <TabsContent value="profile" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
-            <ProfileEdit user={user} />
+            <ProfileEdit user={transformedUser} />
           </TabsContent>
 
           <TabsContent value="subscription" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
-            <SubscriptionManager user={user} />
+            <SubscriptionManager user={transformedUser} />
           </TabsContent>
 
           <TabsContent value="settings" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
-            <ProfileSettings user={user} />
+            <ProfileSettings user={transformedUser} />
           </TabsContent>
         </Tabs>
       </div>

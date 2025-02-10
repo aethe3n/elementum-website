@@ -1,8 +1,10 @@
-export interface User {
+export interface AppUser {
   id: string
   name?: string
   email: string
   plan: 'basic' | 'premium'
-  createdAt: string | Date
-  lastLogin: string | Date
-} 
+  createdAt: string
+  lastLogin: string
+}
+
+// Add any other types needed for the application here 

@@ -1,14 +1,14 @@
 "use client"
 
 import { useState } from 'react'
-import { User } from '@/lib/types'
+import { AppUser } from "@/lib/types"
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface ProfileSettingsProps {
-  user: User
+  user: AppUser
 }
 
 export default function ProfileSettings({ user }: ProfileSettingsProps) {

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { User } from 'firebase/auth'
+import { AppUser } from "@/lib/types"
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
@@ -14,7 +14,7 @@ import {
 import { Check } from 'lucide-react'
 
 interface SubscriptionManagerProps {
-  user: User
+  user: AppUser
 }
 
 interface Plan {

@@ -1,19 +1,22 @@
 "use client"
 
 import { useState } from 'react'
-import { User } from '@/lib/types'
+import { AppUser } from '@/lib/types'
 import { Button } from '@/components/ui/button'
-import { Badge } from '../ui/badge'
+import { Badge } from '@/components/ui/badge'
 import { Settings } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface ProfileHeaderProps {
-  user: User
+  user: AppUser
 }
 
 export default function ProfileHeader({ user }: ProfileHeaderProps) {
   const router = useRouter()
-  const memberSince = user.createdAt ? new Date(user.createdAt) : new Date()
+  const memberSince = new Date(user.createdAt).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric'
+  })
   const accountType = user.plan === 'premium' ? 'Premium' : 'Basic'
 
   return (
@@ -33,7 +36,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
       <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-neutral-400">
         <div className="flex items-center gap-2">
           <span>Member since:</span>
-          <span className="text-white">{memberSince.toLocaleDateString()}</span>
+          <span className="text-white">{memberSince}</span>
         </div>
         <div className="flex items-center gap-2">
           <span>Last login:</span>
