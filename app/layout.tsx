@@ -61,6 +61,7 @@ export default function RootLayout({
                 <Link href="/about-us" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">About Us</Link>
                 <Link href="/services" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">Services</Link>
                 <Link href="/latest-insights" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">Latest Insights</Link>
+                <Link href="/blog" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">Blog</Link>
                 <Link href="/market-ai" className="text-sm font-light text-neutral-200 hover:text-[#B87D3B] transition-colors tracking-wide">Market AI</Link>
                 <Button size="sm" className="rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white font-light tracking-wide px-6">
                   <Link href="/get-started">Get Started</Link>

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { NewsArticle, getLatestNews } from "@/lib/news-service"
 import { ServiceCard } from "../components/service-card"
+import ProjectUpdates from '@/components/ProjectUpdates'
 
 const cities = [
   // Americas
@@ -399,8 +400,11 @@ export default function Page() {
               </Button>
             </div>
           </div>
-                  </div>
-                </div>
+        </div>
+      </div>
+
+      {/* Project Updates Section */}
+      <ProjectUpdates />
 
       {/* Services Section */}
       <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
@@ -408,7 +412,7 @@ export default function Page() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Our Services</h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">Comprehensive trading and financial solutions tailored to your business needs</p>
-                    </div>
+          </div>
           <div className="grid md:grid-cols-2 gap-12">
             {/* Precious Metals */}
             <div className="space-y-8">
@@ -443,7 +447,7 @@ export default function Page() {
                 ]}
                 href="/services/food-products"
               />
-                      </div>
+            </div>
 
             <div className="space-y-8">
               <ServiceCard
@@ -452,7 +456,7 @@ export default function Page() {
                 icon={
                   <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                          </svg>
+                  </svg>
                 }
                 features={[
                   "Competitive Rates",
@@ -478,9 +482,9 @@ export default function Page() {
                 href="/services/petroleum-services"
               />
             </div>
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
       {/* About Us Summary Section */}
       <section className="py-20 px-6 relative">
@@ -488,37 +492,37 @@ export default function Page() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Who We Are</h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">Your trusted partner in global trade and financial solutions</p>
-            </div>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="glimmer-card p-8 hover-float">
               <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
                 <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                  </div>
+                </svg>
+              </div>
               <h3 className="text-xl font-bold mb-4 text-white">Our Story</h3>
-                  <p className="text-neutral-400">
+              <p className="text-neutral-400">
                 Founded on principles of integrity and excellence, bridging markets and creating opportunities worldwide.
-                  </p>
-                </div>
+              </p>
+            </div>
 
             <div className="glimmer-card p-8 hover-float">
               <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
                 <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
-                    </svg>
-                  </div>
+                </svg>
+              </div>
               <h3 className="text-xl font-bold mb-4 text-white">Our Mission</h3>
-                  <p className="text-neutral-400">
+              <p className="text-neutral-400">
                 Empowering businesses through secure, efficient, and innovative trading solutions.
-                  </p>
-                </div>
+              </p>
+            </div>
 
             <div className="glimmer-card p-8 hover-float">
               <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
                 <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                    </svg>
+                </svg>
               </div>
               <h3 className="text-xl font-bold mb-4 text-white">Global Vision</h3>
               <p className="text-neutral-400">
@@ -534,8 +538,8 @@ export default function Page() {
             >
               <Link href="/about-us">Learn More About Us</Link>
             </Button>
-                </div>
-              </div>
+          </div>
+        </div>
       </section>
 
       {/* Blog/News Section */}
@@ -544,7 +548,7 @@ export default function Page() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Latest Insights</h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">Stay informed with the latest updates in global trade and finance</p>
-                  </div>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {articles.map((article, index) => (
               <div key={index} className="glimmer-card p-6 hover-float">
@@ -576,7 +580,7 @@ export default function Page() {
                     Read More
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
+                    </svg>
                   </Link>
                 </div>
               </div>
