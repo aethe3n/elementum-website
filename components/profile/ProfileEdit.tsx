@@ -92,116 +92,114 @@ export default function ProfileEdit({ user }: ProfileEditProps) {
 
   return (
     <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
+        <p className="text-neutral-400">Update your profile information below.</p>
+      </div>
+
       {/* Save Status */}
       {saveStatus === 'saving' && (
-        <Alert className="bg-[#B87D3B]/10 border-[#B87D3B]">
+        <Alert className="bg-[#B87D3B]/10 border-[#B87D3B] rounded-xl">
           <AlertDescription>Saving changes...</AlertDescription>
         </Alert>
       )}
       {saveStatus === 'saved' && (
-        <Alert className="bg-green-900/10 border-green-900">
+        <Alert className="bg-green-900/10 border-green-900 rounded-xl">
           <AlertDescription>Changes saved successfully!</AlertDescription>
         </Alert>
       )}
       {saveStatus === 'error' && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="rounded-xl">
           <AlertDescription>Failed to save changes. Please try again.</AlertDescription>
         </Alert>
       )}
 
-      {/* Basic Information */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-[#B87D3B]">Basic Information</h2>
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="displayName">Display Name</Label>
-            <Input
-              id="displayName"
-              value={profileData.displayName}
-              onChange={(e) => handleChange('displayName', e.target.value)}
-              className="bg-neutral-900 border-neutral-800"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              value={profileData.bio}
-              onChange={(e) => handleChange('bio', e.target.value)}
-              className="bg-neutral-900 border-neutral-800 min-h-[100px]"
-              maxLength={500}
-            />
-            <p className="text-xs text-neutral-400">
-              {profileData.bio.length}/500 characters
-            </p>
-          </div>
+      <form className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="displayName">Display Name</Label>
+          <Input
+            id="displayName"
+            value={profileData.displayName}
+            onChange={(e) => handleChange('displayName', e.target.value)}
+            className="rounded-lg bg-black/50 border-neutral-800"
+          />
         </div>
-      </div>
 
-      {/* Professional Background */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-[#B87D3B]">Professional Background</h2>
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="background">Professional Background</Label>
-            <Textarea
-              id="background"
-              value={profileData.background}
-              onChange={(e) => handleChange('background', e.target.value)}
-              className="bg-neutral-900 border-neutral-800"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="tradingExperience">Trading Experience</Label>
-            <Select
-              value={profileData.tradingExperience}
-              onValueChange={(value) => handleChange('tradingExperience', value)}
-            >
-              <SelectTrigger className="bg-neutral-900 border-neutral-800">
-                <SelectValue placeholder="Select experience level" />
-              </SelectTrigger>
-              <SelectContent>
-                {experienceLevels.map((level) => (
-                  <SelectItem key={level} value={level}>
-                    {level}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="bio">Bio</Label>
+          <Textarea
+            id="bio"
+            value={profileData.bio}
+            onChange={(e) => handleChange('bio', e.target.value)}
+            className="rounded-lg bg-black/50 border-neutral-800 min-h-[100px]"
+            maxLength={500}
+          />
+          <p className="text-xs text-neutral-400">
+            {profileData.bio.length}/500 characters
+          </p>
         </div>
-      </div>
 
-      {/* Market Preferences */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-[#B87D3B]">Market Preferences</h2>
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <Label>Preferred Markets</Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {marketTypes.map((market) => (
-                <Button
-                  key={market}
-                  variant="outline"
-                  className={`border-[#B87D3B] ${
-                    profileData.preferredMarkets.includes(market)
-                      ? 'bg-[#B87D3B] text-white'
-                      : 'text-[#B87D3B] hover:bg-[#B87D3B]/10'
-                  }`}
-                  onClick={() => {
-                    const markets = profileData.preferredMarkets.includes(market)
-                      ? profileData.preferredMarkets.filter((m) => m !== market)
-                      : [...profileData.preferredMarkets, market]
-                    handleChange('preferredMarkets', markets)
-                  }}
-                >
-                  {market}
-                </Button>
+        <div className="space-y-2">
+          <Label htmlFor="background">Professional Background</Label>
+          <Textarea
+            id="background"
+            value={profileData.background}
+            onChange={(e) => handleChange('background', e.target.value)}
+            className="rounded-lg bg-black/50 border-neutral-800"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="tradingExperience">Trading Experience</Label>
+          <Select
+            value={profileData.tradingExperience}
+            onValueChange={(value) => handleChange('tradingExperience', value)}
+          >
+            <SelectTrigger className="rounded-lg bg-black/50 border-neutral-800">
+              <SelectValue placeholder="Select experience level" />
+            </SelectTrigger>
+            <SelectContent>
+              {experienceLevels.map((level) => (
+                <SelectItem key={level} value={level}>
+                  {level}
+                </SelectItem>
               ))}
-            </div>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Preferred Markets</Label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {marketTypes.map((market) => (
+              <Button
+                key={market}
+                variant="outline"
+                className={`rounded-lg border-[#B87D3B] ${
+                  profileData.preferredMarkets.includes(market)
+                    ? 'bg-[#B87D3B] text-white'
+                    : 'text-[#B87D3B] hover:bg-[#B87D3B]/10'
+                }`}
+                onClick={() => {
+                  const markets = profileData.preferredMarkets.includes(market)
+                    ? profileData.preferredMarkets.filter((m) => m !== market)
+                    : [...profileData.preferredMarkets, market]
+                  handleChange('preferredMarkets', markets)
+                }}
+              >
+                {market}
+              </Button>
+            ))}
           </div>
         </div>
-      </div>
+
+        <Button 
+          type="submit" 
+          className="w-full rounded-lg bg-[#B87D3B] hover:bg-[#B87D3B]/80"
+        >
+          {isSaving ? 'Updating...' : 'Update Profile'}
+        </Button>
+      </form>
     </div>
   )
 } 

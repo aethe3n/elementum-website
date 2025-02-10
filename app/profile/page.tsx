@@ -39,40 +39,40 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] text-white py-20 px-6">
-      <div className="max-w-[1200px] mx-auto">
+      <div className="max-w-[1200px] mx-auto space-y-8">
         <ProfileHeader user={user} />
         
         <Tabs defaultValue="profile" className="mt-12">
-          <TabsList className="grid w-full grid-cols-3 bg-black/50 rounded-lg p-1">
+          <TabsList className="grid w-full grid-cols-3 bg-black/50 backdrop-blur-lg rounded-xl p-1 border border-neutral-800">
             <TabsTrigger 
               value="profile"
-              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white rounded-lg"
             >
               Profile
             </TabsTrigger>
             <TabsTrigger 
               value="subscription"
-              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white rounded-lg"
             >
               Subscription
             </TabsTrigger>
             <TabsTrigger 
               value="settings"
-              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white"
+              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white rounded-lg"
             >
               Settings
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="profile">
+          <TabsContent value="profile" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
             <ProfileEdit user={user} />
           </TabsContent>
 
-          <TabsContent value="subscription">
+          <TabsContent value="subscription" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
             <SubscriptionManager user={user} />
           </TabsContent>
 
-          <TabsContent value="settings">
+          <TabsContent value="settings" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
             <ProfileSettings user={user} />
           </TabsContent>
         </Tabs>

@@ -20,23 +20,20 @@ export function middleware(request: NextRequest) {
   // Log request details
   console.log('Request path:', request.nextUrl.pathname)
 
-  // Skip middleware for API routes
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    return NextResponse.next()
-  }
-
-  // Handle root path
-  if (request.nextUrl.pathname === '/') {
+  // Skip middleware for API routes and static files
+  if (request.nextUrl.pathname.startsWith('/api/') || 
+      request.nextUrl.pathname.startsWith('/_next/') ||
+      request.nextUrl.pathname === '/favicon.ico') {
     return NextResponse.next()
   }
 
   // Get response
   const response = NextResponse.next()
 
-  // Add security headers
+  // Add security headers with updated CSP for Firebase
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googleapis.com https://*.gstatic.com https://*.google.com https://apis.google.com https://*.vercel-scripts.com https://*.vercel-analytics.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googleapis.com https://*.gstatic.com https://*.google.com https://apis.google.com https://*.firebaseapp.com https://*.vercel-scripts.com https://*.vercel-analytics.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.gstatic.com;
     font-src 'self' https://fonts.gstatic.com;
     img-src 'self' data: blob: * https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.elementumglobal.com https://elementumglobal.com;
@@ -54,6 +51,7 @@ export function middleware(request: NextRequest) {
       https://*.vercel-analytics.com
       http://localhost:*;
     form-action 'self';
+    worker-src 'self' blob:;
   `.replace(/\s{2,}/g, ' ').trim()
 
   // Set security headers

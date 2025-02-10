@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from 'react'
-import { User } from 'firebase/auth'
+import { User } from '@/lib/types'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '../ui/badge'
 import { Settings } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -13,33 +13,31 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ user }: ProfileHeaderProps) {
   const router = useRouter()
-  const memberSince = user.metadata.creationTime ? new Date(user.metadata.creationTime) : new Date()
-  const accountType = 'Basic' // This should come from your user data in Firestore
+  const memberSince = user.createdAt ? new Date(user.createdAt) : new Date()
+  const accountType = user.plan === 'premium' ? 'Premium' : 'Basic'
 
   return (
-    <div className="bg-black/50 rounded-lg p-8 backdrop-blur-lg border border-neutral-800">
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        {/* User Information */}
-        <div className="flex-1 text-center md:text-left">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold">{user.displayName || user.email?.split('@')[0] || 'User'}</h1>
-            <Badge variant="outline" className="bg-[#B87D3B]/10 text-[#B87D3B] border-[#B87D3B]">
-              {accountType}
-            </Badge>
-          </div>
-          <p className="text-neutral-400 mb-4">{user.email}</p>
-          <div className="flex flex-wrap gap-4 text-sm text-neutral-400">
-            <div>
-              <span className="font-medium text-white">Member since:</span>{' '}
-              {memberSince.toLocaleDateString()}
-            </div>
-            <div>
-              <span className="font-medium text-white">Last login:</span>{' '}
-              {user.metadata.lastSignInTime
-                ? new Date(user.metadata.lastSignInTime).toLocaleDateString()
-                : 'Never'}
-            </div>
-          </div>
+    <div className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
+      <div className="flex items-center gap-4">
+        <div className="bg-[#B87D3B] rounded-xl w-16 h-16 flex items-center justify-center text-2xl font-bold">
+          {user.name?.[0]?.toUpperCase() || 'U'}
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold">{user.name || 'User'}</h1>
+          <p className="text-neutral-400">{user.email}</p>
+        </div>
+        <Badge variant="outline" className="ml-auto rounded-lg border-[#B87D3B] text-[#B87D3B]">
+          {accountType}
+        </Badge>
+      </div>
+      <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-neutral-400">
+        <div className="flex items-center gap-2">
+          <span>Member since:</span>
+          <span className="text-white">{memberSince.toLocaleDateString()}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span>Last login:</span>
+          <span className="text-white">{new Date(user.lastLogin).toLocaleDateString()}</span>
         </div>
       </div>
     </div>
