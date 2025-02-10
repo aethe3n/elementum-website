@@ -20,16 +20,16 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
   const accountType = user.plan === 'premium' ? 'Premium' : 'Basic'
 
   return (
-    <div className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
+    <div className="bg-black/50 backdrop-blur-lg rounded-2xl p-8 border border-neutral-800">
       <div className="flex items-center gap-4">
-        <div className="bg-[#B87D3B] rounded-xl w-16 h-16 flex items-center justify-center text-2xl font-bold">
+        <div className="bg-[#B87D3B] rounded-2xl w-16 h-16 flex items-center justify-center text-2xl font-bold">
           {user.name?.[0]?.toUpperCase() || 'U'}
         </div>
         <div>
           <h1 className="text-2xl font-bold">{user.name || 'User'}</h1>
           <p className="text-neutral-400">{user.email}</p>
         </div>
-        <Badge variant="outline" className="ml-auto rounded-lg border-[#B87D3B] text-[#B87D3B]">
+        <Badge variant="outline" className="ml-auto rounded-2xl border-[#B87D3B] text-[#B87D3B] px-4 py-1">
           {accountType}
         </Badge>
       </div>
