@@ -90,7 +90,7 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
   return (
     <div className="space-y-8">
       {/* Promotional Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#2C1810] via-[#4A2817] to-[#2C1810] p-6 rounded-lg border border-[#B87D3B]">
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#2C1810] via-[#4A2817] to-[#2C1810] p-6 rounded-3xl border border-[#B87D3B]">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10"></div>
         <div className="relative text-center">
           <p className="text-2xl font-bold mb-2 bg-gradient-to-r from-[#FFB259] via-[#B87D3B] to-[#FFB259] bg-clip-text text-transparent">
@@ -124,7 +124,7 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
         {plans.map((plan) => (
           <Card 
             key={plan.id}
-            className={`relative bg-black/50 border-neutral-800 ${
+            className={`relative bg-black/50 border-neutral-800 rounded-3xl ${
               plan.isPopular ? 'border-[#B87D3B]' : ''
             }`}
           >
@@ -156,7 +156,7 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
               </ul>
 
               <Button
-                className={`w-full ${
+                className={`w-full rounded-full ${
                   currentPlan === plan.id
                     ? 'bg-neutral-700 cursor-default'
                     : 'bg-[#B87D3B] hover:bg-[#96652F]'
@@ -164,14 +164,14 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
                 disabled={isLoading || currentPlan === plan.id}
                 onClick={() => handleUpgrade(plan.id)}
               >
-                {currentPlan === plan.id ? 'Current Plan' : `Upgrade to ${plan.name}`}
+                {currentPlan === plan.id ? 'Current Plan' : 'Coming Soon'}
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card className="bg-black/50 border-neutral-800">
+      <Card className="bg-black/50 border-neutral-800 rounded-3xl">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-[#B87D3B]">
             Subscription Details
