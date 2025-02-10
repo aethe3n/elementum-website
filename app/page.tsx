@@ -151,7 +151,7 @@ export default function Page() {
           height: 120%;
           left: -10%;
           top: -10%;
-          background: radial-gradient(circle at center, rgba(184, 125, 59, 0.15) 0%, transparent 70%);
+          background: radial-gradient(circle at center, rgba(252, 157, 68, 0.15) 0%, transparent 70%);
           animation: rotate 60s linear infinite;
           transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -160,8 +160,8 @@ export default function Page() {
           position: absolute;
           inset: -20px;
           background: 
-            radial-gradient(circle at 20% 20%, rgba(184, 125, 59, 0.08) 0%, transparent 70%),
-            radial-gradient(circle at 80% 80%, rgba(184, 125, 59, 0.08) 0%, transparent 70%);
+            radial-gradient(circle at 20% 20%, rgba(252, 157, 68, 0.08) 0%, transparent 70%),
+            radial-gradient(circle at 80% 80%, rgba(252, 157, 68, 0.08) 0%, transparent 70%);
           filter: blur(80px);
           opacity: 0.7;
           z-index: 0;
@@ -186,16 +186,16 @@ export default function Page() {
           border-radius: 16px;
           overflow: hidden;
           backdrop-filter: blur(10px);
-          border: 1px solid rgba(184, 125, 59, 0.1);
+          border: 1px solid rgba(252, 157, 68, 0.1);
           transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .glimmer-card:hover {
           transform: translateY(-8px) scale(1.02);
           box-shadow: 
-            0 20px 40px -20px rgba(184, 125, 59, 0.3),
-            0 0 20px rgba(184, 125, 59, 0.1);
-          border-color: rgba(184, 125, 59, 0.3);
+            0 20px 40px -20px rgba(252, 157, 68, 0.3),
+            0 0 20px rgba(252, 157, 68, 0.1);
+          border-color: rgba(252, 157, 68, 0.3);
           background: rgba(0, 0, 0, 0.4);
         }
         
@@ -206,9 +206,9 @@ export default function Page() {
           background: linear-gradient(
             90deg,
             transparent,
-            rgba(184, 125, 59, 0.15),
-            rgba(184, 125, 59, 0.25),
-            rgba(184, 125, 59, 0.15),
+            rgba(252, 157, 68, 0.15),
+            rgba(252, 157, 68, 0.25),
+            rgba(252, 157, 68, 0.15),
             transparent
           );
           background-size: 200% 100%;
@@ -229,8 +229,8 @@ export default function Page() {
         .glimmer-card:hover .service-icon-container {
           transform: scale(1.1) rotate(5deg);
           box-shadow: 
-            0 0 30px -5px rgba(184, 125, 59, 0.3),
-            inset 0 0 20px rgba(184, 125, 59, 0.2);
+            0 0 30px -5px rgba(252, 157, 68, 0.3),
+            inset 0 0 20px rgba(252, 157, 68, 0.2);
         }
 
         @keyframes nodeGlow {
@@ -283,7 +283,7 @@ export default function Page() {
 
         .trade-route:hover {
           opacity: 0.8;
-          filter: drop-shadow(0 0 12px rgba(184, 125, 59, 0.6));
+          filter: drop-shadow(0 0 12px rgba(252, 157, 68, 0.6));
           stroke-width: 2;
         }
 
@@ -329,7 +329,7 @@ export default function Page() {
                 cy={city.y + 40}
                 r={city.size}
                 className="city-node"
-                fill="#B87D3B"
+                fill="#BF946B"
                 style={{ 
                   animationDelay: `${index * 200}ms`,
                   '--base-size': `${city.size}px`
@@ -363,7 +363,7 @@ export default function Page() {
                 key={`route-${i}`}
                 className="trade-route"
                 d={`M${start.x},${start.y + 40} Q${midX},${midY} ${end.x},${end.y + 40}`}
-                stroke="#B87D3B"
+                stroke="#BF946B"
                 strokeWidth="1"
                 fill="none"
                 style={{ 
@@ -375,27 +375,33 @@ export default function Page() {
         </svg>
 
         {/* Hero Content */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center px-6 scroll-animation">
-            <h1 className="text-6xl md:text-7xl tracking-tight font-light bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent" style={{ letterSpacing: '-0.02em', fontFeatureSettings: "'ss02' on, 'ss01' on" }}>
-              ELEMENTUM<br/>
-              <span className="font-extralight tracking-widest" style={{ letterSpacing: '0.05em' }}>GLOBAL</span>
-            </h1>
-            <div className="inline-flex items-center px-3 py-1 text-sm text-[#B87D3B] mb-8 glimmer-pill">
+        <div className="absolute inset-0 flex items-center justify-center -translate-y-40">
+          <div className="text-center px-6 scroll-animation space-y-4">
+            <div className="relative h-[750px] w-[750px] mx-auto mb-4">
+              <Image
+                src="/images/Elementum Global-1000x1000.png"
+                alt="Elementum Global"
+                fill
+                className="object-contain filter contrast-125 brightness-110 sepia-[0.1] hue-rotate-[5deg]"
+                priority
+                style={{ filter: 'brightness(0.95) sepia(0.2) hue-rotate(355deg) saturate(1.5)' }}
+              />
+            </div>
+            <div className="inline-flex items-center px-3 py-1 text-sm text-[#BF946B] mb-2 glimmer-pill">
               <span>Global Trading & Financial Services</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight fade-in delay-1 animate-gradient bg-gradient-to-r from-[#C89D6D] via-[#B87D3B] to-[#96652F] bg-[length:200%_auto] bg-clip-text text-transparent transition-all duration-300 hover:scale-[1.02]" style={{ textShadow: '0 0 30px rgba(184,125,59,0.2)', letterSpacing: '-0.02em' }}>
+            <h2 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight fade-in delay-1 animate-gradient bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-[length:200%_auto] bg-clip-text text-transparent transition-all duration-300 hover:scale-[1.02]" style={{ textShadow: '0 0 30px rgba(252,157,68,0.2)', letterSpacing: '-0.02em' }}>
               Transform Your Business<br />
               With Global Solutions
             </h2>
-            <p className="text-xl text-neutral-400 mb-8 max-w-2xl mx-auto fade-in delay-2">
+            <p className="text-xl text-neutral-400 mb-4 max-w-2xl mx-auto fade-in delay-2">
               Empowering businesses with secure and efficient global trading capabilities.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-12 py-8 text-xl font-bold" asChild>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center fade-in delay-3">
+              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#FC9D44] hover:bg-[#BF946B] text-white px-12 py-8 text-xl font-bold" asChild>
                 <Link href="/get-started">Schedule Consultation</Link>
               </Button>
-              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-8 py-6 text-lg font-bold" asChild>
+              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#FC9D44] hover:bg-[#BF946B] text-white px-8 py-6 text-lg font-bold" asChild>
                 <Link href="/market-ai">Market Assistant</Link>
               </Button>
             </div>
@@ -410,7 +416,7 @@ export default function Page() {
       <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
         <div className="max-w-[1200px] mx-auto scroll-animation">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Our Services</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">Our Services</h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">Comprehensive trading and financial solutions tailored to your business needs</p>
           </div>
           <div className="grid md:grid-cols-2 gap-12">
@@ -420,7 +426,7 @@ export default function Page() {
                 title="Precious Metals"
                 description="Global trading solutions for gold, silver, and other precious metals. We facilitate secure and efficient transactions worldwide."
                 icon={
-                  <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                 }
@@ -436,7 +442,7 @@ export default function Page() {
                 title="Food Products"
                 description="International trade and distribution of agricultural and food commodities, ensuring quality and reliability."
                 icon={
-                  <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h18v18H3z M12 8v8 M8 12h8" />
                   </svg>
                 }
@@ -454,7 +460,7 @@ export default function Page() {
                 title="OTC Trading"
                 description="Secure and efficient cryptocurrency exchange services with competitive rates and personalized support."
                 icon={
-                  <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 }
@@ -470,7 +476,7 @@ export default function Page() {
                 title="Petroleum Services"
                 description="Comprehensive petroleum trading and distribution solutions, ensuring reliable supply chain and competitive pricing in global energy markets."
                 icon={
-                  <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                   </svg>
                 }
@@ -490,13 +496,13 @@ export default function Page() {
       <section className="py-20 px-6 relative">
         <div className="max-w-[1200px] mx-auto scroll-animation">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Who We Are</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">Who We Are</h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">Your trusted partner in global trade and financial solutions</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="glimmer-card p-8 hover-float">
-              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
-                <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#BF946B]/10">
+                <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
@@ -507,8 +513,8 @@ export default function Page() {
             </div>
 
             <div className="glimmer-card p-8 hover-float">
-              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
-                <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#BF946B]/10">
+                <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
                 </svg>
               </div>
@@ -519,8 +525,8 @@ export default function Page() {
             </div>
 
             <div className="glimmer-card p-8 hover-float">
-              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#B87D3B]/10">
-                <svg className="w-12 h-12 text-[#B87D3B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#BF946B]/10">
+                <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
               </div>
@@ -533,7 +539,7 @@ export default function Page() {
           <div className="text-center mt-8">
             <Button 
               variant="outline" 
-              className="rounded-full border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10"
+              className="rounded-full border-[#BF946B] text-[#BF946B] hover:bg-[#BF946B]/10"
               asChild
             >
               <Link href="/about-us">Learn More About Us</Link>
@@ -546,13 +552,13 @@ export default function Page() {
       <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
         <div className="max-w-[1200px] mx-auto scroll-animation">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">Latest Insights</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">Latest Insights</h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">Stay informed with the latest updates in global trade and finance</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {articles.map((article, index) => (
               <div key={index} className="glimmer-card p-6 hover-float">
-                <div className="aspect-video mb-4 bg-[#B87D3B]/10 rounded-lg overflow-hidden">
+                <div className="aspect-video mb-4 bg-[#BF946B]/10 rounded-lg overflow-hidden">
                   {article.urlToImage ? (
                     <Image
                       src={article.urlToImage}
@@ -562,11 +568,11 @@ export default function Page() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-[#B87D3B]/20 to-transparent" />
+                    <div className="w-full h-full bg-gradient-to-br from-[#BF946B]/20 to-transparent" />
                   )}
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm text-[#B87D3B] px-3 py-1 rounded-full bg-[#B87D3B]/10 inline-block">
+                  <p className="text-sm text-[#BF946B] px-3 py-1 rounded-full bg-[#BF946B]/10 inline-block">
                     {article.category}
                   </p>
                   <h3 className="text-lg font-semibold text-white line-clamp-2">{article.title}</h3>
@@ -575,7 +581,7 @@ export default function Page() {
                   </p>
                   <Link 
                     href="/latest-insights"
-                    className="text-sm text-[#B87D3B] hover:text-[#96652F] transition-colors inline-flex items-center gap-1"
+                    className="text-sm text-[#BF946B] hover:text-[#FC9D44] transition-colors inline-flex items-center gap-1"
                   >
                     Read More
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -589,7 +595,7 @@ export default function Page() {
           <div className="text-center mt-8">
             <Button 
               variant="outline" 
-              className="rounded-full border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10"
+              className="rounded-full border-[#BF946B] text-[#BF946B] hover:bg-[#BF946B]/10"
               asChild
             >
               <Link href="/latest-insights">View All Articles</Link>
@@ -601,7 +607,7 @@ export default function Page() {
       {/* CTA Section */}
       <section className="py-20 px-6 relative">
         <div className="max-w-[800px] mx-auto text-center scroll-animation">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">
             Ready to Get Started?
           </h2>
           <p className="text-neutral-400 mb-8">
@@ -609,7 +615,7 @@ export default function Page() {
           </p>
           <Button 
             size="lg" 
-            className="rounded-full bg-[#B87D3B] hover:bg-[#96652F] text-white px-8 py-6 text-lg"
+            className="rounded-full bg-[#FC9D44] hover:bg-[#BF946B] text-white px-8 py-6 text-lg"
             asChild
           >
             <Link href="/get-started">Schedule a Consultation</Link>

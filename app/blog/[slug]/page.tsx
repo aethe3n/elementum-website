@@ -59,7 +59,20 @@ export default function BlogPostPage() {
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] text-white py-20 px-6">
-      <article className="max-w-[800px] mx-auto">
+      {/* Background Pattern */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-radial from-[#B87D3B]/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 opacity-30">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#B87D3B" strokeWidth="0.5" strokeOpacity="0.2" />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
+      </div>
+
+      <article className="relative z-10 max-w-[800px] mx-auto">
         <Link
           href="/blog"
           className="inline-flex items-center text-[#B87D3B] hover:text-[#96652F] mb-8"
@@ -69,12 +82,13 @@ export default function BlogPostPage() {
         </Link>
 
         {post.coverImage && (
-          <div className="relative h-[200px] w-[200px] mx-auto rounded-lg overflow-hidden mb-12">
+          <div className="relative h-[400px] w-[400px] mx-auto mb-12">
             <Image
               src={post.coverImage}
               alt={post.title}
               fill
               className="object-contain"
+              priority
             />
           </div>
         )}
@@ -103,10 +117,10 @@ export default function BlogPostPage() {
           </div>
         </div>
 
-        <div className="prose prose-invert max-w-none prose-headings:text-[#B87D3B] prose-a:text-[#B87D3B] hover:prose-a:text-[#96652F] prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-p:leading-relaxed prose-li:text-base">
+        <div className="prose prose-invert max-w-none prose-headings:text-[#B87D3B] prose-a:text-[#B87D3B] hover:prose-a:text-[#96652F] prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-p:leading-relaxed prose-li:text-base bg-black/30 rounded-lg p-8 shadow-lg border border-neutral-800">
           <div 
             dangerouslySetInnerHTML={{ __html: post.content }}
-            className="space-y-6"
+            className="space-y-6 [&>h1]:font-bold [&>h2]:font-bold [&>h3]:font-bold [&>h1]:mb-6 [&>h2]:mb-4 [&>h3]:mb-3 [&>p]:text-neutral-300 [&>ul]:text-neutral-300 [&>h2]:text-2xl [&>h3]:text-xl [&>h2]:mt-8 [&>h3]:mt-6 [&>h1]:pb-4 [&>h1]:border-b [&>h1]:border-[#B87D3B]/20"
           />
         </div>
 
@@ -115,7 +129,7 @@ export default function BlogPostPage() {
             {post.tags.map((tag) => (
               <div
                 key={tag}
-                className="flex items-center text-sm text-[#B87D3B]"
+                className="flex items-center text-sm text-[#B87D3B] bg-[#B87D3B]/5 px-3 py-1 rounded-full"
               >
                 <Tag className="w-4 h-4 mr-1" />
                 {tag}

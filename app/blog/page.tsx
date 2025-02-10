@@ -56,7 +56,7 @@ export default function BlogPage() {
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#B87D3B] via-[#96652F] to-[#B87D3B] bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">
             Latest Updates & Insights
           </h1>
           <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
@@ -67,13 +67,13 @@ export default function BlogPage() {
         {/* Search and Filter */}
         <div className="mb-12 space-y-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#BF946B]" />
             <Input
               type="text"
               placeholder="Search posts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-black/30 border-neutral-800"
+              className="pl-10 bg-black/30 border-[#BF946B]/20 rounded-full focus:border-[#FC9D44] focus:ring-[#FC9D44] transition-colors"
             />
           </div>
 
@@ -83,10 +83,10 @@ export default function BlogPage() {
                 key={category}
                 variant="outline"
                 size="sm"
-                className={`${
+                className={`rounded-full border-2 transition-all duration-300 ${
                   selectedCategory === category
-                    ? 'bg-[#B87D3B] text-white'
-                    : 'text-[#B87D3B] border-[#B87D3B] hover:bg-[#B87D3B]/10'
+                    ? 'bg-[#FC9D44] text-white border-[#FC9D44] hover:bg-[#BF946B] hover:border-[#BF946B]'
+                    : 'text-[#BF946B] border-[#BF946B] hover:bg-[#BF946B]/10'
                 }`}
                 onClick={() => setSelectedCategory(category === 'All' ? null : category)}
               >
@@ -104,9 +104,9 @@ export default function BlogPage() {
               href={`/blog/${post.slug}`}
               className="group"
             >
-              <article className="bg-black/30 rounded-lg overflow-hidden border border-neutral-800 transition-all duration-300 hover:border-[#B87D3B]/50 hover:shadow-lg hover:shadow-[#B87D3B]/5">
+              <article className="bg-black/30 rounded-2xl overflow-hidden border border-[#BF946B]/20 transition-all duration-300 hover:border-[#FC9D44]/50 hover:shadow-lg hover:shadow-[#FC9D44]/5 backdrop-blur-sm">
                 {post.coverImage && (
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden rounded-t-2xl">
                     <Image
                       src={post.coverImage}
                       alt={post.title}
@@ -117,16 +117,16 @@ export default function BlogPage() {
                 )}
                 <div className="p-6 space-y-4">
                   <div className="flex items-center gap-2 text-sm text-neutral-400">
-                    <Badge variant="outline" className="bg-[#B87D3B]/10 text-[#B87D3B] border-[#B87D3B]">
+                    <Badge variant="outline" className="bg-[#BF946B]/10 text-[#FC9D44] border-[#FC9D44] rounded-full px-3">
                       {post.category}
                     </Badge>
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-4 h-4 text-[#BF946B]" />
                       {post.readingTime}
                     </div>
                   </div>
 
-                  <h2 className="text-xl font-semibold leading-tight group-hover:text-[#B87D3B] transition-colors">
+                  <h2 className="text-xl font-semibold leading-tight group-hover:text-[#FC9D44] transition-colors">
                     {post.title}
                   </h2>
 
@@ -134,9 +134,9 @@ export default function BlogPage() {
                     {post.excerpt}
                   </p>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-neutral-800">
+                  <div className="flex items-center justify-between pt-4 border-t border-[#BF946B]/20">
                     <div className="flex items-center gap-2 text-sm">
-                      <User className="w-4 h-4 text-[#B87D3B]" />
+                      <User className="w-4 h-4 text-[#BF946B]" />
                       <span className="text-neutral-400">{post.author.name}</span>
                     </div>
                     <div className="text-sm text-neutral-400">
@@ -148,7 +148,7 @@ export default function BlogPage() {
                     {post.tags.map((tag) => (
                       <div
                         key={tag}
-                        className="flex items-center text-xs text-[#B87D3B]"
+                        className="flex items-center text-xs text-[#FC9D44] bg-[#BF946B]/5 px-2 py-1 rounded-full"
                       >
                         <Tag className="w-3 h-3 mr-1" />
                         {tag}
@@ -162,7 +162,7 @@ export default function BlogPage() {
         </div>
 
         {filteredPosts.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-12 bg-black/30 rounded-2xl border border-[#BF946B]/20 backdrop-blur-sm">
             <p className="text-neutral-400">No posts found matching your criteria.</p>
           </div>
         )}
