@@ -39,7 +39,7 @@ const plans: Plan[] = [
       'Basic market trend analysis',
       'Limited historical data access',
       'Simple price predictions',
-      '1 Premium search per day'
+      '3 searches per day'
     ]
   },
   {
@@ -58,7 +58,8 @@ const plans: Plan[] = [
       'Deep learning price forecasting',
       'Multi-factor market analysis',
       'Comprehensive historical data',
-      '3 Premium searches per day'
+      'Unlimited premium searches',
+      'AI web search enabled'
     ]
   }
 ]
@@ -100,7 +101,7 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
               <span className="font-semibold">Free Premium Access</span> until February 15th
             </p>
             <p className="text-sm text-neutral-300">
-              After Feb 15: Get a <span className="text-white font-medium">2-Week Free Trial</span> of all premium features
+              After Feb 15: Get a <span className="text-white font-medium">7-Day Free Trial</span> of all premium features
             </p>
           </div>
         </div>

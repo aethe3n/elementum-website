@@ -41,18 +41,6 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
             </div>
           </div>
         </div>
-
-        {/* Settings Button */}
-        <div>
-          <Button 
-            variant="outline" 
-            className="border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B]/10"
-            onClick={() => router.push('/settings')}
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
-        </div>
       </div>
     </div>
   )
