@@ -10,6 +10,7 @@ export function middleware(request: NextRequest) {
     const session = request.cookies.get('__session')?.value
     
     if (!session) {
+      // Store the original URL to redirect back after login
       const url = new URL('/auth/login', request.url)
       url.searchParams.set('from', request.nextUrl.pathname)
       return NextResponse.redirect(url)
