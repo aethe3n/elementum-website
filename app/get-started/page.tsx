@@ -178,12 +178,17 @@ export default function GetStartedPage() {
                       </svg>
                       elementumglobal.llc@gmail.com
                     </p>
-                    <p className="flex items-center">
-                      <svg className="w-6 h-6 text-[#B87D3B] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    <Link 
+                      href="https://x.com/ElementumGlobal"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-neutral-400 hover:text-[#B87D3B] transition-colors"
+                    >
+                      <svg className="w-6 h-6 text-[#B87D3B] mr-3" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                       </svg>
-                      +1 805 338-1909
-                    </p>
+                      Follow us on X
+                    </Link>
                   </div>
                 </div>
               </div>
