@@ -47,7 +47,8 @@ export default function LoginForm() {
           await authService.logout(); // Sign out until verified
         } else {
           // User is verified or using social login
-          router.push('/');
+          const redirectTo = searchParams.get('from') || '/';
+          router.push(redirectTo);
         }
       }
     } catch (err: any) {
@@ -66,7 +67,8 @@ export default function LoginForm() {
       if (result.error) {
         setError(result.error);
       } else {
-        router.push('/');
+        const redirectTo = searchParams.get('from') || '/';
+        router.push(redirectTo);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to sign in with Google. Please try again.');

@@ -6,9 +6,10 @@ export function middleware(request: NextRequest) {
   const protectedPaths = ['/market-ai']
   
   if (protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
-    // If user is not authenticated, redirect to login
-    const authCookie = request.cookies.get('auth')
-    if (!authCookie) {
+    // Get the token from cookies
+    const session = request.cookies.get('__session')?.value
+    
+    if (!session) {
       const url = new URL('/auth/login', request.url)
       url.searchParams.set('from', request.nextUrl.pathname)
       return NextResponse.redirect(url)
