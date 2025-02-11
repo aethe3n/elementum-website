@@ -2,36 +2,23 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/context/AuthContext'
-import ProfileHeader from '@/components/profile/ProfileHeader'
-import ProfileEdit from '@/components/profile/ProfileEdit'
-import SubscriptionManager from '@/components/profile/SubscriptionManager'
-import ProfileSettings from '@/components/profile/ProfileSettings'
+import { useAuth } from '@/lib/hooks/useAuth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SubscriptionManager } from '@/components/profile/SubscriptionManager'
 import { trackPageView } from '@/lib/utils'
-import { AppUser } from '@/lib/types'
 
 export default function ProfilePage() {
-  const { user: firebaseUser, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('profile')
 
-  // Transform Firebase user to our AppUser interface
-  const transformedUser: AppUser | null = firebaseUser ? {
-    id: firebaseUser.uid,
-    name: firebaseUser.displayName || undefined,
-    email: firebaseUser.email || '',
-    plan: 'basic' as const,
-    createdAt: firebaseUser.metadata.creationTime || new Date().toISOString(),
-    lastLogin: firebaseUser.metadata.lastSignInTime || new Date().toISOString()
-  } : null
-
   useEffect(() => {
-    if (!loading && !transformedUser) {
+    if (!loading && !user) {
       router.push('/auth/login?from=/profile')
+      return
     }
     trackPageView('/profile')
-  }, [transformedUser, loading, router])
+  }, [user, loading, router])
 
   if (loading) {
     return (
@@ -44,48 +31,62 @@ export default function ProfilePage() {
     )
   }
 
-  if (!transformedUser) {
+  if (!user) {
     return null
   }
 
   return (
-    <div className="min-h-screen bg-[#1A1A1A] text-white py-20 px-6">
-      <div className="max-w-[1200px] mx-auto space-y-8">
-        <ProfileHeader user={transformedUser} />
+    <div className="min-h-screen bg-[#1A1A1A] py-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-light text-white mb-8">Account Settings</h1>
         
-        <Tabs defaultValue="profile" className="mt-12">
-          <TabsList className="grid w-full grid-cols-3 bg-black/50 backdrop-blur-lg rounded-xl p-1 border border-neutral-800">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="bg-black/50 border-neutral-800">
             <TabsTrigger 
               value="profile"
-              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white rounded-lg"
+              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white"
             >
               Profile
             </TabsTrigger>
             <TabsTrigger 
               value="subscription"
-              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white rounded-lg"
+              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white"
             >
               Subscription
             </TabsTrigger>
-            <TabsTrigger 
-              value="settings"
-              className="data-[state=active]:bg-[#B87D3B] data-[state=active]:text-white rounded-lg"
-            >
-              Settings
-            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="profile" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
-            <ProfileEdit user={transformedUser} />
-          </TabsContent>
+          <div className="mt-8">
+            <TabsContent value="profile">
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-light text-white">Profile Information</h2>
+                  <p className="text-neutral-400">Update your account settings</p>
+                </div>
 
-          <TabsContent value="subscription" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
-            <SubscriptionManager user={transformedUser} />
-          </TabsContent>
+                <div className="grid gap-6">
+                  <div>
+                    <label className="text-sm font-medium text-white">Email</label>
+                    <p className="text-neutral-400">{user.email}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-white">Name</label>
+                    <p className="text-neutral-400">{user.displayName || 'Not set'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-white">Account Created</label>
+                    <p className="text-neutral-400">
+                      {new Date(user.metadata.creationTime).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
 
-          <TabsContent value="settings" className="bg-black/50 backdrop-blur-lg rounded-xl p-8 border border-neutral-800">
-            <ProfileSettings user={transformedUser} />
-          </TabsContent>
+            <TabsContent value="subscription">
+              <SubscriptionManager />
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>

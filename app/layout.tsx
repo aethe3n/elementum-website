@@ -7,6 +7,7 @@ import Image from "next/image"
 import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import UserProfileButton from "@/components/UserProfileButton";
+import { FeedbackButton } from '@/components/FeedbackButton';
 
 const montserrat = Montserrat({ 
   subsets: ["latin"],
@@ -25,16 +26,40 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/logo.png',
-        href: '/logo.png',
+        url: '/favicon-32x32.png',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+      {
+        url: '/favicon-16x16.png',
+        sizes: '16x16',
+        type: 'image/png',
       }
     ],
-    shortcut: '/logo.png',
-    apple: '/logo.png',
+    apple: [
+      {
+        url: '/apple-touch-icon.png',
+        sizes: '180x180',
+        type: 'image/png',
+      }
+    ],
+    other: [
+      {
+        rel: 'manifest',
+        url: '/manifest.json'
+      }
+    ]
   },
   manifest: '/manifest.json',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-  themeColor: '#1A1A1A',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#1A1A1A' },
+    { media: '(prefers-color-scheme: dark)', color: '#1A1A1A' }
+  ],
 };
 
 export default function RootLayout({
@@ -44,9 +69,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${montserrat.variable} ${inter.variable} font-sans antialiased`}>
-      <head>
-        <link rel="icon" href="/logo.png" type="image/png" />
-      </head>
       <body className="flex flex-col min-h-screen bg-[#1A1A1A] text-white">
         <AuthProvider>
           {/* Navigation */}
@@ -125,6 +147,7 @@ export default function RootLayout({
               </div>
             </div>
           </footer>
+          <FeedbackButton />
         </AuthProvider>
         <Analytics />
       </body>
