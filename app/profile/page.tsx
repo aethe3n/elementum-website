@@ -76,7 +76,7 @@ export default function ProfilePage() {
                   <div>
                     <label className="text-sm font-medium text-white">Account Created</label>
                     <p className="text-neutral-400">
-                      {new Date(user.metadata.creationTime).toLocaleDateString()}
+                      {user.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : 'Not available'}
                     </p>
                   </div>
                 </div>

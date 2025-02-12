@@ -13,7 +13,7 @@ import {
   createCustomerPortalLink,
   type Subscription 
 } from '@/lib/firebase/stripe'
-import { STRIPE_PLANS } from '@/lib/stripe/config'
+import { STRIPE_PLANS, type StripePlan } from '@/lib/stripe/config'
 
 export function SubscriptionManager() {
   const { user } = useAuth()
@@ -40,8 +40,10 @@ export function SubscriptionManager() {
     try {
       // Find the next tier plan
       const plans = Object.values(STRIPE_PLANS)
-      const currentPlanIndex = plans.findIndex(plan => plan.id === subscription?.items.data[0].price.id)
-      const nextPlan = plans[currentPlanIndex + 1]
+      const currentPlanIndex = plans.findIndex(
+        (plan: StripePlan) => plan.id === subscription?.items.data[0].price.id
+      )
+      const nextPlan = plans[currentPlanIndex + 1] as StripePlan | undefined
       
       if (nextPlan) {
         const sessionId = await createStripeCheckoutSession(
@@ -79,7 +81,7 @@ export function SubscriptionManager() {
   }
 
   const currentPlan = subscription ? Object.values(STRIPE_PLANS).find(
-    plan => plan.id === subscription.items.data[0].price.id
+    (plan: StripePlan) => plan.id === subscription.items.data[0].price.id
   ) : null
 
   return (
@@ -107,9 +109,14 @@ export function SubscriptionManager() {
               </CardTitle>
               <Badge
                 variant={
-                  subscription.status === 'active' ? 'success' :
+                  subscription.status === 'active' ? 'default' :
                   subscription.status === 'canceled' ? 'destructive' :
-                  'warning'
+                  'secondary'
+                }
+                className={
+                  subscription.status === 'active' ? 'bg-emerald-500' :
+                  subscription.status === 'canceled' ? 'bg-red-500' :
+                  'bg-yellow-500'
                 }
               >
                 {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}

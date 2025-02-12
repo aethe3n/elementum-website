@@ -5,47 +5,61 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16', // Use the latest API version
+  apiVersion: '2025-01-27.acacia',
   typescript: true,
 });
 
-export const STRIPE_PLANS = {
+export interface StripePlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  features: string[];
+}
+
+export const STRIPE_PLANS: Record<string, StripePlan> = {
   BASIC: {
+    id: process.env.STRIPE_BASIC_PRICE_ID!,
     name: 'Basic Plan',
-    id: process.env.STRIPE_BASIC_PRICE_ID || '',
+    description: 'Perfect for getting started with trading',
     price: 49,
     features: [
-      'Basic market analysis',
-      'Standard trading tools',
+      'Basic market analysis tools',
+      'Real-time price alerts',
+      'Daily market insights',
       'Email support',
-      'Market reports (weekly)',
-    ],
+      'Basic API access'
+    ]
   },
   PRO: {
+    id: process.env.STRIPE_PRO_PRICE_ID!,
     name: 'Pro Plan',
-    id: process.env.STRIPE_PRO_PRICE_ID || '',
+    description: 'Advanced features for serious traders',
     price: 99,
     features: [
-      'Advanced market analysis',
-      'Premium trading tools',
+      'All Basic features',
+      'Advanced technical analysis',
+      'Priority API access',
+      'Custom alerts configuration',
       'Priority support',
-      'Market reports (daily)',
-      'API access',
-      'Custom alerts',
-    ],
+      'Trading signals',
+      'Portfolio tracking'
+    ]
   },
   ENTERPRISE: {
+    id: process.env.STRIPE_ENTERPRISE_PRICE_ID!,
     name: 'Enterprise Plan',
-    id: process.env.STRIPE_ENTERPRISE_PRICE_ID || '',
+    description: 'Full suite of trading tools for organizations',
     price: 299,
     features: [
-      'Full market analysis suite',
-      'Enterprise trading tools',
-      'Dedicated support',
-      'Real-time market reports',
-      'Advanced API access',
-      'Custom solutions',
-      'Account manager',
-    ],
-  },
+      'All Pro features',
+      'Dedicated account manager',
+      'Custom integration support',
+      'Advanced API features',
+      'Team collaboration tools',
+      'Custom reporting',
+      'SLA guarantees',
+      'Training sessions'
+    ]
+  }
 }; 
