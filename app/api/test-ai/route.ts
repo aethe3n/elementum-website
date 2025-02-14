@@ -39,6 +39,45 @@ async function testOpenAI() {
   }
 }
 
+async function testGroq() {
+  try {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return { success: false, error: 'GROQ API key missing' };
+    }
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'mixtral-8x7b-32768',
+        messages: [{ role: 'user', content: 'Hello, this is a test.' }],
+        temperature: 0.7,
+        max_tokens: 100
+      })
+    });
+
+    const data = await response.text();
+    console.log('GROQ Response:', data);
+
+    return {
+      success: response.ok,
+      status: response.status,
+      data: data,
+      headers: Object.fromEntries(response.headers.entries())
+    };
+  } catch (error) {
+    console.error('GROQ Test Error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
 async function testAnthropicClaude() {
   try {
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -117,17 +156,74 @@ async function testDeepSeek() {
   }
 }
 
+async function testMoonshot() {
+  try {
+    const apiKey = process.env.MOONSHOT_API_KEY;
+    if (!apiKey) {
+      return { success: false, error: 'Moonshot API key missing' };
+    }
+
+    const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'kimi-v2',
+        messages: [{ role: 'user', content: 'Hello, this is a test.' }],
+        temperature: 0.7,
+        max_tokens: 100
+      })
+    });
+
+    const data = await response.text();
+    console.log('Moonshot Response:', data);
+
+    return {
+      success: response.ok,
+      status: response.status,
+      data: data,
+      headers: Object.fromEntries(response.headers.entries())
+    };
+  } catch (error) {
+    console.error('Moonshot Test Error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
 export async function GET() {
   console.log('Testing AI Services...');
   
-  const results = {
+  // Test Moonshot
+  console.log('Testing Moonshot...');
+  const moonshotResult = await testMoonshot();
+  
+  // Test OpenAI
+  console.log('Testing OpenAI...');
+  const openaiResult = await testOpenAI();
+  
+  // Test GROQ
+  console.log('Testing GROQ...');
+  const groqResult = await testGroq();
+  
+  // Test Anthropic
+  console.log('Testing Anthropic...');
+  const anthropicResult = await testAnthropicClaude();
+  
+  // Test DeepSeek
+  console.log('Testing DeepSeek...');
+  const deepseekResult = await testDeepSeek();
+  
+  return NextResponse.json({
     timestamp: new Date().toISOString(),
-    openai: await testOpenAI(),
-    anthropic: await testAnthropicClaude(),
-    deepseek: await testDeepSeek()
-  };
-
-  console.log('Test Results:', JSON.stringify(results, null, 2));
-
-  return NextResponse.json(results);
+    moonshot: moonshotResult,
+    openai: openaiResult,
+    groq: groqResult,
+    anthropic: anthropicResult,
+    deepseek: deepseekResult
+  });
 } 
