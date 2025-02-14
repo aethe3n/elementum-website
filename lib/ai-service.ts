@@ -180,6 +180,204 @@ async function makeOpenAIRequest(messages: Array<{ role: string; content: string
   throw lastError || new Error('Failed to get response from OpenAI API');
 }
 
+interface GroqMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+async function makeGroqRequest(messages: Array<{ role: string; content: string }>): Promise<string> {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    console.error('GROQ API key is missing');
+    throw new Error('GROQ API key is missing');
+  }
+
+  const maxRetries = 3;
+  let retryCount = 0;
+  let lastError: Error | null = null;
+
+  while (retryCount < maxRetries) {
+    try {
+      console.log(`Making request to GROQ API (attempt ${retryCount + 1})...`);
+      
+      const endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      };
+
+      const requestBody = {
+        model: 'mixtral-8x7b-32768',
+        messages,
+        temperature: 0.8,
+        max_tokens: 2000,
+        stream: false,
+        top_p: 0.9
+      };
+
+      console.log('Request configuration:', {
+        endpoint,
+        headers: { ...headers, Authorization: 'Bearer [REDACTED]' },
+        messages: messages.map(m => ({ role: m.role, content: m.content.substring(0, 50) + '...' }))
+      });
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestBody)
+      });
+
+      const responseData = await response.text();
+      console.log('Raw API Response:', responseData.substring(0, 200) + '...');
+
+      if (!response.ok) {
+        const statusCode = response.status;
+        
+        // Handle rate limits
+        if (statusCode === 429) {
+          const retryAfter = response.headers.get('retry-after');
+          const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 1000 * (retryCount + 1);
+          console.log(`Rate limited. Waiting ${waitTime}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          retryCount++;
+          continue;
+        }
+
+        // Handle other API errors
+        console.error('GROQ API Error:', {
+          status: statusCode,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          body: responseData
+        });
+        
+        throw new Error(`GROQ API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = JSON.parse(responseData);
+      if (!data.choices?.[0]?.message?.content) {
+        console.error('Unexpected API response format:', data);
+        throw new Error('Invalid response format from GROQ API');
+      }
+
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error(`Error in GROQ request (attempt ${retryCount + 1}):`, error);
+      lastError = error instanceof Error ? error : new Error(String(error));
+      
+      if (retryCount < maxRetries - 1) {
+        const waitTime = Math.pow(2, retryCount) * 1000; // Exponential backoff
+        console.log(`Waiting ${waitTime}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        retryCount++;
+      } else {
+        throw lastError;
+      }
+    }
+  }
+
+  throw lastError || new Error('Failed to get response from GROQ API');
+}
+
+interface MoonshotMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+async function makeMoonshotRequest(messages: Array<{ role: string; content: string }>): Promise<string> {
+  const apiKey = process.env.MOONSHOT_API_KEY;
+  if (!apiKey) {
+    console.error('Moonshot API key is missing');
+    throw new Error('Moonshot API key is missing');
+  }
+
+  const maxRetries = 3;
+  let retryCount = 0;
+  let lastError: Error | null = null;
+
+  while (retryCount < maxRetries) {
+    try {
+      console.log(`Making request to Moonshot API (attempt ${retryCount + 1})...`);
+      
+      const endpoint = 'https://api.moonshot.cn/v1/chat/completions';
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      };
+
+      const requestBody = {
+        model: 'kimi-v2',
+        messages,
+        temperature: 0.7,
+        max_tokens: 2000,
+        stream: false,
+        presence_penalty: 0.6,
+        frequency_penalty: 0.6,
+        top_p: 0.9
+      };
+
+      console.log('Request configuration:', {
+        endpoint,
+        headers: { ...headers, Authorization: 'Bearer [REDACTED]' },
+        messages: messages.map(m => ({ role: m.role, content: m.content.substring(0, 50) + '...' }))
+      });
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestBody)
+      });
+
+      const responseData = await response.text();
+      console.log('Raw API Response:', responseData.substring(0, 200) + '...');
+
+      if (!response.ok) {
+        const statusCode = response.status;
+        
+        if (statusCode === 429) {
+          const retryAfter = response.headers.get('retry-after');
+          const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 1000 * (retryCount + 1);
+          console.log(`Rate limited. Waiting ${waitTime}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          retryCount++;
+          continue;
+        }
+
+        console.error('Moonshot API Error:', {
+          status: statusCode,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          body: responseData
+        });
+        
+        throw new Error(`Moonshot API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = JSON.parse(responseData);
+      if (!data.choices?.[0]?.message?.content) {
+        console.error('Unexpected API response format:', data);
+        throw new Error('Invalid response format from Moonshot API');
+      }
+
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error(`Error in Moonshot request (attempt ${retryCount + 1}):`, error);
+      lastError = error instanceof Error ? error : new Error(String(error));
+      
+      if (retryCount < maxRetries - 1) {
+        const waitTime = Math.pow(2, retryCount) * 1000;
+        console.log(`Waiting ${waitTime}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        retryCount++;
+      } else {
+        throw lastError;
+      }
+    }
+  }
+
+  throw lastError || new Error('Failed to get response from Moonshot API');
+}
+
 interface Citation {
   title: string;
   url: string;
@@ -231,26 +429,38 @@ export async function getChatResponse(
 
     const fullPrompt = `${message}\n${marketContext}\n${newsContext}\n\nPlease provide a detailed response with citations to the sources provided above when relevant.`;
     
-    // Combine conversation history with current message
     const messages = [
       { role: 'system', content: SYSTEM_PROMPT },
       ...conversationHistory,
       { role: 'user', content: fullPrompt }
     ];
 
-    // Ensure we don't exceed token limits (keep last 10 messages)
     if (messages.length > 12) {
       messages.splice(1, messages.length - 12);
     }
     
-    const response = await makeOpenAIRequest(messages);
-    
-    return {
-      content: response,
-      citations
-    };
+    // Try Moonshot first, then fall back to GROQ, then OpenAI
+    try {
+      const response = await makeMoonshotRequest(messages);
+      return { content: response, citations };
+    } catch (moonshotError) {
+      console.warn('Moonshot API failed, falling back to GROQ:', moonshotError);
+      try {
+        const response = await makeGroqRequest(messages);
+        return { content: response, citations };
+      } catch (groqError) {
+        console.warn('GROQ API failed, falling back to OpenAI:', groqError);
+        try {
+          const response = await makeOpenAIRequest(messages);
+          return { content: response, citations };
+        } catch (openaiError) {
+          console.error('All AI APIs failed:', { moonshotError, groqError, openaiError });
+          throw new Error('Failed to get response from any available AI service');
+        }
+      }
+    }
   } catch (error) {
-    console.error('Chat Response Error:', error);
+    console.error('Error in getChatResponse:', error);
     throw error;
   }
 }

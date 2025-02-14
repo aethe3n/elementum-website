@@ -1,13 +1,19 @@
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
+let stripe: Stripe | null = null;
+
+try {
+  if (process.env.STRIPE_SECRET_KEY) {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+      typescript: true,
+    });
+  }
+} catch (error) {
+  console.warn('Failed to initialize Stripe:', error);
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-01-27.acacia',
-  typescript: true,
-});
+export { stripe };
 
 export interface StripePlan {
   id: string;
@@ -19,7 +25,7 @@ export interface StripePlan {
 
 export const STRIPE_PLANS: Record<string, StripePlan> = {
   BASIC: {
-    id: process.env.STRIPE_BASIC_PRICE_ID!,
+    id: process.env.STRIPE_BASIC_PRICE_ID || 'price_basic',
     name: 'Basic Plan',
     description: 'Perfect for getting started with trading',
     price: 49,
@@ -32,7 +38,7 @@ export const STRIPE_PLANS: Record<string, StripePlan> = {
     ]
   },
   PRO: {
-    id: process.env.STRIPE_PRO_PRICE_ID!,
+    id: process.env.STRIPE_PRO_PRICE_ID || 'price_pro',
     name: 'Pro Plan',
     description: 'Advanced features for serious traders',
     price: 99,
@@ -47,7 +53,7 @@ export const STRIPE_PLANS: Record<string, StripePlan> = {
     ]
   },
   ENTERPRISE: {
-    id: process.env.STRIPE_ENTERPRISE_PRICE_ID!,
+    id: process.env.STRIPE_ENTERPRISE_PRICE_ID || 'price_enterprise',
     name: 'Enterprise Plan',
     description: 'Full suite of trading tools for organizations',
     price: 299,
