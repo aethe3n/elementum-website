@@ -88,11 +88,28 @@ class AuthService {
     const debugInfo = this.getAuthDebugInfo();
     console.log('Google Sign In Attempt Debug:', debugInfo);
 
+    // Immediate API key validation
+    if (!auth.app.options.apiKey) {
+      console.error('CRITICAL: No API key available');
+      return {
+        error: 'Authentication configuration error. Please try again later.',
+        debug: debugInfo
+      };
+    }
+
+    // Log the current domain and configuration
+    console.log('Auth Configuration:', {
+      currentDomain: window.location.hostname,
+      authDomain: auth.app.options.authDomain,
+      apiKeyPrefix: auth.app.options.apiKey.substring(0, 10) + '...',
+      timestamp: new Date().toISOString()
+    });
+
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: 'select_account',
       // Add hosted domain if on production
-      ...(debugInfo.domain === 'www.elementumglobal.com' && {
+      ...(window.location.hostname === 'www.elementumglobal.com' && {
         hosted_domain: 'elementumglobal.com'
       })
     });
@@ -108,22 +125,40 @@ class AuthService {
           uid: result.user.uid,
           email: result.user.email,
           provider: result.user.providerData[0]?.providerId
-        }
+        },
+        timestamp: new Date().toISOString()
       });
       
       return { user: result.user, debug: debugInfo };
     } catch (error: any) {
-      // Enhanced error logging
+      // Enhanced error logging with domain info
       const errorDetails = {
         code: error.code,
         message: error.message,
         email: error.email,
         credential: error.credential,
         stack: error.stack,
+        domain: window.location.hostname,
+        apiKeyPrefix: auth.app.options.apiKey.substring(0, 10) + '...',
+        timestamp: new Date().toISOString(),
         debugInfo
       };
       
       console.error('Google Sign In Error:', errorDetails);
+      
+      if (error.code === 'auth/unauthorized-domain') {
+        return {
+          error: `This domain (${window.location.hostname}) is not authorized for authentication. Please ensure it is added to Firebase Console.`,
+          debug: errorDetails
+        };
+      }
+      
+      if (error.code === 'auth/api-key-expired') {
+        return {
+          error: 'Authentication is temporarily unavailable. Please contact support.',
+          debug: errorDetails
+        };
+      }
       
       // Special handling for common errors
       if (error.code === 'auth/popup-blocked') {

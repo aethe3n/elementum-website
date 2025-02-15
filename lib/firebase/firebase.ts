@@ -2,6 +2,19 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getAuth, connectAuthEmulator, Auth, browserLocalPersistence, setPersistence } from 'firebase/auth'
 
+// Force immediate environment check
+const ENV_CHECK = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  timestamp: new Date().toISOString(),
+  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
+};
+
+// Immediately log environment check
+console.warn('IMMEDIATE ENV CHECK:', {
+  ...ENV_CHECK,
+  apiKeyPrefix: ENV_CHECK.apiKey ? ENV_CHECK.apiKey.substring(0, 10) + '...' : 'NOT SET'
+});
+
 // Debug: Log initialization context
 console.log('Firebase Initialization Context:', {
   hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
@@ -19,11 +32,17 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 } as const;
 
-// Validate configuration
+// Enhanced validation with immediate feedback
 const validateConfig = () => {
   const requiredFields = ['apiKey', 'authDomain', 'projectId'] as const;
   const missingFields = requiredFields.filter(field => !firebaseConfig[field]);
   
+  // Immediate API key validation
+  if (firebaseConfig.apiKey?.includes('AIzaSyDSUFobiJZhmYiNLE')) {
+    console.error('CRITICAL: Old API key still in use. Please check environment variables.');
+    throw new Error('Old API key detected');
+  }
+
   if (missingFields.length > 0) {
     throw new Error(`Missing required Firebase configuration: ${missingFields.join(', ')}`);
   }
@@ -34,7 +53,8 @@ const validateConfig = () => {
     apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing',
     authDomain: firebaseConfig.authDomain,
     projectId: firebaseConfig.projectId,
-    configComplete: missingFields.length === 0
+    configComplete: missingFields.length === 0,
+    timestamp: new Date().toISOString()
   });
 };
 
