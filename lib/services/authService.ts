@@ -52,6 +52,13 @@ class AuthService {
   }
 
   async googleSignIn(): Promise<AuthResponse> {
+    console.log('Starting Google Sign In process');
+    console.log('Auth instance:', {
+      initialized: !!auth,
+      currentUser: auth.currentUser ? 'Set' : 'Not Set',
+      apiKey: auth.app.options.apiKey ? `${auth.app.options.apiKey.substring(0, 10)}...` : 'Not Set'
+    });
+
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: 'select_account'
@@ -60,17 +67,23 @@ class AuthService {
     try {
       console.log('Setting up persistence...');
       await setPersistence(auth, browserLocalPersistence);
-      console.log('Persistence set up, initiating Google sign in...');
+      console.log('Persistence set up successfully');
       
+      console.log('Initiating Google sign in popup...');
       const result = await signInWithPopup(auth, provider);
-      console.log('Google sign in successful');
+      console.log('Google sign in successful:', {
+        uid: result.user.uid,
+        email: result.user.email,
+        provider: result.user.providerData[0]?.providerId
+      });
       return { user: result.user };
     } catch (error: any) {
-      console.error('Google Sign In Error:', {
+      console.error('Google Sign In Error Details:', {
         code: error.code,
         message: error.message,
         email: error.email,
-        credential: error.credential
+        credential: error.credential,
+        stack: error.stack
       });
       
       // Check for specific error conditions
@@ -80,6 +93,11 @@ class AuthService {
       
       if (error.code === 'auth/api-key-expired') {
         console.error('API key has expired - needs to be renewed in Firebase Console');
+        console.error('Current API key (first 10 chars):', auth.app.options.apiKey?.substring(0, 10));
+      }
+
+      if (error.code === 'auth/invalid-api-key') {
+        console.error('Invalid API key - check the key in environment variables');
       }
       
       return { error: this.getErrorMessage(error.code) };
