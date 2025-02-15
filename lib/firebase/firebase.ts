@@ -1,30 +1,39 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
+import { initializeApp, getApps, FirebaseApp, deleteApp } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getAuth, connectAuthEmulator, Auth, browserLocalPersistence, setPersistence } from 'firebase/auth'
+
+// Force clear any existing Firebase instances
+if (typeof window !== 'undefined') {
+  getApps().forEach(app => {
+    console.log('Cleaning up existing Firebase app:', app.name);
+    deleteApp(app);
+  });
+}
+
+// Production domain check
+const PRODUCTION_DOMAINS = ['www.elementumglobal.com', 'elementumglobal.com'];
+const isProductionDomain = typeof window !== 'undefined' && 
+  PRODUCTION_DOMAINS.includes(window.location.hostname);
 
 // Force immediate environment check
 const ENV_CHECK = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   timestamp: new Date().toISOString(),
-  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
+  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+  isProduction: isProductionDomain
 };
 
 // Immediately log environment check
 console.warn('IMMEDIATE ENV CHECK:', {
   ...ENV_CHECK,
-  apiKeyPrefix: ENV_CHECK.apiKey ? ENV_CHECK.apiKey.substring(0, 10) + '...' : 'NOT SET'
-});
-
-// Debug: Log initialization context
-console.log('Firebase Initialization Context:', {
-  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
-  environment: process.env.NODE_ENV,
-  timestamp: new Date().toISOString()
+  apiKeyPrefix: ENV_CHECK.apiKey ? ENV_CHECK.apiKey.substring(0, 10) + '...' : 'NOT SET',
+  domain: ENV_CHECK.hostname,
+  isProductionDomain
 });
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  authDomain: isProductionDomain ? 'elementumglobal.com' : process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
@@ -37,11 +46,10 @@ const validateConfig = () => {
   const requiredFields = ['apiKey', 'authDomain', 'projectId'] as const;
   const missingFields = requiredFields.filter(field => !firebaseConfig[field]);
   
-  // Immediate API key validation
-  if (firebaseConfig.apiKey?.includes('AIzaSyDSUFobiJZhmYiNLE')) {
-    console.error('CRITICAL: Old API key still in use. Please check environment variables.');
-    throw new Error('Old API key detected');
-  }
+  console.log('Current Firebase Configuration:', {
+    ...firebaseConfig,
+    apiKey: firebaseConfig.apiKey ? `${firebaseConfig.apiKey.substring(0, 10)}...` : 'missing'
+  });
 
   if (missingFields.length > 0) {
     throw new Error(`Missing required Firebase configuration: ${missingFields.join(', ')}`);
@@ -54,7 +62,8 @@ const validateConfig = () => {
     authDomain: firebaseConfig.authDomain,
     projectId: firebaseConfig.projectId,
     configComplete: missingFields.length === 0,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    isProductionDomain
   });
 };
 
@@ -66,12 +75,9 @@ try {
   // Validate configuration before initialization
   validateConfig();
 
-  // Check for existing Firebase instances
-  const existingApps = getApps();
-  console.log('Existing Firebase apps:', existingApps.length);
-
-  // Initialize or get existing Firebase app
-  app = existingApps.length === 0 ? initializeApp(firebaseConfig) : existingApps[0];
+  // Initialize new Firebase app
+  app = initializeApp(firebaseConfig);
+  console.log('New Firebase app initialized:', app.name);
   
   // Initialize Firestore
   db = getFirestore(app);
@@ -93,7 +99,9 @@ try {
       userId: user?.uid,
       isAuthenticated: !!user,
       emailVerified: user?.emailVerified,
-      provider: user?.providerData[0]?.providerId
+      provider: user?.providerData[0]?.providerId,
+      domain: window.location.hostname,
+      isProductionDomain
     });
   });
 
@@ -101,7 +109,9 @@ try {
   console.log('Firebase Initialization Success:', {
     appName: app.name,
     authDomain: auth.app.options.authDomain,
-    currentUser: auth.currentUser ? 'Authenticated' : 'Not Authenticated'
+    currentUser: auth.currentUser ? 'Authenticated' : 'Not Authenticated',
+    apiKeyPrefix: auth.app.options.apiKey ? auth.app.options.apiKey.substring(0, 10) + '...' : 'missing',
+    isProductionDomain
   });
 
 } catch (error) {
@@ -110,7 +120,8 @@ try {
     config: {
       authDomain: firebaseConfig.authDomain,
       projectId: firebaseConfig.projectId,
-      apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing'
+      apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing',
+      isProductionDomain
     }
   });
   throw error;
