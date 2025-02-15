@@ -58,11 +58,30 @@ class AuthService {
     });
     
     try {
+      console.log('Setting up persistence...');
       await setPersistence(auth, browserLocalPersistence);
+      console.log('Persistence set up, initiating Google sign in...');
+      
       const result = await signInWithPopup(auth, provider);
+      console.log('Google sign in successful');
       return { user: result.user };
     } catch (error: any) {
-      console.error('Google Sign In Error:', error);
+      console.error('Google Sign In Error:', {
+        code: error.code,
+        message: error.message,
+        email: error.email,
+        credential: error.credential
+      });
+      
+      // Check for specific error conditions
+      if (error.code === 'auth/configuration-not-found') {
+        console.error('Firebase configuration error - check API key and auth domain');
+      }
+      
+      if (error.code === 'auth/api-key-expired') {
+        console.error('API key has expired - needs to be renewed in Firebase Console');
+      }
+      
       return { error: this.getErrorMessage(error.code) };
     }
   }
