@@ -19,7 +19,8 @@ const nextConfig = {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
     MOONSHOT_API_KEY: process.env.MOONSHOT_API_KEY,
-    JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY
+    JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY,
+    NEXT_PUBLIC_BUILD_TIMESTAMP: Date.now().toString(),
   },
   poweredByHeader: false,
   compress: true,
@@ -102,7 +103,11 @@ const nextConfig = {
         }
       ]
     }
-  }
+  },
+  generateBuildId: async () => {
+    // This will be unique for every build
+    return 'build-' + Date.now()
+  },
 }
 
 module.exports = nextConfig 

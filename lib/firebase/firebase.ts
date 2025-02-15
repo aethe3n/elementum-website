@@ -2,6 +2,17 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getAuth, connectAuthEmulator, Auth } from 'firebase/auth'
 
+// IMMEDIATE CHECK - NO CACHING
+const DIRECT_CHECK = {
+  key: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  timestamp: new Date().toISOString()
+};
+console.warn('DIRECT ENV CHECK:', DIRECT_CHECK);
+
+if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.includes('AIzaSyDSUFobiJZhmYiNLE')) {
+  console.error('OLD API KEY DETECTED - This should not happen if environment is updated');
+}
+
 // Debug: Log all environment variables (masked)
 console.log('Environment Variables Check:', {
   NODE_ENV: process.env.NODE_ENV,
