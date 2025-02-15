@@ -1,28 +1,13 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
-import { getAuth, connectAuthEmulator, Auth } from 'firebase/auth'
+import { getAuth, connectAuthEmulator, Auth, browserLocalPersistence, setPersistence } from 'firebase/auth'
 
-// IMMEDIATE CHECK - NO CACHING
-const DIRECT_CHECK = {
-  key: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+// Debug: Log initialization context
+console.log('Firebase Initialization Context:', {
+  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+  environment: process.env.NODE_ENV,
   timestamp: new Date().toISOString()
-};
-console.warn('DIRECT ENV CHECK:', DIRECT_CHECK);
-
-if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.includes('AIzaSyDSUFobiJZhmYiNLE')) {
-  console.error('OLD API KEY DETECTED - This should not happen if environment is updated');
-}
-
-// Debug: Log all environment variables (masked)
-console.log('Environment Variables Check:', {
-  NODE_ENV: process.env.NODE_ENV,
-  NEXT_PUBLIC_FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? 'Set' : 'Not Set',
-  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ? 'Set' : 'Not Set',
-  NEXT_PUBLIC_FIREBASE_PROJECT_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ? 'Set' : 'Not Set'
 });
-
-// Force log the actual API key first 10 characters to verify it's the new one
-console.log('API Key Check (first 10 chars):', process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.substring(0, 10));
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -34,51 +19,80 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 } as const;
 
-// Log the full config for debugging
-console.log('Full Firebase Config:', {
-  ...firebaseConfig,
-  apiKey: firebaseConfig.apiKey ? `${firebaseConfig.apiKey.substring(0, 10)}...` : undefined
-});
+// Validate configuration
+const validateConfig = () => {
+  const requiredFields = ['apiKey', 'authDomain', 'projectId'] as const;
+  const missingFields = requiredFields.filter(field => !firebaseConfig[field]);
+  
+  if (missingFields.length > 0) {
+    throw new Error(`Missing required Firebase configuration: ${missingFields.join(', ')}`);
+  }
 
-// Check if any required config is missing
-const requiredConfig = ['apiKey', 'authDomain', 'projectId'] as const;
-const missingConfig = requiredConfig.filter(key => !firebaseConfig[key]);
-
-if (missingConfig.length > 0) {
-  console.error('Missing required Firebase config:', missingConfig);
-  throw new Error(`Missing required Firebase configuration: ${missingConfig.join(', ')}`);
-}
+  // Log sanitized config for debugging
+  console.log('Firebase Config Validation:', {
+    apiKeyPresent: !!firebaseConfig.apiKey,
+    apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing',
+    authDomain: firebaseConfig.authDomain,
+    projectId: firebaseConfig.projectId,
+    configComplete: missingFields.length === 0
+  });
+};
 
 let app: FirebaseApp;
 let db: Firestore;
 let auth: Auth;
 
 try {
-  // Check if Firebase is already initialized
+  // Validate configuration before initialization
+  validateConfig();
+
+  // Check for existing Firebase instances
   const existingApps = getApps();
   console.log('Existing Firebase apps:', existingApps.length);
 
-  // Initialize Firebase
+  // Initialize or get existing Firebase app
   app = existingApps.length === 0 ? initializeApp(firebaseConfig) : existingApps[0];
-  console.log('Firebase app initialized:', app.name);
   
-  // Initialize services
+  // Initialize Firestore
   db = getFirestore(app);
+  
+  // Initialize Auth with persistence
   auth = getAuth(app);
   
-  // Log auth state
+  // Set persistence to LOCAL
+  if (typeof window !== 'undefined') {
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => console.log('Auth persistence set to LOCAL'))
+      .catch(error => console.error('Error setting auth persistence:', error));
+  }
+
+  // Enhanced auth state monitoring
   auth.onAuthStateChanged((user) => {
-    console.log('Auth state changed:', user ? `User ${user.uid} logged in` : 'No user');
+    console.log('Auth State Change:', {
+      timestamp: new Date().toISOString(),
+      userId: user?.uid,
+      isAuthenticated: !!user,
+      emailVerified: user?.emailVerified,
+      provider: user?.providerData[0]?.providerId
+    });
   });
 
-  // Verify auth configuration
-  console.log('Auth configuration:', {
-    currentUser: auth.currentUser ? 'Set' : 'Not Set',
-    apiKey: auth.app.options.apiKey ? `${auth.app.options.apiKey.substring(0, 10)}...` : 'Not Set'
+  // Verify initialization
+  console.log('Firebase Initialization Success:', {
+    appName: app.name,
+    authDomain: auth.app.options.authDomain,
+    currentUser: auth.currentUser ? 'Authenticated' : 'Not Authenticated'
   });
 
 } catch (error) {
-  console.error('Error initializing Firebase:', error);
+  console.error('Firebase Initialization Error:', {
+    error,
+    config: {
+      authDomain: firebaseConfig.authDomain,
+      projectId: firebaseConfig.projectId,
+      apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing'
+    }
+  });
   throw error;
 }
 
