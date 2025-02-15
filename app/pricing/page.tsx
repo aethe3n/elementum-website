@@ -1,106 +1,64 @@
 "use client";
 
-import { useAuth } from '@/lib/hooks/useAuth';
-import { STRIPE_PLANS } from '@/lib/stripe/config';
-import { createStripeCheckoutSession } from '@/lib/firebase/stripe';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Check } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button"
+import { Clock } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function PricingPage() {
-  const { user } = useAuth();
   const router = useRouter();
 
-  const handleSubscribe = async (priceId: string) => {
-    if (!user) {
-      router.push('/auth/login?from=/pricing');
-      return;
-    }
-
-    try {
-      const sessionId = await createStripeCheckoutSession(
-        user.uid,
-        priceId,
-        `${window.location.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-        `${window.location.origin}/pricing`
-      );
-
-      // Redirect to Stripe Checkout
-      window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-[#1A1A1A] py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-light tracking-tight text-white mb-4">
-            Choose Your Trading Plan
+    <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center py-20">
+      <div className="max-w-2xl mx-auto px-4 text-center">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-radial from-[#B87D3B]/5 via-transparent to-transparent" />
+          <div className="absolute inset-0 opacity-30">
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#B87D3B" strokeWidth="0.5" strokeOpacity="0.2" />
+              </pattern>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 glimmer-card p-8 backdrop-blur-sm">
+          <div className="w-16 h-16 bg-[#B87D3B]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Clock className="w-8 h-8 text-[#B87D3B]" />
+          </div>
+          
+          <h1 className="text-4xl font-light text-white mb-4">
+            Premium Plans Coming Soon
           </h1>
-          <p className="text-xl text-neutral-400">
-            Select the perfect plan for your trading needs
+          
+          <p className="text-xl text-neutral-400 mb-8">
+            We're working hard to bring you our premium features. Stay tuned for exciting updates!
           </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {Object.values(STRIPE_PLANS).map((plan) => (
-            <Card key={plan.id} className="bg-black/50 backdrop-blur-lg border-neutral-800 text-white">
-              <CardHeader>
-                <CardTitle className="text-2xl font-light">{plan.name}</CardTitle>
-                <CardDescription className="text-neutral-400">
-                  Perfect for {plan.name === 'Basic Plan' ? 'getting started' : 
-                              plan.name === 'Pro Plan' ? 'professional traders' : 
-                              'enterprise needs'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-6">
-                  <span className="text-4xl font-light">${plan.price}</span>
-                  <span className="text-neutral-400">/month</span>
-                </div>
-                <ul className="space-y-3">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3 text-neutral-200">
-                      <Check className="h-5 w-5 text-[#B87D3B]" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className="w-full bg-[#B87D3B] hover:bg-[#96652F]"
-                  onClick={() => handleSubscribe(plan.id)}
-                >
-                  {user ? 'Subscribe Now' : 'Sign Up to Subscribe'}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <h2 className="text-2xl font-light text-white mb-4">
-            Enterprise Solutions
-          </h2>
-          <p className="text-neutral-400 mb-6">
-            Need a custom solution? We offer tailored packages for large organizations.
-          </p>
-          <Button variant="outline" className="border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B] hover:text-white">
-            Contact Sales
-          </Button>
+          
+          <div className="space-y-6">
+            <div className="p-4 bg-black/30 rounded-lg border border-[#B87D3B]/20">
+              <h3 className="text-lg font-medium text-[#B87D3B] mb-2">What to Expect</h3>
+              <ul className="text-neutral-300 space-y-2">
+                <li>• Advanced Market Analysis Tools</li>
+                <li>• Real-time Trading Signals</li>
+                <li>• Priority Support</li>
+                <li>• Custom Alerts</li>
+                <li>• Portfolio Management</li>
+              </ul>
+            </div>
+            
+            <Button
+              variant="outline"
+              className="w-full bg-[#B87D3B]/10 border-[#B87D3B] text-[#B87D3B] hover:bg-[#B87D3B] hover:text-white"
+              onClick={() => router.push('/')}
+            >
+              Back to Home
+            </Button>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 } 

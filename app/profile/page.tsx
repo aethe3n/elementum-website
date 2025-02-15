@@ -31,7 +31,6 @@ export default function ProfilePage() {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('profile')
-  const [stripeEnabled] = useState(false)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<UserProfile>({
     displayName: '',
@@ -60,20 +59,6 @@ export default function ProfilePage() {
     }
     
     trackPageView('/profile')
-    
-    // Stripe check disabled until bank account is ready
-    // const checkStripeConfig = async () => {
-    //   try {
-    //     const response = await fetch('/api/check-stripe-config')
-    //     const { enabled } = await response.json()
-    //     setStripeEnabled(enabled)
-    //   } catch (error) {
-    //     console.error('Error checking Stripe config:', error)
-    //     setStripeEnabled(false)
-    //   }
-    // }
-    
-    // checkStripeConfig()
   }, [user, loading, router])
 
   const handleSaveProfile = async () => {

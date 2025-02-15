@@ -17,6 +17,8 @@ const nextConfig = {
     POLYGON_API_KEY: process.env.POLYGON_API_KEY,
     DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    MOONSHOT_API_KEY: process.env.MOONSHOT_API_KEY,
     JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY
   },
   poweredByHeader: false,
@@ -53,7 +55,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app *.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io; connect-src 'self' *.vercel.app api.openai.com api.deepseek.ai api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com va.vercel-scripts.com; frame-ancestors 'none'; form-action 'self';"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app *.vercel-scripts.com *.firebaseapp.com *.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io *.googleusercontent.com; connect-src 'self' *.vercel.app api.openai.com api.deepseek.ai api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com va.vercel-scripts.com *.firebaseapp.com *.googleapis.com identitytoolkit.googleapis.com; frame-src 'self' *.firebaseapp.com *.googleapis.com; form-action 'self';"
           },
           {
             key: 'X-DNS-Prefetch-Control',
