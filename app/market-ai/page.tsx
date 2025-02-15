@@ -84,31 +84,35 @@ export default function MarketAIPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const fetchMarketData = async () => {
+    try {
+      const marketResponse = await fetch('/api/market');
+      if (!marketResponse.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const marketData = await marketResponse.json();
+      setMarketData(marketData.data);
+      setMarketAnalysis(marketData.analysis);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth/login?from=/market-ai');
+      // Store the current URL before redirecting
+      const returnUrl = encodeURIComponent('/market-ai');
+      router.push(`/auth/login?from=${returnUrl}`);
+      return;
+    }
+
+    // Only fetch data if user is authenticated
+    if (user) {
+      fetchMarketData();
+      // Track page view
+      trackEvent('page_view', { page: 'market_ai', userId: user.uid });
     }
   }, [user, loading, router]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const marketResponse = await fetch('/api/market');
-        if (!marketResponse.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const marketData = await marketResponse.json();
-        setMarketData(marketData.data);
-        setMarketAnalysis(marketData.analysis);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-    fetchData();
-
-    // Track page view
-    trackEvent('page_view', { page: 'market_ai' });
-  }, []);
 
   const handleGetMarketOverview = async () => {
     setIsOverviewLoading(true);
@@ -272,6 +276,7 @@ export default function MarketAIPage() {
     return text;
   }
 
+  // Show loading state while checking auth
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -283,8 +288,9 @@ export default function MarketAIPage() {
     );
   }
 
+  // If not authenticated, don't render anything (redirect will happen in useEffect)
   if (!user) {
-    return null; // Will redirect in useEffect
+    return null;
   }
 
   return (
