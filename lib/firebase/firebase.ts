@@ -1,4 +1,4 @@
-import { initializeApp, getApps, FirebaseApp, deleteApp } from 'firebase/app'
+import { initializeApp, getApps, FirebaseApp, deleteApp, FirebaseError } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getAuth, connectAuthEmulator, Auth, browserLocalPersistence, setPersistence } from 'firebase/auth'
 import { getAnalytics, isSupported } from 'firebase/analytics'
@@ -88,10 +88,11 @@ function initializeFirebase() {
         isProductionDomain
       });
     }, (error) => {
+      const firebaseError = error as FirebaseError;
       console.error('Auth State Error:', {
-        code: error.code,
-        message: error.message,
-        stack: error.stack,
+        code: firebaseError.code,
+        message: firebaseError.message,
+        stack: firebaseError.stack,
         timestamp: new Date().toISOString()
       });
     });
