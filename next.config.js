@@ -56,7 +56,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app *.vercel-scripts.com *.firebaseapp.com *.googleapis.com apis.google.com accounts.google.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io *.googleusercontent.com; connect-src 'self' *.vercel.app *.elementumglobal.com api.openai.com api.deepseek.ai api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com va.vercel-scripts.com *.firebaseapp.com *.googleapis.com identitytoolkit.googleapis.com securetoken.googleapis.com; frame-src 'self' *.firebaseapp.com *.googleapis.com accounts.google.com; form-action 'self'; frame-ancestors 'self' *.elementumglobal.com *.firebaseapp.com accounts.google.com;"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://*.googleapis.com; img-src 'self' blob: data: https://*.googleusercontent.com https://*.jblanked.com https://*.unsplash.com https://*.alphavantage.co https://*.finnhub.io https://*.polygon.io; connect-src 'self' https://*.elementumglobal.com https://*.firebaseapp.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; frame-src 'self' https://*.firebaseapp.com https://*.googleapis.com https://accounts.google.com; form-action 'self'; frame-ancestors 'self';"
           },
           {
             key: 'X-DNS-Prefetch-Control',
