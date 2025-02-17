@@ -34,8 +34,7 @@ export default function AdminUsersPage() {
 
   // Admin check
   const ADMIN_EMAILS = useMemo(() => [
-    'jono@elementum.com',
-    // ... other admin emails
+    'elementumglobal.llc@gmail.com',
   ], []); // Empty dependency array since this is constant
 
   useEffect(() => {

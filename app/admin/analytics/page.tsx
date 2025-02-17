@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -10,6 +12,8 @@ import type { SubscriptionMetrics } from '@/lib/services/analyticsService';
 import type { UsageMetrics } from '@/lib/services/usageService';
 
 export default function AdminAnalyticsPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [metrics, setMetrics] = useState<SubscriptionMetrics | null>(null);
   const [revenueByPlan, setRevenueByPlan] = useState<Record<string, number>>({});
   const [topUsers, setTopUsers] = useState<Array<{ userId: string; usage: UsageMetrics }>>([]);
@@ -18,6 +22,11 @@ export default function AdminAnalyticsPage() {
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
     endDate: new Date()
   });
+
+  // Admin check
+  const ADMIN_EMAILS = useMemo(() => [
+    'elementumglobal.llc@gmail.com',
+  ], []); // Empty dependency array since this is constant
 
   const loadData = useCallback(async () => {
     try {
@@ -39,15 +48,29 @@ export default function AdminAnalyticsPage() {
   }, [dateRange]);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (!authLoading && !user) {
+      router.push('/auth/login?from=/admin/analytics');
+      return;
+    }
 
-  if (loading) {
+    if (user && !ADMIN_EMAILS.includes(user.email || '')) {
+      router.push('/');
+      return;
+    }
+
+    loadData();
+  }, [authLoading, user, router, ADMIN_EMAILS, loadData]);
+
+  if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-[#B87D3B]" />
       </div>
     );
+  }
+
+  if (!user || !ADMIN_EMAILS.includes(user.email || '')) {
+    return null;
   }
 
   return (
