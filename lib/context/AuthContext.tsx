@@ -31,9 +31,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    // Skip auth state listener on server
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     console.log('Setting up auth state listener');
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+      console.log('Auth state changed:', {
+        status: user ? 'User logged in' : 'No user',
+        domain: window.location.hostname,
+        timestamp: new Date().toISOString()
+      });
       
       if (user) {
         try {
@@ -50,6 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } catch (error) {
           console.error('Error getting ID token:', error);
+          // Clear user state if token refresh fails
+          setUser(null);
         }
       } else {
         // Clear the session cookie

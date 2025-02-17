@@ -2,34 +2,16 @@ import { initializeApp, getApps, FirebaseApp, deleteApp } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getAuth, connectAuthEmulator, Auth, browserLocalPersistence, setPersistence } from 'firebase/auth'
 
-// Force clear any existing Firebase instances
-if (typeof window !== 'undefined') {
-  getApps().forEach(app => {
-    console.log('Cleaning up existing Firebase app:', app.name);
-    deleteApp(app);
-  });
-}
+let app: FirebaseApp;
+let db: Firestore;
+let auth: Auth;
 
-// Production domain check
+// Check if we're running on the server
+const isServer = typeof window === 'undefined';
+
+// Production domain check (only run on client)
 const PRODUCTION_DOMAINS = ['www.elementumglobal.com', 'elementumglobal.com'];
-const isProductionDomain = typeof window !== 'undefined' && 
-  PRODUCTION_DOMAINS.includes(window.location.hostname);
-
-// Force immediate environment check
-const ENV_CHECK = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  timestamp: new Date().toISOString(),
-  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
-  isProduction: isProductionDomain
-};
-
-// Immediately log environment check
-console.warn('IMMEDIATE ENV CHECK:', {
-  ...ENV_CHECK,
-  apiKeyPrefix: ENV_CHECK.apiKey ? ENV_CHECK.apiKey.substring(0, 10) + '...' : 'NOT SET',
-  domain: ENV_CHECK.hostname,
-  isProductionDomain
-});
+const isProductionDomain = !isServer && PRODUCTION_DOMAINS.includes(window.location.hostname);
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -41,90 +23,73 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 } as const;
 
-// Enhanced validation with immediate feedback
-const validateConfig = () => {
-  const requiredFields = ['apiKey', 'authDomain', 'projectId'] as const;
-  const missingFields = requiredFields.filter(field => !firebaseConfig[field]);
-  
-  console.log('Current Firebase Configuration:', {
-    ...firebaseConfig,
-    apiKey: firebaseConfig.apiKey ? `${firebaseConfig.apiKey.substring(0, 10)}...` : 'missing'
-  });
-
-  if (missingFields.length > 0) {
-    throw new Error(`Missing required Firebase configuration: ${missingFields.join(', ')}`);
+function initializeFirebase() {
+  if (isServer) {
+    console.log('Server-side Firebase initialization skipped');
+    return;
   }
 
-  // Log sanitized config for debugging
-  console.log('Firebase Config Validation:', {
-    apiKeyPresent: !!firebaseConfig.apiKey,
-    apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing',
-    authDomain: firebaseConfig.authDomain,
-    projectId: firebaseConfig.projectId,
-    configComplete: missingFields.length === 0,
-    timestamp: new Date().toISOString(),
-    isProductionDomain
-  });
-};
+  try {
+    // Log initialization attempt
+    console.log('Initializing Firebase on client:', {
+      domain: window.location.hostname,
+      isProduction: isProductionDomain,
+      apiKeyStatus: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? 'Present' : 'Missing',
+      environment: process.env.NODE_ENV
+    });
 
-let app: FirebaseApp;
-let db: Firestore;
-let auth: Auth;
+    // Clean up existing instances
+    getApps().forEach(app => {
+      console.log('Cleaning up existing Firebase app:', app.name);
+      deleteApp(app);
+    });
 
-try {
-  // Validate configuration before initialization
-  validateConfig();
+    // Initialize Firebase
+    app = initializeApp(firebaseConfig);
+    console.log('New Firebase app initialized:', app.name);
 
-  // Initialize new Firebase app
-  app = initializeApp(firebaseConfig);
-  console.log('New Firebase app initialized:', app.name);
-  
-  // Initialize Firestore
-  db = getFirestore(app);
-  
-  // Initialize Auth with persistence
-  auth = getAuth(app);
-  
-  // Set persistence to LOCAL
-  if (typeof window !== 'undefined') {
+    // Initialize Firestore
+    db = getFirestore(app);
+
+    // Initialize Auth
+    auth = getAuth(app);
+
+    // Set persistence (client-side only)
     setPersistence(auth, browserLocalPersistence)
       .then(() => console.log('Auth persistence set to LOCAL'))
       .catch(error => console.error('Error setting auth persistence:', error));
-  }
 
-  // Enhanced auth state monitoring
-  auth.onAuthStateChanged((user) => {
-    console.log('Auth State Change:', {
-      timestamp: new Date().toISOString(),
-      userId: user?.uid,
-      isAuthenticated: !!user,
-      emailVerified: user?.emailVerified,
-      provider: user?.providerData[0]?.providerId,
-      domain: window.location.hostname,
-      isProductionDomain
+    // Enhanced auth state monitoring
+    auth.onAuthStateChanged((user) => {
+      console.log('Auth State Change:', {
+        timestamp: new Date().toISOString(),
+        userId: user?.uid,
+        isAuthenticated: !!user,
+        emailVerified: user?.emailVerified,
+        provider: user?.providerData[0]?.providerId,
+        domain: window.location.hostname,
+        isProductionDomain
+      });
     });
-  });
 
-  // Verify initialization
-  console.log('Firebase Initialization Success:', {
-    appName: app.name,
-    authDomain: auth.app.options.authDomain,
-    currentUser: auth.currentUser ? 'Authenticated' : 'Not Authenticated',
-    apiKeyPrefix: auth.app.options.apiKey ? auth.app.options.apiKey.substring(0, 10) + '...' : 'missing',
-    isProductionDomain
-  });
+    return { app, db, auth };
+  } catch (error) {
+    console.error('Firebase Initialization Error:', {
+      error,
+      config: {
+        authDomain: firebaseConfig.authDomain,
+        projectId: firebaseConfig.projectId,
+        apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing',
+        isProductionDomain
+      }
+    });
+    throw error;
+  }
+}
 
-} catch (error) {
-  console.error('Firebase Initialization Error:', {
-    error,
-    config: {
-      authDomain: firebaseConfig.authDomain,
-      projectId: firebaseConfig.projectId,
-      apiKeyPrefix: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'missing',
-      isProductionDomain
-    }
-  });
-  throw error;
+// Initialize Firebase if we're on the client
+if (!isServer) {
+  initializeFirebase();
 }
 
 export { app as default, db, auth }; 
