@@ -1,11 +1,13 @@
 import * as admin from 'firebase-admin';
-import { handleSubscriptionUpdated, cleanupDeletedUser } from './subscriptions';
+// TODO: Stripe integration coming soon
+// import { handleSubscriptionUpdated, cleanupDeletedUser } from './subscriptions';
 
 // Initialize Firebase Admin
 admin.initializeApp();
 
 // Export all functions
-export {
+// TODO: Re-enable when Stripe integration is ready
+/*export {
   handleSubscriptionUpdated,
   cleanupDeletedUser
-}; 
+};*/ 

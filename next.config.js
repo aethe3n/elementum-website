@@ -17,7 +17,10 @@ const nextConfig = {
     POLYGON_API_KEY: process.env.POLYGON_API_KEY,
     DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    MOONSHOT_API_KEY: process.env.MOONSHOT_API_KEY,
+    JB_NEWS_API_KEY: process.env.JB_NEWS_API_KEY,
+    NEXT_PUBLIC_BUILD_TIMESTAMP: Date.now().toString(),
   },
   poweredByHeader: false,
   compress: true,
@@ -53,7 +56,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app *.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: *.jblanked.com *.unsplash.com *.alphavantage.co *.finnhub.io *.polygon.io; connect-src 'self' *.vercel.app api.openai.com api.deepseek.ai api.polygon.io finnhub.io www.alphavantage.co www.jblanked.com va.vercel-scripts.com; frame-ancestors 'none'; form-action 'self';"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://*.googleapis.com; img-src 'self' blob: data: https://*.googleusercontent.com https://*.jblanked.com https://*.unsplash.com https://*.alphavantage.co https://*.finnhub.io https://*.polygon.io; connect-src 'self' https://*.elementumglobal.com https://*.firebaseapp.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; frame-src 'self' https://*.firebaseapp.com https://*.googleapis.com https://accounts.google.com; form-action 'self'; frame-ancestors 'self';"
           },
           {
             key: 'X-DNS-Prefetch-Control',
@@ -77,7 +80,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
+            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()'
           }
         ]
       }
@@ -100,7 +103,11 @@ const nextConfig = {
         }
       ]
     }
-  }
+  },
+  generateBuildId: async () => {
+    // This will be unique for every build
+    return 'build-' + Date.now()
+  },
 }
 
 module.exports = nextConfig 

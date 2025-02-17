@@ -1,3 +1,6 @@
+// TODO: Stripe integration coming soon
+// Temporarily disabled until bank account setup is complete
+/*
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import Stripe from 'stripe';
@@ -233,4 +236,5 @@ export const cleanupDeletedUser = functions.auth.user().onDelete(async (user: Us
     console.error('Error cleaning up deleted user:', error);
     return null;
   }
-}); 
+});
+*/ 

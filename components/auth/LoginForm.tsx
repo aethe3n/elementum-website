@@ -34,25 +34,32 @@ export default function LoginForm() {
     setSuccess(null);
     setShowVerificationMessage(false);
     setIsLoading(true);
+    console.log('Login attempt on domain:', window.location.hostname);
 
     try {
       const result = await authService.login(email, password);
+      console.log('Login result:', {
+        success: !result.error,
+        debug: result.debug
+      });
+
       if (result.error) {
         setError(result.error);
+        // Log debug info but don't show to user
+        console.error('Login debug info:', result.debug);
       } else if (result.user) {
-        if (!result.user.emailVerified && result.user.providerData[0].providerId === 'password') {
-          // User needs to verify email
+        if (!result.user.emailVerified && result.user.providerData[0]?.providerId === 'password') {
           setShowVerificationMessage(true);
           await authService.resendVerificationEmail(email);
-          await authService.logout(); // Sign out until verified
+          await authService.logout();
         } else {
-          // User is verified or using social login
           const redirectTo = searchParams.get('from') || '/';
           router.push(redirectTo);
         }
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in. Please try again.');
+      console.error('Login error:', err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -61,17 +68,26 @@ export default function LoginForm() {
   const handleGoogleSignIn = async () => {
     setError(null);
     setIsLoading(true);
+    console.log('Google sign in attempt on domain:', window.location.hostname);
 
     try {
       const result = await authService.googleSignIn();
+      console.log('Google sign in result:', {
+        success: !result.error,
+        debug: result.debug
+      });
+
       if (result.error) {
         setError(result.error);
+        // Log debug info but don't show to user
+        console.error('Google sign in debug info:', result.debug);
       } else {
         const redirectTo = searchParams.get('from') || '/';
         router.push(redirectTo);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google. Please try again.');
+      console.error('Google sign in error:', err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }

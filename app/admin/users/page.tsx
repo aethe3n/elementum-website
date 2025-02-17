@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
@@ -33,15 +33,18 @@ export default function AdminUsersPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Admin check
-  const ADMIN_EMAILS = ['info@elementumglobal.com']; // Replace with your admin email
+  const ADMIN_EMAILS = useMemo(() => [
+    'jono@elementum.com',
+    // ... other admin emails
+  ], []); // Empty dependency array since this is constant
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push('/auth/login?from=/admin/users');
       return;
     }
 
-    if (!ADMIN_EMAILS.includes(user.email || '')) {
+    if (user && !ADMIN_EMAILS.includes(user.email || '')) {
       router.push('/');
       return;
     }
@@ -75,7 +78,7 @@ export default function AdminUsersPage() {
     };
 
     fetchUsers();
-  }, [user, router]);
+  }, [loading, user, router, ADMIN_EMAILS]);
 
   if (!user || !ADMIN_EMAILS.includes(user.email || '')) {
     return null;

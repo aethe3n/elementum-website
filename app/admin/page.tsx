@@ -1,29 +1,32 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   // Admin check
-  const ADMIN_EMAILS = ['info@elementumglobal.com']; // Replace with your admin email
+  const ADMIN_EMAILS = useMemo(() => [
+    'jono@elementum.com',
+    // ... other admin emails
+  ], []); // Empty dependency array since this is constant
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push('/auth/login?from=/admin');
       return;
     }
 
-    if (!ADMIN_EMAILS.includes(user.email || '')) {
+    if (user && !ADMIN_EMAILS.includes(user.email || '')) {
       router.push('/');
       return;
     }
-  }, [user, router]);
+  }, [loading, user, router, ADMIN_EMAILS]);
 
   if (!user || !ADMIN_EMAILS.includes(user.email || '')) {
     return null;
