@@ -1,627 +1,654 @@
-'use client'
+import Image from "next/image";
+import {
+  ArrowRight,
+  Building2,
+  Factory,
+  Handshake,
+  HandHeart,
+  Leaf,
+  Mail,
+  MapPin,
+  Plus,
+  Route,
+  Search,
+  ShieldCheck,
+  Ship,
+  Sprout,
+  TreePine,
+  TrendingUp,
+  Users,
+  FileCheck2,
+  Network,
+} from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
+import InquireLink from "@/components/InquireLink";
+import InquiryForm from "@/components/InquiryForm";
+import { site } from "@/lib/site";
 
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
-import Image from "next/image"
-import { NewsArticle, getLatestNews } from "@/lib/news-service"
-import { ServiceCard } from "../components/service-card"
-import ProjectUpdates from '@/components/ProjectUpdates'
-
-const cities = [
-  // Americas
-  { name: "New York", x: 285, y: 280, size: 6, importance: "major" },
-  { name: "Los Angeles", x: 200, y: 320, size: 5, importance: "major" },
-  { name: "Vancouver", x: 180, y: 250, size: 4, importance: "minor" },
-  { name: "São Paulo", x: 350, y: 500, size: 5, importance: "major" },
-  
-  // Europe
-  { name: "London", x: 520, y: 250, size: 6, importance: "major" },
-  { name: "Rotterdam", x: 540, y: 260, size: 5, importance: "major" },
-  { name: "Hamburg", x: 550, y: 240, size: 4, importance: "minor" },
-  
-  // Asia & Pacific
-  { name: "Singapore", x: 820, y: 450, size: 6, importance: "major" },
-  { name: "Hong Kong", x: 850, y: 380, size: 5, importance: "major" },
-  { name: "Tokyo", x: 900, y: 320, size: 5, importance: "major" },
-  { name: "Shanghai", x: 850, y: 350, size: 4, importance: "minor" },
-  { name: "Sydney", x: 900, y: 550, size: 4, importance: "minor" },
-  
-  // Middle East & Africa
-  { name: "Dubai", x: 680, y: 380, size: 5, importance: "major" },
-  { name: "Cape Town", x: 580, y: 550, size: 4, importance: "minor" }
+const faqs = [
+  {
+    q: "Does Elementum Global hold its own stock?",
+    a: "No. We work as an intermediary. Product is supplied through our producer relationships and established partner exporters at origin, who handle export. We manage the relationship and coordinate the transaction from first inquiry to shipment.",
+  },
+  {
+    q: "On what terms are offers made?",
+    a: "Terms are confirmed per offer. Cacao is typically quoted FOB origin port. Specifications, packaging, documentation and payment terms are agreed in writing before contract.",
+  },
+  {
+    q: "Which origins do you work with?",
+    a: "Our focus is Africa, built on long-standing family relationships with farms and producers. Our current cacao offers come from Cameroon, with further Central African origins considered case by case.",
+  },
+  {
+    q: "Can I receive samples or detailed specifications?",
+    a: "Yes, for qualified buyers. Tell us your product, grade requirements and destination in the inquiry form and we will come back with what is available and how samples can be arranged.",
+  },
+  {
+    q: "Is there a minimum order quantity?",
+    a: "It depends on the product and the lot. Commercial cacao volumes are usually traded by the container. Smaller trial lots can sometimes be arranged — share your expected volume and we will tell you what is realistic.",
+  },
+  {
+    q: "How do you approach sustainability and EUDR?",
+    a: "We prioritise organic and Fairtrade supply where available and work toward traceable, deforestation-free sourcing with no child or forced labour. For buyers in the EU, we work with our partners on the traceability information required under the EU Deforestation Regulation.",
+  },
+  {
+    q: "Do you already supply metals and minerals?",
+    a: "We are building supplier relationships in metals and minerals and in further agricultural products. If you have a specific requirement, register your interest — we will tell you honestly whether and when we can help.",
+  },
 ];
 
-// Define specific trade routes to reduce clutter
-const tradeRoutes = [
-  ["Los Angeles", "Shanghai"],
-  ["Los Angeles", "Tokyo"],
-  ["Vancouver", "Hong Kong"],
-  ["New York", "London"],
-  ["New York", "Rotterdam"],
-  ["Rotterdam", "Singapore"],
-  ["Hamburg", "Dubai"],
-  ["London", "Hong Kong"],
-  ["São Paulo", "Cape Town"],
-  ["Singapore", "Shanghai"],
-  ["Hong Kong", "Tokyo"],
-  ["Dubai", "Singapore"]
-];
-
-export default function Page() {
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [showChat, setShowChat] = useState(false);
-  const [chatMessages, setChatMessages] = useState<Array<{type: 'user' | 'ai' | 'market', content: string}>>([]);
-
-  // Add scroll restoration control
-  useEffect(() => {
-    // Scroll to top on page load
-    window.scrollTo(0, 0);
-    
-    // Disable the browser's scroll restoration
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
-    }
-  }, []);
-
-  // Example questions array
-  const exampleQuestions = [
-    "What's driving the current gold price movements?",
-    "How are forex markets responding to recent economic data?",
-    "What's the outlook for commodity prices this quarter?"
-  ];
-
-  const submitQuestion = async (question: string) => {
-    setChatMessages(prev => [...prev, { type: 'user', content: question }]);
-    // Add actual API call implementation here
-  };
-
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-in');
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '50px'
-    });
-
-    document.querySelectorAll('.scroll-animation').forEach((element) => {
-      observerRef.current?.observe(element);
-    });
-
-    return () => observerRef.current?.disconnect();
-  }, []);
-
-  useEffect(() => {
-    getLatestNews().then(setArticles);
-  }, []);
-
+export default function Home() {
   return (
-    <div className="min-h-screen bg-[#1A1A1A] text-foreground">
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { 
-            opacity: 0; 
-            transform: translateY(30px); 
-            filter: blur(10px);
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0);
-            filter: blur(0);
-          }
-        }
-
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        .animate-gradient {
-          animation: gradient 8s ease infinite;
-          background-size: 200% auto;
-        }
-
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-
-        @keyframes float {
-          0% { transform: translate(0, 0) rotate(0deg); }
-          25% { transform: translate(10px, -10px) rotate(1deg); }
-          50% { transform: translate(0, -20px) rotate(0deg); }
-          75% { transform: translate(-10px, -10px) rotate(-1deg); }
-          100% { transform: translate(0, 0) rotate(0deg); }
-        }
-
-        @keyframes rotate {
-          from { transform: rotate(0deg) scale(0.95); }
-          to { transform: rotate(360deg) scale(1.05); }
-        }
-
-        .spiral-bg {
-          position: absolute;
-          width: 120%;
-          height: 120%;
-          left: -10%;
-          top: -10%;
-          background: radial-gradient(circle at center, rgba(252, 157, 68, 0.15) 0%, transparent 70%);
-          animation: rotate 60s linear infinite;
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .dynamic-bg {
-          position: absolute;
-          inset: -20px;
-          background: 
-            radial-gradient(circle at 20% 20%, rgba(252, 157, 68, 0.08) 0%, transparent 70%),
-            radial-gradient(circle at 80% 80%, rgba(252, 157, 68, 0.08) 0%, transparent 70%);
-          filter: blur(80px);
-          opacity: 0.7;
-          z-index: 0;
-          animation: float 30s ease-in-out infinite;
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .fade-in {
-          animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-          opacity: 0;
-          transform: translateY(30px);
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .delay-1 { animation-delay: 0.3s; }
-        .delay-2 { animation-delay: 0.6s; }
-        .delay-3 { animation-delay: 0.9s; }
-        
-        .glimmer-card {
-          position: relative;
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 16px;
-          overflow: hidden;
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(252, 157, 68, 0.1);
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .glimmer-card:hover {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 
-            0 20px 40px -20px rgba(252, 157, 68, 0.3),
-            0 0 20px rgba(252, 157, 68, 0.1);
-          border-color: rgba(252, 157, 68, 0.3);
-          background: rgba(0, 0, 0, 0.4);
-        }
-        
-        .glimmer-card::before {
-          content: '';
-          position: absolute;
-          inset: -1px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(252, 157, 68, 0.15),
-            rgba(252, 157, 68, 0.25),
-            rgba(252, 157, 68, 0.15),
-            transparent
-          );
-          background-size: 200% 100%;
-          animation: shimmer 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glimmer-card:hover::before {
-          opacity: 1;
-        }
-
-        .service-icon-container {
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glimmer-card:hover .service-icon-container {
-          transform: scale(1.1) rotate(5deg);
-          box-shadow: 
-            0 0 30px -5px rgba(252, 157, 68, 0.3),
-            inset 0 0 20px rgba(252, 157, 68, 0.2);
-        }
-
-        @keyframes nodeGlow {
-          0%, 100% { r: var(--base-size); opacity: 0.8; }
-          50% { r: calc(var(--base-size) * 1.3); opacity: 0.4; }
-        }
-
-        @keyframes cityAppear {
-          0% { 
-            opacity: 0;
-            transform: scale(0);
-          }
-          50% {
-            opacity: 0.4;
-            transform: scale(1.2);
-          }
-          100% { 
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
-        @keyframes labelAppear {
-          0% { 
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          100% { 
-            opacity: 0.6;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes tradeRoute {
-          0% { 
-            stroke-dashoffset: 1000; 
-            opacity: 0; 
-          }
-          100% { 
-            stroke-dashoffset: 0; 
-            opacity: 0.4; 
-          }
-        }
-        
-        .trade-route {
-          stroke-dasharray: 1000;
-          animation: tradeRoute 3s ease-in-out forwards;
-          opacity: 0;
-        }
-
-        .trade-route:hover {
-          opacity: 0.8;
-          filter: drop-shadow(0 0 12px rgba(252, 157, 68, 0.6));
-          stroke-width: 2;
-        }
-
-        .city-node {
-          animation: cityAppear 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-          opacity: 0;
-        }
-
-        .city-label {
-          animation: labelAppear 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-          opacity: 0;
-        }
-
-        .scroll-animation {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-          filter: blur(10px);
-        }
-
-        .scroll-animation.animate-in {
-          opacity: 1;
-          transform: translateY(0);
-          filter: blur(0);
-        }
-
-        .scroll-delay-1 { transition-delay: 0.3s; }
-        .scroll-delay-2 { transition-delay: 0.6s; }
-        .scroll-delay-3 { transition-delay: 0.9s; }
-      `}</style>
-
-      {/* World Map and Trade Routes */}
-      <div className="relative w-full h-screen overflow-hidden">
-        <div className="spiral-bg"></div>
-        <div className="dynamic-bg"></div>
-        
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1000 600">
-          {/* Cities First */}
-          {cities.map((city, index) => (
-            <g key={city.name}>
-              <circle
-                cx={city.x}
-                cy={city.y + 40}
-                r={city.size}
-                className="city-node"
-                fill="#BF946B"
-                style={{ 
-                  animationDelay: `${index * 200}ms`,
-                  '--base-size': `${city.size}px`
-                } as any}
-              />
-              <text
-                x={city.x}
-                y={city.y + 60}
-                className="city-label text-xs fill-neutral-400"
-                textAnchor="middle"
-                style={{ 
-                  animationDelay: `${(index * 200) + 500}ms`
-                }}
-              >
-                {city.name}
-              </text>
-            </g>
-          ))}
-
-          {/* Trade Routes After */}
-          {tradeRoutes.map((route, i) => {
-            const start = cities.find(c => c.name === route[0]);
-            const end = cities.find(c => c.name === route[1]);
-            if (!start || !end) return null;
-
-            const midX = (start.x + end.x) / 2;
-            const midY = (start.y + end.y) / 2 - 20;
-
-            return (
-              <path
-                key={`route-${i}`}
-                className="trade-route"
-                d={`M${start.x},${start.y + 40} Q${midX},${midY} ${end.x},${end.y + 40}`}
-                stroke="#BF946B"
-                strokeWidth="1"
-                fill="none"
-                style={{ 
-                  animationDelay: `${(cities.length * 200) + 1000 + (i * 300)}ms`
-                }}
-              />
-            );
-          })}
-        </svg>
-
-        {/* Hero Content */}
-        <div className="absolute inset-0 flex items-center justify-center -translate-y-40">
-          <div className="text-center px-6 scroll-animation space-y-4">
-            <div className="relative h-[750px] w-[750px] mx-auto mb-4">
-              <Image
-                src="/images/Elementum Global-1000x1000.png"
-                alt="Elementum Global"
-                fill
-                className="object-contain filter contrast-125 brightness-110 sepia-[0.1] hue-rotate-[5deg]"
-                priority
-                style={{ filter: 'brightness(0.95) sepia(0.2) hue-rotate(355deg) saturate(1.5)' }}
-              />
-            </div>
-            <div className="inline-flex items-center px-3 py-1 text-sm text-[#BF946B] mb-2 glimmer-pill">
-              <span>Global Trading & Financial Services</span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight fade-in delay-1 animate-gradient bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-[length:200%_auto] bg-clip-text text-transparent transition-all duration-300 hover:scale-[1.02]" style={{ textShadow: '0 0 30px rgba(252,157,68,0.2)', letterSpacing: '-0.02em' }}>
-              Transform Your Business<br />
-              With Global Solutions
-            </h2>
-            <p className="text-xl text-neutral-400 mb-4 max-w-2xl mx-auto fade-in delay-2">
-              Empowering businesses with secure and efficient global trading capabilities.
+    <>
+      <Header />
+      <Reveal />
+      <main id="main">
+        {/* HERO */}
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-media">
+            <Image
+              src="/images/hero.webp"
+              alt="Ripening cacao pods on a shaded cacao tree"
+              fill
+              priority
+              sizes="100vw"
+            />
+          </div>
+          <div className="container hero-inner">
+            <span className="eyebrow">Commodity sourcing &amp; trade facilitation</span>
+            <h1 id="hero-title">
+              Agricultural commodities, <span className="accent">sourced at origin.</span>
+            </h1>
+            <p className="hero-sub">
+              Elementum Global connects African producers with international buyers. Cacao is our lead
+              product, alongside vanilla, coffee and pepper, and we are adding metals and minerals.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center fade-in delay-3">
-              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#FC9D44] hover:bg-[#BF946B] text-white px-12 py-8 text-xl font-bold" asChild>
-                <Link href="/get-started">Schedule Consultation</Link>
-              </Button>
-              <Button size="lg" className="w-full sm:w-auto rounded-full bg-[#FC9D44] hover:bg-[#BF946B] text-white px-8 py-6 text-lg font-bold" asChild>
-                <Link href="/market-ai">Market Assistant</Link>
-              </Button>
+            <div className="hero-actions">
+              <a href="#inquiry" className="btn btn--gold">
+                Register your interest <ArrowRight aria-hidden />
+              </a>
+              <a href="#products" className="btn btn--ghost-light">
+                Explore products
+              </a>
             </div>
+            <ul className="hero-facts" role="list">
+              <li>
+                <strong>U.S.-registered</strong>Elementum Global LLC, Delaware
+              </li>
+              <li>
+                <strong>Rooted in Africa</strong>Long-standing farm relationships
+              </li>
+              <li>
+                <strong>Partner exporters</strong>Export handled at origin
+              </li>
+              <li>
+                <strong>Responsible trade</strong>Organic &amp; Fairtrade prioritised
+              </li>
+            </ul>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Project Updates Section */}
-      <ProjectUpdates />
-
-      {/* Services Section */}
-      <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
-        <div className="max-w-[1200px] mx-auto scroll-animation">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">Our Services</h2>
-            <p className="text-neutral-400 max-w-2xl mx-auto">Comprehensive trading and financial solutions tailored to your business needs</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Precious Metals */}
-            <div className="space-y-8">
-              <ServiceCard
-                title="Precious Metals"
-                description="Global trading solutions for gold, silver, and other precious metals. We facilitate secure and efficient transactions worldwide."
-                icon={
-                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                }
-                features={[
-                  "Secure Storage Solutions",
-                  "Global Market Access",
-                  "Competitive Pricing"
-                ]}
-                href="/services/precious-metals"
+        {/* INTRO */}
+        <section className="section" aria-labelledby="intro-title">
+          <div className="container intro-grid">
+            <div className="intro-media" data-reveal>
+              <Image
+                src="/images/cacao.webp"
+                alt="Fermented cacao beans drying on a wooden rack"
+                width={1200}
+                height={900}
+                sizes="(max-width: 900px) 100vw, 50vw"
               />
-
-              <ServiceCard
-                title="Food Products"
-                description="International trade and distribution of agricultural and food commodities, ensuring quality and reliability."
-                icon={
-                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h18v18H3z M12 8v8 M8 12h8" />
-                  </svg>
-                }
-                features={[
-                  "Quality Assurance",
-                  "Global Distribution Network",
-                  "Supply Chain Management"
-                ]}
-                href="/services/food-products"
-              />
-            </div>
-
-            <div className="space-y-8">
-              <ServiceCard
-                title="OTC Trading"
-                description="Secure and efficient cryptocurrency exchange services with competitive rates and personalized support."
-                icon={
-                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                }
-                features={[
-                  "Competitive Rates",
-                  "Secure Transactions",
-                  "Expert Guidance"
-                ]}
-                href="/services/otc-trading"
-              />
-
-              <ServiceCard
-                title="Petroleum Services"
-                description="Comprehensive petroleum trading and distribution solutions, ensuring reliable supply chain and competitive pricing in global energy markets."
-                icon={
-                  <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                  </svg>
-                }
-                features={[
-                  "Global Distribution",
-                  "Market Analysis",
-                  "Supply Chain Solutions"
-                ]}
-                href="/services/petroleum-services"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Us Summary Section */}
-      <section className="py-20 px-6 relative">
-        <div className="max-w-[1200px] mx-auto scroll-animation">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">Who We Are</h2>
-            <p className="text-neutral-400 max-w-2xl mx-auto">Your trusted partner in global trade and financial solutions</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="glimmer-card p-8 hover-float">
-              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#BF946B]/10">
-                <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+              <div className="intro-badge">
+                <strong>Cacao first.</strong>
+                <span>Our core focus, sourced from Cameroon and other Central African origins.</span>
               </div>
-              <h3 className="text-xl font-bold mb-4 text-white">Our Story</h3>
-              <p className="text-neutral-400">
-                Founded on principles of integrity and excellence, bridging markets and creating opportunities worldwide.
-              </p>
             </div>
-
-            <div className="glimmer-card p-8 hover-float">
-              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#BF946B]/10">
-                <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-white">Our Mission</h3>
-              <p className="text-neutral-400">
-                Empowering businesses through secure, efficient, and innovative trading solutions.
+            <div className="intro-copy" data-reveal>
+              <span className="eyebrow">About Elementum Global</span>
+              <h2 id="intro-title" className="h2">
+                Trade built on <span className="accent">relationships</span>, not just transactions.
+              </h2>
+              <p className="lead">
+                We are a U.S.-registered commodity sourcing and trade facilitation company. Our roots are in
+                long-standing family relationships with farms across Africa, and our role is to connect that
+                supply with serious international buyers. We aim to make trade sustainable, fair and organic
+                wherever possible.
               </p>
-            </div>
-
-            <div className="glimmer-card p-8 hover-float">
-              <div className="mb-6 service-icon-container p-4 rounded-xl inline-block bg-[#BF946B]/10">
-                <svg className="w-12 h-12 text-[#BF946B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-white">Global Vision</h3>
-              <p className="text-neutral-400">
-                Connecting markets across borders with integrity and excellence.
-              </p>
-            </div>
-          </div>
-          <div className="text-center mt-8">
-            <Button 
-              variant="outline" 
-              className="rounded-full border-[#BF946B] text-[#BF946B] hover:bg-[#BF946B]/10"
-              asChild
-            >
-              <Link href="/about-us">Learn More About Us</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Blog/News Section */}
-      <section className="py-20 px-6 bg-black/30 backdrop-blur-md relative">
-        <div className="max-w-[1200px] mx-auto scroll-animation">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">Latest Insights</h2>
-            <p className="text-neutral-400 max-w-2xl mx-auto">Stay informed with the latest updates in global trade and finance</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {articles.map((article, index) => (
-              <div key={index} className="glimmer-card p-6 hover-float">
-                <div className="aspect-video mb-4 bg-[#BF946B]/10 rounded-lg overflow-hidden">
-                  {article.urlToImage ? (
-                    <Image
-                      src={article.urlToImage}
-                      alt={article.title}
-                      width={400}
-                      height={225}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-[#BF946B]/20 to-transparent" />
-                  )}
+              <div className="attr-grid">
+                <div className="attr">
+                  <Sprout aria-hidden />
+                  <h3>Close to origin</h3>
+                  <p>Direct relationships with producers and partner exporters on the ground.</p>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-[#BF946B] px-3 py-1 rounded-full bg-[#BF946B]/10 inline-block">
-                    {article.category}
-                  </p>
-                  <h3 className="text-lg font-semibold text-white line-clamp-2">{article.title}</h3>
-                  <p className="text-neutral-400 text-sm line-clamp-2">
-                    {article.description}
-                  </p>
-                  <Link 
-                    href="/latest-insights"
-                    className="text-sm text-[#BF946B] hover:text-[#FC9D44] transition-colors inline-flex items-center gap-1"
-                  >
-                    Read More
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </Link>
+                <div className="attr">
+                  <FileCheck2 aria-hidden />
+                  <h3>Clear terms</h3>
+                  <p>Origin, specifications and terms stated up front for every offer.</p>
+                </div>
+                <div className="attr">
+                  <Route aria-hidden />
+                  <h3>Coordinated execution</h3>
+                  <p>One point of contact from first inquiry to shipment.</p>
+                </div>
+                <div className="attr">
+                  <ShieldCheck aria-hidden />
+                  <h3>Responsible sourcing</h3>
+                  <p>Traceable, deforestation-free supply as the standard we work toward.</p>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-          <div className="text-center mt-8">
-            <Button 
-              variant="outline" 
-              className="rounded-full border-[#BF946B] text-[#BF946B] hover:bg-[#BF946B]/10"
-              asChild
-            >
-              <Link href="/latest-insights">View All Articles</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-6 relative">
-        <div className="max-w-[800px] mx-auto text-center scroll-animation">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#E4C9B0] via-[#FC9D44] to-[#BF946B] bg-clip-text text-transparent">
-            Ready to Get Started?
-          </h2>
-          <p className="text-neutral-400 mb-8">
-            Let's discuss how we can help achieve your trading and financial goals
-          </p>
-          <Button 
-            size="lg" 
-            className="rounded-full bg-[#FC9D44] hover:bg-[#BF946B] text-white px-8 py-6 text-lg"
-            asChild
-          >
-            <Link href="/get-started">Schedule a Consultation</Link>
-          </Button>
-        </div>
-      </section>
-    </div>
-  )
+        {/* PRODUCTS */}
+        <section id="products" className="section section--sand" aria-labelledby="products-title">
+          <div className="container">
+            <div className="section-head section-head--split" data-reveal>
+              <div>
+                <span className="eyebrow">Product portfolio</span>
+                <h2 id="products-title" className="h2">
+                  What we source <span className="accent">today.</span>
+                </h2>
+              </div>
+              <p className="lead">
+                Every lot is offered with its origin, specification and terms confirmed in writing.
+                Availability changes with the season — tell us what you need and we will match it to current
+                supply.
+              </p>
+            </div>
+
+            <div className="product-grid">
+              <article className="product product--lead" data-reveal>
+                <div className="product-media">
+                  <Image
+                    src="/images/hero.webp"
+                    alt="Cacao pods ripening on the tree"
+                    fill
+                    sizes="(max-width: 760px) 100vw, 55vw"
+                    style={{ objectPosition: "75% center" }}
+                  />
+                  <span className="product-tag">Lead product</span>
+                </div>
+                <div className="product-body">
+                  <span className="product-num">01</span>
+                  <h3>Cacao beans</h3>
+                  <p>
+                    Dry, fermented cacao beans for importers, grinders and chocolate makers. Offers are lot-based
+                    and come from partner-sourced supply in Cameroon, with further Central African origins
+                    considered case by case.
+                  </p>
+                  <ul className="product-specs" role="list">
+                    <li>
+                      <span>Form</span>Dry fermented beans
+                    </li>
+                    <li>
+                      <span>Origin</span>Cameroon &amp; Central Africa
+                    </li>
+                    <li>
+                      <span>Terms</span>Typically FOB origin port
+                    </li>
+                    <li>
+                      <span>Specs</span>Confirmed per lot
+                    </li>
+                  </ul>
+                  <InquireLink product="cacao" className="btn btn--dark">
+                    Request a cacao offer
+                  </InquireLink>
+                </div>
+              </article>
+
+              <article className="product" data-reveal style={{ ["--reveal-delay" as string]: "0ms" }}>
+                <div className="product-media">
+                  <Image src="/images/vanilla.webp" alt="Bundle of cured vanilla beans" fill sizes="(max-width: 760px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                </div>
+                <div className="product-body">
+                  <span className="product-num">02</span>
+                  <h3>Vanilla</h3>
+                  <p>Cured vanilla beans from our producer network. Grade, length and moisture specified per lot.</p>
+                  <div className="chips">
+                    <span className="chip">Cured beans</span>
+                    <span className="chip">Grade per lot</span>
+                  </div>
+                  <InquireLink product="vanilla">Inquire about vanilla</InquireLink>
+                </div>
+              </article>
+
+              <article className="product" data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
+                <div className="product-media">
+                  <Image src="/images/coffee.webp" alt="Ripe red coffee cherries on the branch" fill sizes="(max-width: 760px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                </div>
+                <div className="product-body">
+                  <span className="product-num">03</span>
+                  <h3>Coffee</h3>
+                  <p>Green coffee from African origins. Variety, grade and available volume confirmed per offer.</p>
+                  <div className="chips">
+                    <span className="chip">Green coffee</span>
+                    <span className="chip">Origin per offer</span>
+                  </div>
+                  <InquireLink product="coffee">Inquire about coffee</InquireLink>
+                </div>
+              </article>
+
+              <article className="product" data-reveal style={{ ["--reveal-delay" as string]: "160ms" }}>
+                <div className="product-media">
+                  <Image src="/images/pepper.webp" alt="Whole black peppercorns and fresh green pepper berries" fill sizes="(max-width: 760px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                </div>
+                <div className="product-body">
+                  <span className="product-num">04</span>
+                  <h3>Pepper</h3>
+                  <p>Whole black pepper and related spices, sourced to your specification and confirmed per lot.</p>
+                  <div className="chips">
+                    <span className="chip">Whole black pepper</span>
+                    <span className="chip">To specification</span>
+                  </div>
+                  <InquireLink product="pepper">Inquire about pepper</InquireLink>
+                </div>
+              </article>
+            </div>
+
+            <div className="expanding">
+              <article className="expand-card expand-card--minerals" data-reveal>
+                <Image src="/images/minerals.webp" alt="Raw copper ore, dark metallic ore and quartz on slate" fill sizes="(max-width: 760px) 100vw, 60vw" />
+                <span className="status-pill">Expanding</span>
+                <h3>Metals &amp; minerals</h3>
+                <p>
+                  We are building supplier relationships in metals and minerals. If you have a specific requirement,
+                  tell us — we will let you know honestly where we can help.
+                </p>
+                <InquireLink product="metals-minerals">Register interest</InquireLink>
+              </article>
+              <article className="expand-card expand-card--agri" data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
+                <span className="status-pill">On request</span>
+                <h3>Other agricultural products</h3>
+                <p>
+                  Our producer network reaches beyond our core four. Looking for another agricultural commodity
+                  from Africa? Share the product and specification and we will check availability.
+                </p>
+                <InquireLink product="other-agri">Ask about a product</InquireLink>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* SERVICES */}
+        <section id="services" className="section" aria-labelledby="services-title">
+          <div className="container">
+            <div className="section-head section-head--center" data-reveal>
+              <span className="eyebrow">What we do</span>
+              <h2 id="services-title" className="h2">
+                More than an introduction. <span className="accent">A coordinated trade.</span>
+              </h2>
+              <p className="lead">
+                We sit between origin and buyer, so each side has one accountable counterpart.
+              </p>
+            </div>
+            <ul className="services" role="list">
+              <li className="service" data-reveal>
+                <div className="service-icon">
+                  <Search aria-hidden />
+                </div>
+                <h3>Sourcing &amp; introductions</h3>
+                <p>We identify reliable supply and bring the right producers and buyers together.</p>
+                <ul role="list">
+                  <li>Identify reliable producers and exporters</li>
+                  <li>Introduce supply to qualified buyers</li>
+                </ul>
+              </li>
+              <li className="service" data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
+                <div className="service-icon">
+                  <TrendingUp aria-hidden />
+                </div>
+                <h3>Buyer development</h3>
+                <p>We look for long-term partners, not one-off deals.</p>
+                <ul role="list">
+                  <li>Find importers, traders and processors</li>
+                  <li>Build repeat, long-term offtake relationships</li>
+                </ul>
+              </li>
+              <li className="service" data-reveal style={{ ["--reveal-delay" as string]: "160ms" }}>
+                <div className="service-icon">
+                  <Handshake aria-hidden />
+                </div>
+                <h3>Transaction coordination</h3>
+                <p>We keep each deal moving, from offer to shipment.</p>
+                <ul role="list">
+                  <li>Align specifications, terms and timelines</li>
+                  <li>Coordinate communication and documents</li>
+                </ul>
+              </li>
+            </ul>
+
+            <div className="model" data-reveal>
+              <div className="model-media">
+                <Image src="/images/port.webp" alt="Container port with cranes at dusk" fill sizes="(max-width: 860px) 100vw, 50vw" />
+              </div>
+              <div className="model-copy">
+                <span className="eyebrow">Our model</span>
+                <h3>Clear roles. One point of contact.</h3>
+                <p>
+                  Export is handled by established partner exporters at origin. Elementum Global manages the
+                  relationships and coordinates each transaction — and we aim to be clear about origin,
+                  specifications and terms at every step.
+                </p>
+                <div className="model-roles">
+                  <div className="model-role">
+                    <strong>Partner exporters</strong>
+                    <span>Aggregation, quality preparation, export documentation and loading at origin.</span>
+                  </div>
+                  <div className="model-role">
+                    <strong>Elementum Global</strong>
+                    <span>Buyer relationship, offer, specification alignment and transaction coordination.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PROCESS */}
+        <section id="process" className="section section--sand" aria-labelledby="process-title">
+          <div className="container">
+            <div className="section-head" data-reveal>
+              <span className="eyebrow">How we work</span>
+              <h2 id="process-title" className="h2">
+                From first inquiry <span className="accent">to shipment.</span>
+              </h2>
+            </div>
+            <ol className="steps" role="list">
+              <li className="step" data-reveal>
+                <span className="step-num">STEP 01</span>
+                <h3>Tell us what you need</h3>
+                <p>Product, grade, volume, destination and timing. The more specific, the faster we can respond.</p>
+              </li>
+              <li className="step" data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
+                <span className="step-num">STEP 02</span>
+                <h3>Offer &amp; specification</h3>
+                <p>We match your request to available supply and share origin, specification and indicative terms.</p>
+              </li>
+              <li className="step" data-reveal style={{ ["--reveal-delay" as string]: "160ms" }}>
+                <span className="step-num">STEP 03</span>
+                <h3>Agree terms</h3>
+                <p>Samples where needed, then price, quality, documentation and payment terms agreed in writing.</p>
+              </li>
+              <li className="step" data-reveal style={{ ["--reveal-delay" as string]: "240ms" }}>
+                <span className="step-num">STEP 04</span>
+                <h3>Ship &amp; follow through</h3>
+                <p>Our partner exporter ships; we coordinate documents and communication until delivery.</p>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        {/* WHO WE WORK WITH */}
+        <section className="section" aria-labelledby="partners-title">
+          <div className="container">
+            <div className="section-head section-head--split" data-reveal>
+              <div>
+                <span className="eyebrow">Who we want to meet</span>
+                <h2 id="partners-title" className="h2">
+                  Partners for <span className="accent">long-term trade.</span>
+                </h2>
+              </div>
+              <p className="lead">
+                We are looking for counterparts who value reliable origin relationships and want to build
+                volume over time.
+              </p>
+            </div>
+            <ul className="audience" role="list">
+              <li data-reveal>
+                <Building2 aria-hidden />
+                <h3>Importers &amp; traders</h3>
+                <p>Cocoa and commodity importers sourcing from Africa.</p>
+              </li>
+              <li data-reveal style={{ ["--reveal-delay" as string]: "60ms" }}>
+                <Factory aria-hidden />
+                <h3>Processors &amp; grinders</h3>
+                <p>Cocoa processors needing consistent bean supply.</p>
+              </li>
+              <li data-reveal style={{ ["--reveal-delay" as string]: "120ms" }}>
+                <Leaf aria-hidden />
+                <h3>Manufacturers</h3>
+                <p>Chocolate and food makers buying at origin.</p>
+              </li>
+              <li data-reveal style={{ ["--reveal-delay" as string]: "180ms" }}>
+                <Ship aria-hidden />
+                <h3>Trade &amp; logistics</h3>
+                <p>Partners supporting trade flows into Europe and beyond.</p>
+              </li>
+              <li data-reveal style={{ ["--reveal-delay" as string]: "240ms" }}>
+                <Network aria-hidden />
+                <h3>Investors</h3>
+                <p>Aligned investors with agribusiness experience.</p>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* SUSTAINABILITY */}
+        <section id="sustainability" className="section section--dark" aria-labelledby="sustain-title">
+          <div className="container sustain-grid">
+            <div className="sustain-copy" data-reveal>
+              <span className="eyebrow">Sustainability commitment</span>
+              <h2 id="sustain-title" className="h2">
+                Good trade should <span className="accent">give back to its origin.</span>
+              </h2>
+              <p className="lead">
+                Sustainability is not a label for us — it shapes which supply we take on and how we work with the
+                communities behind it.
+              </p>
+              <Image
+                src="/images/forest.webp"
+                alt="Young cacao trees growing under tall shade trees in morning mist"
+                width={1672}
+                height={941}
+                sizes="(max-width: 900px) 100vw, 45vw"
+              />
+            </div>
+            <div className="commitments-wrap" style={{ display: "grid", gap: "var(--space-4)" }}>
+              <ul className="commitments" role="list">
+                <li className="commitment" data-reveal>
+                  <div className="commitment-icon">
+                    <TreePine aria-hidden />
+                  </div>
+                  <h3>Reforestation</h3>
+                  <p>A share of our revenue is set aside for reforestation in producing regions.</p>
+                </li>
+                <li className="commitment" data-reveal style={{ ["--reveal-delay" as string]: "60ms" }}>
+                  <div className="commitment-icon">
+                    <HandHeart aria-hidden />
+                  </div>
+                  <h3>Local communities</h3>
+                  <p>We support local communities around our supply chains and aim to give back where we trade.</p>
+                </li>
+                <li className="commitment" data-reveal style={{ ["--reveal-delay" as string]: "120ms" }}>
+                  <div className="commitment-icon">
+                    <Leaf aria-hidden />
+                  </div>
+                  <h3>Organic &amp; fair trade</h3>
+                  <p>We prioritise organic and Fairtrade supply wherever it is available.</p>
+                </li>
+                <li className="commitment" data-reveal style={{ ["--reveal-delay" as string]: "180ms" }}>
+                  <div className="commitment-icon">
+                    <ShieldCheck aria-hidden />
+                  </div>
+                  <h3>Responsible sourcing</h3>
+                  <p>Working toward traceable, deforestation-free supply, with no child labour and no forced labour.</p>
+                </li>
+              </ul>
+              <div className="eudr-note" data-reveal>
+                <FileCheck2 aria-hidden />
+                <p>
+                  <strong>Selling into the EU?</strong> We work with our partner exporters on the traceability
+                  information that buyers need under the EU Deforestation Regulation (EUDR).
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* COMPANY */}
+        <section id="company" className="section" aria-labelledby="company-title">
+          <div className="container company">
+            <div className="company-copy" data-reveal>
+              <span className="eyebrow">The company</span>
+              <h2 id="company-title" className="h2">
+                Small team. <span className="accent">Long-term view.</span>
+              </h2>
+              <p className="lead">
+                Elementum Global was founded to make trade between African origins and international markets more
+                direct, transparent and fair. Our objectives are simple:
+              </p>
+              <ul className="objectives" role="list">
+                <li>
+                  <span>
+                    <strong>Long-term offtake</strong> — build lasting relationships with buyers.
+                  </span>
+                </li>
+                <li>
+                  <span>
+                    <strong>Real transactions</strong> — progress deals from first offer to shipment.
+                  </span>
+                </li>
+                <li>
+                  <span>
+                    <strong>Give back</strong> — reinvest in the communities behind our supply.
+                  </span>
+                </li>
+                <li>
+                  <span>
+                    <strong>Aligned growth</strong> — welcome investment that fits our model and values.
+                  </span>
+                </li>
+              </ul>
+            </div>
+            <div className="facts" data-reveal>
+              <dl>
+                <div className="row">
+                  <dt>Company</dt>
+                  <dd>{site.legalName}</dd>
+                </div>
+                <div className="row">
+                  <dt>Registered</dt>
+                  <dd>Delaware, United States</dd>
+                </div>
+                <div className="row">
+                  <dt>Focus</dt>
+                  <dd>Commodity sourcing &amp; trade facilitation</dd>
+                </div>
+                <div className="row">
+                  <dt>Products</dt>
+                  <dd>Cacao, vanilla, coffee, pepper · expanding into metals &amp; minerals</dd>
+                </div>
+                <div className="row">
+                  <dt>Co-founders</dt>
+                  <dd>Joshua Hohl &amp; Brendan Ollivier</dd>
+                </div>
+                <div className="row">
+                  <dt>Contact</dt>
+                  <dd>
+                    <a href={`mailto:${site.email}`}>{site.email}</a>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq" className="section section--sand" aria-labelledby="faq-title">
+          <div className="container faq-wrap">
+            <div className="section-head section-head--center" data-reveal>
+              <span className="eyebrow">Frequently asked</span>
+              <h2 id="faq-title" className="h2">
+                Answers for <span className="accent">buyers.</span>
+              </h2>
+            </div>
+            <div className="faq" data-reveal>
+              {faqs.map((f, i) => (
+                <details key={f.q} open={i === 0}>
+                  <summary>
+                    {f.q}
+                    <Plus aria-hidden />
+                  </summary>
+                  <p className="answer">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* INQUIRY */}
+        <section id="inquiry" className="section" aria-labelledby="inquiry-title">
+          <div className="container inquiry-grid">
+            <div className="inquiry-copy" data-reveal>
+              <span className="eyebrow">Register your interest</span>
+              <h2 id="inquiry-title" className="h2">
+                Your next origin partner is <span className="accent">one message away.</span>
+              </h2>
+              <p className="lead">
+                Whether you are looking for a specific lot of cacao or exploring a new origin for vanilla, coffee,
+                pepper or minerals, tell us what you need. We will come back with a relevant answer — not a
+                generic price list.
+              </p>
+              <ul className="contact-list" role="list">
+                <li>
+                  <span className="contact-icon">
+                    <Mail aria-hidden />
+                  </span>
+                  <div>
+                    <small>Email</small>
+                    <a href={`mailto:${site.email}`}>{site.email}</a>
+                  </div>
+                </li>
+                <li>
+                  <span className="contact-icon">
+                    <MapPin aria-hidden />
+                  </span>
+                  <div>
+                    <small>Registered</small>
+                    <span>{site.legalName} · Delaware, USA</span>
+                  </div>
+                </li>
+                <li>
+                  <span className="contact-icon">
+                    <Users aria-hidden />
+                  </span>
+                  <div>
+                    <small>Working with</small>
+                    <span>Buyers, processors, partners &amp; producers</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div data-reveal>
+              <InquiryForm />
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
 }
