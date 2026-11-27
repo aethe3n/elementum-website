@@ -13,7 +13,7 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Elementum Global — Sustainable cacao sourcing & trade facilitation",
+    default: "Elementum Global — Commodity sourcing & trade",
     template: "%s — Elementum Global",
   },
   description: site.description,

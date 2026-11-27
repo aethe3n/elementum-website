@@ -69,7 +69,7 @@ export async function POST(req: Request) {
   if (data.name.length < 2) fields.name = "Please enter your name.";
   if (!EMAIL_RE.test(data.email)) fields.email = "Please enter a valid email address.";
   if (data.company.length < 2) fields.company = "Please enter your company or organisation.";
-  if (!(roleOptions as readonly string[]).includes(data.role)) fields.role = "Please choose what describes you best.";
+  if (data.role && !(roleOptions as readonly string[]).includes(data.role)) data.role = "";
   if (data.volume && !(volumeOptions as readonly string[]).includes(data.volume)) data.volume = "";
   if (data.products.length === 0) fields.products = "Select at least one product.";
   if (!data.consent) fields.consent = "Please confirm so we can reply to you.";
@@ -98,14 +98,14 @@ export async function POST(req: Request) {
     ["Company", data.company],
     ["Email", data.email],
     ["Country", data.country || "—"],
-    ["Role", data.role],
+    ["Role", data.role || "—"],
     ["Products", productList],
     ["Estimated volume", data.volume || "—"],
-  ];
+  ].filter(([k, v]) => !(v === "—" && ["Country", "Role", "Estimated volume"].includes(k))) as [string, string][];
 
   const text =
     rows.map(([k, v]) => `${k}: ${v}`).join("\n") +
-    `\n\nRequirements:\n${data.message || "—"}\n\n— Sent from the inquiry form on elementumglobal.com`;
+    `\n\nMessage:\n${data.message || "—"}\n\n— Sent from the inquiry form on elementumglobal.com`;
 
   const html = `<!doctype html><html><body style="margin:0;background:#f6f0e7;font-family:Arial,Helvetica,sans-serif;color:#2a2420">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 0"><tr><td align="center">
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
           )
           .join("")}
       </table>
-      <p style="margin:20px 0 6px;color:#675c52;font-size:12px;text-transform:uppercase;letter-spacing:1px">Requirements</p>
+      <p style="margin:20px 0 6px;color:#675c52;font-size:12px;text-transform:uppercase;letter-spacing:1px">Message</p>
       <p style="margin:0;font-size:14px;line-height:1.6;white-space:pre-wrap">${esc(data.message || "—")}</p>
       <p style="margin:24px 0 0;font-size:12px;color:#9a8e81">Reply directly to this email to answer ${esc(data.name)}.</p>
     </td></tr>

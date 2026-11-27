@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, CircleAlert, CircleCheck } from "lucide-react";
-import { productOptions, roleOptions, site, volumeOptions } from "@/lib/site";
+import { productOptions, site } from "@/lib/site";
 import { SELECT_EVENT } from "./InquireLink";
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -42,7 +42,6 @@ export default function InquiryForm() {
     if (name.length < 2) e.name = "Please enter your name.";
     if (!EMAIL_RE.test(email)) e.email = "Please enter a valid email address.";
     if (company.length < 2) e.company = "Please enter your company or organisation.";
-    if (!fd.get("role")) e.role = "Please choose what describes you best.";
     if (products.length === 0) e.products = "Select at least one product.";
     if (!fd.get("consent")) e.consent = "Please confirm so we can reply to you.";
     return e;
@@ -66,10 +65,7 @@ export default function InquiryForm() {
       name: fd.get("name"),
       email: fd.get("email"),
       company: fd.get("company"),
-      country: fd.get("country"),
-      role: fd.get("role"),
       products,
-      volume: fd.get("volume"),
       message: fd.get("message"),
       consent: Boolean(fd.get("consent")),
       website: fd.get("website"), // honeypot
@@ -105,13 +101,12 @@ export default function InquiryForm() {
           <div className="success-icon">
             <CircleCheck aria-hidden />
           </div>
-          <h3>Thank you — we have your inquiry.</h3>
+          <h3>Thank you — we will be in touch.</h3>
           <p>
-            Our team reviews every request personally and will reply from {site.email}. If it is urgent, you can
-            also write to us directly.
+            We have received your message and will reply from {site.email} to arrange a call.
           </p>
           <button type="button" className="btn btn--ghost" onClick={() => setStatus("idle")}>
-            Send another inquiry
+            Send another message
           </button>
         </div>
       </div>
@@ -145,7 +140,7 @@ export default function InquiryForm() {
           </div>
         </div>
 
-        <div className="form-row">
+        <div className="form-single">
           <div className="field" {...fieldProps("email")}>
             <label htmlFor="f-email">
               Business email <span className="req">*</span>
@@ -153,39 +148,6 @@ export default function InquiryForm() {
             <input id="f-email" name="email" type="email" className="input" autoComplete="email" placeholder="name@company.com"
               aria-invalid={!!errors.email} aria-describedby={errors.email ? "e-email" : undefined} maxLength={200} />
             {errors.email && <span id="e-email" className="field-error">{errors.email}</span>}
-          </div>
-          <div className="field">
-            <label htmlFor="f-country">
-              Country <span className="opt">(optional)</span>
-            </label>
-            <input id="f-country" name="country" className="input" autoComplete="country-name" placeholder="e.g. Netherlands" maxLength={80} />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="field" {...fieldProps("role")}>
-            <label htmlFor="f-role">
-              I am a… <span className="req">*</span>
-            </label>
-            <select id="f-role" name="role" className="select" defaultValue=""
-              aria-invalid={!!errors.role} aria-describedby={errors.role ? "e-role" : undefined}>
-              <option value="" disabled>Choose one</option>
-              {roleOptions.map((r) => (
-                <option key={r} value={r}>{r}</option>
-              ))}
-            </select>
-            {errors.role && <span id="e-role" className="field-error">{errors.role}</span>}
-          </div>
-          <div className="field">
-            <label htmlFor="f-volume">
-              Estimated volume <span className="opt">(optional)</span>
-            </label>
-            <select id="f-volume" name="volume" className="select" defaultValue="">
-              <option value="">Select a range</option>
-              {volumeOptions.map((v) => (
-                <option key={v} value={v}>{v}</option>
-              ))}
-            </select>
           </div>
         </div>
 
@@ -210,10 +172,10 @@ export default function InquiryForm() {
 
         <div className="field">
           <label htmlFor="f-message">
-            Your requirements <span className="opt">(optional)</span>
+            Message <span className="opt">(optional)</span>
           </label>
           <textarea id="f-message" name="message" className="textarea" maxLength={4000}
-            placeholder="Grade or specification, destination port, preferred terms, timing — whatever helps us prepare a relevant answer." />
+            placeholder="A few words about what you are looking for." />
         </div>
 
         <div className="hp" aria-hidden="true">
@@ -251,7 +213,7 @@ export default function InquiryForm() {
               </>
             ) : (
               <>
-                Send inquiry <ArrowRight aria-hidden />
+                Send message <ArrowRight aria-hidden />
               </>
             )}
           </button>

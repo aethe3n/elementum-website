@@ -4,7 +4,7 @@ export const site = {
   url: "https://elementumglobal.com",
   email: "info@elementumglobal.com",
   description:
-    "Elementum Global is a U.S.-registered commodity sourcing and trade facilitation company connecting African producers with international buyers — cacao first, alongside vanilla, coffee and pepper.",
+    "Elementum Global is a U.S.-registered commodity sourcing and trade company connecting producers with international buyers of cacao, vanilla, coffee, pepper and more.",
 };
 
 export const productOptions = [
