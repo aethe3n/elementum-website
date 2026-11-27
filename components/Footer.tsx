@@ -10,8 +10,7 @@ export default function Footer() {
           <div className="footer-brand">
             <Image src="/images/logo-light.png" alt="Elementum Global" width={775} height={175} />
             <p>
-              Sustainable cacao sourcing and trade facilitation — connecting African producers with international
-              buyers.
+              Agricultural commodities, sourced at origin.
             </p>
           </div>
           <div className="footer-col">
@@ -28,7 +27,6 @@ export default function Footer() {
             <h3>Company</h3>
             <ul role="list">
               <li><a href="/#services">What we do</a></li>
-              <li><a href="/#process">How we work</a></li>
               <li><a href="/#sustainability">Sustainability</a></li>
               <li><a href="/#faq">FAQ</a></li>
             </ul>
@@ -37,7 +35,7 @@ export default function Footer() {
             <h3>Contact</h3>
             <ul role="list">
               <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
-              <li><a href="/#inquiry">Register interest</a></li>
+              <li><a href="/#inquiry">Get in touch</a></li>
               <li>Delaware, USA</li>
             </ul>
           </div>

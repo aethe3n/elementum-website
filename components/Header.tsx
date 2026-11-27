@@ -7,10 +7,9 @@ import { Menu, X, ArrowRight } from "lucide-react";
 const links = [
   { href: "/#products", label: "Products" },
   { href: "/#services", label: "What we do" },
-  { href: "/#process", label: "How we work" },
   { href: "/#sustainability", label: "Sustainability" },
-  { href: "/#company", label: "Company" },
   { href: "/#faq", label: "FAQ" },
+  { href: "/#inquiry", label: "Contact" },
 ];
 
 export default function Header({ solid = false }: { solid?: boolean }) {
@@ -51,7 +50,7 @@ export default function Header({ solid = false }: { solid?: boolean }) {
             ))}
           </ul>
           <a href="/#inquiry" className="btn btn--gold">
-            Register interest
+            Get in touch
           </a>
           <button
             type="button"
@@ -76,7 +75,7 @@ export default function Header({ solid = false }: { solid?: boolean }) {
           ))}
         </ul>
         <a href="/#inquiry" className="btn btn--dark" onClick={() => setOpen(false)} tabIndex={open ? 0 : -1}>
-          Register interest <ArrowRight aria-hidden />
+          Get in touch <ArrowRight aria-hidden />
         </a>
       </div>
     </header>
